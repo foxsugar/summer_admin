@@ -1,2 +1,3 @@
-python manage.py makemigrations apps
-python manage.py migrate
+创建数据库脚本
+  python manage.py makemigrations apps
+  python manage.py migrate
