@@ -17,6 +17,7 @@ class Agent_user(models.Model):
     area = models.CharField('所属区域', max_length=2000, default='')
     address = models.CharField('地址', max_length=2000, default='')
     money = models.FloatField('钱', default=0)
+    gold = models.FloatField('点券', default=0)
     pay_deduct = models.FloatField('支付提成', default=0)
     share_deduct = models.FloatField('分享提成', default=0)
     parent_pay_deduct = models.FloatField('上级支付提成', default=0)

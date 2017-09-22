@@ -26,7 +26,7 @@ SECRET_KEY = 'a-qq64ewutm*p)488=dx)t7+-z23!_(z!eoh0e7@^%&gy-fxd!'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # '192.168.1.132',
+    '192.168.1.132',
     # '192.168.1.101',
     '*'
 ]
@@ -61,9 +61,37 @@ MIDDLEWARE = [
 CSRF_COOKIE_SECURE = False
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
-      # 'localhost:9999',
+    '*'
+      # 'localhost:9528',
+      # '127.0.0.1:9528',
+      # '192.168.1.132:9528',
+      # '192.168.1.132',
       # '192.168.1.101:8020',
       # '192.168.1.101',
+)
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+CORS_ALLOW_HEADERS = (
+    'XMLHttpRequest',
+    'X_FILENAME',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'X-Token',
+    'Pragma',
 )
 
 ROOT_URLCONF = 'summer_admin.urls'

@@ -41,7 +41,8 @@ setup(
     install_requires=[
         'pymysql',
         'django',
-        'django-cors-headers'
+        'django-cors-headers',
+        'thrift>=0.10.0'
 
     ],
 

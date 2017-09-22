@@ -20,11 +20,15 @@ from summer_admin.apps import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
+    #登录
     url(r'^user/login$', views.login),
-    url(r'^user$', views.get_user),
-    url(r'^user/getUser$', views.get_agent),
-    url(r'^menus$', views.menus),
-    url(r'^dashboard', views.dashboard),
-    url(r'^overview', views.overview),
+    url(r'^user/info$', views.get_info),
+
+
+    #代理
+    url(r'^agent/list$', views.agent_list),
+    url(r'^agent$', views.agent),
+    url(r'^agent/charge$', views.agent_charge),
+
 
 ]
