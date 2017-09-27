@@ -33,6 +33,7 @@ urlpatterns = [
 
 
     url(r'^player/charge$', playerViews.charge),
+    url(r'^player/list$', playerViews.user_list),
 
 
     url(r'^constant$', views.constant),

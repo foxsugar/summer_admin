@@ -68,16 +68,17 @@ def agent_list(request):
     """代理列表"""
     page = int(str(request.GET['page']))
     size = int(str(request.GET['size']))
-    page_right = (page + 1) * size
+    index_left = (page - 1) * size
+    index_right = page * size
 
-    table_data = list(Agent_user.objects.values()[page:page_right])
+    table_data = list(Agent_user.objects.values()[index_left:index_right])
     td = []
     for t in table_data:
         td.append(agent2vo(t))
 
     total_page = Agent_user.objects.count()
 
-    data = {'tableData': td, 'totalPage': total_page, 'currentPage': 1}
+    data = {'tableData': td, 'totalPage': total_page}
 
     return JsonResponse({'code': 20000, 'data': data})
 
