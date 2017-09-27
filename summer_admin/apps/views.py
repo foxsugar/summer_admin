@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.http import HttpRequest
 from django.http import JsonResponse
 from summer_admin.apps.models import models
-from summer_admin.apps.models import Agent_user
+from summer_admin.apps.models import *
 from summer_admin.apps.models import Users
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
@@ -11,17 +11,22 @@ from summer_admin.apps.menu import *
 import os
 import uuid
 import datetime
+from summer_admin.apps.gl import *
+from django.core.cache import cache
 
+TIME_OUT = 60 * 60 * 2
 
 def check_login(func):
     """
     检测登录装饰器
     """
-
     def wrapper(req):
-        # request.session['usenname']
-        if req.session.get('user') is None:
-            return JsonResponse({'success': False, 'message': '请登录'})
+        print(req)
+        x_token = req.META['HTTP_X_TOKEN']
+        print(x_token)
+        agent = cache.get(x_token)
+        if agent is None:
+            return JsonResponse({'code': 50014, 'message': '请登录'})
         else:
             return func(req)
 
@@ -39,11 +44,11 @@ def login(request):
     users = Agent_user.objects.filter(username=username).filter(password=password)
     if users.values().count() > 0:
         user = users.values()[0]
-        print(user)
-        # 放入session
+        # 放入缓存
         user_cache = {'id': user['id'], 'level': user['level']}
-
-        result = {'code': 20000, 'data': {'token': uuid.uuid4().hex}}
+        token = uuid.uuid4().hex
+        cache.set(token, user_cache, TIME_OUT)
+        result = {'code': 20000, 'data': {'token': token}}
         return JsonResponse(result)
     else:
         return JsonResponse({'code': 2000, 'data': '账户密码错误'})
@@ -57,7 +62,9 @@ def get_info(request):
     return JsonResponse({'code': 20000, 'data': data})
 
 
+@check_login
 def agent_list(request):
+
     """代理列表"""
     page = int(str(request.GET['page']))
     size = int(str(request.GET['size']))
@@ -74,16 +81,15 @@ def agent_list(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
+
 def agent(request):
     param = json.loads(str(request.GET['agentForm']))
     method = request.method
 
-    #添加代理
+    # 添加代理
     if method == "POST":
         create_agent_user(param)
         return JsonResponse({'code': 20000, 'data': param})
-
-
 
 
 def agent_charge(request):
@@ -95,6 +101,12 @@ def agent_charge(request):
     agent.money += num
     agent.save()
     return JsonResponse({'code': 20000, 'data': agent.money})
+
+
+def constant(request):
+    con = Constant.objects.filter(id=1).values()[0]
+
+    return JsonResponse({'code': 20000, 'data': con})
 
 
 def agent2vo(agent):
@@ -123,6 +135,7 @@ def agent2vo(agent):
 
 
 def create_agent_user(agent):
+    """创建代理"""
     user = Agent_user()
     data = agent
     user.username = data['username']

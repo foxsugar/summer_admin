@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from summer_admin.apps import views
+from summer_admin.apps import playerViews
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -29,6 +30,12 @@ urlpatterns = [
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
+
+
+    url(r'^player/charge$', playerViews.charge),
+
+
+    url(r'^constant$', views.constant),
 
 
 ]

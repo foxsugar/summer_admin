@@ -72,3 +72,24 @@ class Agent_charge(models.Model):
         verbose_name = '代理充值表表'
         verbose_name_plural = '代理充值'
         managed = True
+
+
+class Constant(models.Model):
+    id = models.AutoField(primary_key=True)
+    init_money = models.IntegerField(default=0)
+    share_money = models.IntegerField(default=0)
+    black_list = models.TextField(default=0)
+    apple_check = models.CharField(max_length=255, default='')
+    download = models.CharField(max_length=255, default='')
+    download2 = models.CharField(max_length=255, default='')
+    marquee = models.CharField(max_length=255, default='')
+    marquee1 = models.CharField(max_length=255, default='')
+    marquee2 = models.CharField(max_length=255, default='')
+    version_of_android = models.CharField(max_length=255, default='')
+    version_of_ios = models.CharField(max_length=255, default='')
+
+    class Meta:
+        db_table = 'constant'
+        verbose_name = '常量表'
+        verbose_name_plural = '常量表'
+        managed = False
