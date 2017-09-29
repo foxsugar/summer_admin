@@ -17,7 +17,7 @@ setup(
     # http://packaging.python.org/en/latest/tutorial.html#version
     version='0.0.1',
 
-    description='summer admin',
+    description='summer_admin',
     long_description=long_description,
 
 
@@ -33,10 +33,10 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
 
-    keywords='summer admin',
+    keywords='summer_admin',
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    namespace_packages=['summer'],
+    namespace_packages=['summer_admin'],
 
     install_requires=[
         'pymysql',
