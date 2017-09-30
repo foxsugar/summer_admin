@@ -1,2 +1,4 @@
 python manage.py makemigrations apps
 python manage.py migrate
+
+启动 python manage.py runserver 8000
