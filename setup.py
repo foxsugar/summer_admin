@@ -39,9 +39,9 @@ setup(
     namespace_packages=['summer_admin'],
 
     install_requires=[
-        'pymysql',
-        'django',
-        'django-cors-headers',
+        'pymysql>=0.7.11',
+        'django>=1.10.3',
+        'django-cors-headers>=2.1.0',
         'thrift>=0.10.0'
 
     ],
