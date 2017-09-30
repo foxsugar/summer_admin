@@ -2,22 +2,8 @@ import json
 
 from django.http import JsonResponse
 
-from summer_admin.rpc.rpc import *
-from summer_admin.apps.models import *
-from django.http import HttpResponse
-from django.http import HttpRequest
-from django.http import JsonResponse
-from summer_admin.apps.models import models
-from summer_admin.apps.models import *
 from summer_admin.apps.models import Users
-from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_exempt
-from summer_admin.apps.menu import *
-import os
-import uuid
-import datetime
-from summer_admin.apps.gl import *
-from django.core.cache import cache
+from summer_admin.rpc.rpc import *
 
 
 def charge(request):
