@@ -1,25 +1,21 @@
-import json
-from django.http import HttpResponse
-from django.http import HttpRequest
-from django.http import JsonResponse
-from summer_admin.apps.models import models
-from summer_admin.apps.models import *
-from summer_admin.apps.models import Users
-from django.core.paginator import Paginator
-from django.views.decorators.csrf import csrf_exempt
-from summer_admin.apps.menu import *
-import os
-import uuid
 import datetime
-from summer_admin.apps.gl import *
+import json
+import uuid
+
 from django.core.cache import cache
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+from summer_admin.apps.models import *
 
 TIME_OUT = 60 * 60 * 2
+
 
 def check_login(func):
     """
     检测登录装饰器
     """
+
     def wrapper(req):
         print(req)
         x_token = req.META['HTTP_X_TOKEN']
@@ -54,6 +50,7 @@ def login(request):
         return JsonResponse({'code': 2000, 'data': '账户密码错误'})
 
 
+@check_login
 def get_info(request):
     """获得用户信息"""
     roles = ['admin']
@@ -64,7 +61,6 @@ def get_info(request):
 
 @check_login
 def agent_list(request):
-
     """代理列表"""
     page = int(str(request.GET['page']))
     size = int(str(request.GET['size']))
@@ -83,6 +79,7 @@ def agent_list(request):
     return JsonResponse({'code': 20000, 'data': data})
 
 
+@check_login
 def agent(request):
     param = json.loads(str(request.GET['agentForm']))
     method = request.method
@@ -93,6 +90,7 @@ def agent(request):
         return JsonResponse({'code': 20000, 'data': param})
 
 
+@check_login
 def agent_charge(request):
     """代理充值"""
     param = json.loads(str(request.GET['chargeForm']))
@@ -104,6 +102,7 @@ def agent_charge(request):
     return JsonResponse({'code': 20000, 'data': agent.money})
 
 
+@check_login
 def constant(request):
     con = Constant.objects.filter(id=1).values()[0]
 
