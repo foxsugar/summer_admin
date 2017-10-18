@@ -1,10 +1,10 @@
 import json
 
 from django.http import JsonResponse
-
+from django.core.cache import cache
 from summer_admin.apps.models import Users, Charge, Agent_charge
 from summer_admin.rpc.rpc import *
-
+from summer_admin.apps.views import *
 
 def charge(request):
     param = json.loads(str(request.GET['chargeForm']))
@@ -20,7 +20,7 @@ def charge(request):
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
-
+@check_login
 def user_list(request):
     page = int(str(request.GET['page']))
     size = int(str(request.GET['size']))
@@ -35,23 +35,74 @@ def user_list(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
+
+@check_login
 def charge_list(request):
-    page = int(str(request.GET['page']))
-    size = int(str(request.GET['size']))
-    index_left = (page - 1) * size
-    index_right = page * size
-    total_page = Charge.objects.count()
-    player_data = list(Charge.objects.values()[index_left:index_right])
-    data = {'tableData': player_data, 'totalPage': total_page}
 
-    return JsonResponse({'code': 20000, 'data': data})
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    username = dict['username']
 
+    if username != 'admin':
+
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+
+        array = Charge.objects.filter(origin=agent_id)
+        player_data = list(array.values()[index_left:index_right])
+        total_page = len(player_data)
+        data = {'tableData': player_data, 'totalPage': total_page}
+        return JsonResponse({'code': 20000, 'data': data})
+
+    else:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        total_page = Charge.objects.count()
+        player_data = list(Charge.objects.values()[index_left:index_right])
+        data = {'tableData': player_data, 'totalPage': total_page}
+        return JsonResponse({'code': 20000, 'data': data})
+
+@check_login
 def agent_charge_list(request):
-    page = int(str(request.GET['page']))
-    size = int(str(request.GET['size']))
-    index_left = (page - 1) * size
-    index_right = page * size
-    total_page = Agent_charge.objects.count()
-    agent_data = list(Agent_charge.objects.values()[index_left:index_right])
-    data = {'tableData': agent_data, 'totalPage': total_page}
-    return JsonResponse({'code': 20000, 'data': data})
+
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+
+    username = dict['username']
+    if username != 'admin':
+
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+
+        array = Agent_charge.objects.filter(agent_id=agent_id)
+        agent_data = list(array.values()[index_left:index_right])
+        total_page = len(array)
+        data = {'tableData': agent_data, 'totalPage': total_page}
+        return JsonResponse({'code': 20000, 'data': data})
+
+    else:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        total_page = Agent_charge.objects.count()
+        agent_data = list(Agent_charge.objects.values()[index_left:index_right])
+        data = {'tableData': agent_data, 'totalPage': total_page}
+        return JsonResponse({'code': 20000, 'data': data})
+
+def logout(request):
+
+    cache.clear()
+    return JsonResponse({'code': 20000, 'data': None})

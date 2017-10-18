@@ -41,7 +41,7 @@ def login(request):
     if users.values().count() > 0:
         user = users.values()[0]
         # 放入缓存
-        user_cache = {'id': user['id'], 'level': user['level']}
+        user_cache = {'id': user['id'], 'level': user['level'], 'username' : user['username']}
         token = uuid.uuid4().hex
         cache.set(token, user_cache, TIME_OUT)
         result = {'code': 20000, 'data': {'token': token}}
@@ -99,6 +99,34 @@ def agent_charge(request):
     agent = Agent_user.objects.get(id=id)
     agent.money += num
     agent.save()
+
+
+    # int
+    # WX = 1;
+    # int
+    # ZFB = 2;
+    # int
+    # SHARE = 3;
+    # int
+    # CHARGE_CARD = 4;
+    # int
+    # BIND_REFERRER = 5;
+    # int
+    # AGENT = 7;
+
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_charge = Agent_charge()
+    agent_charge.agent_id = id
+    agent_charge.charge_src_agent = agent_id
+    agent_charge.charge_num = num
+    agent_charge.charge_type = 7
+    agent_charge.save()
+
     return JsonResponse({'code': 20000, 'data': agent.money})
 
 

@@ -40,5 +40,6 @@ urlpatterns = [
 
     url(r'^constant$', views.constant),
 
+    url(r'^user/logout$', playerViews.logout)
 
 ]
