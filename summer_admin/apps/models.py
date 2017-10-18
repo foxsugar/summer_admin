@@ -92,3 +92,28 @@ class Constant(models.Model):
         verbose_name = '常量表'
         verbose_name_plural = '常量表'
         managed = False
+
+class Charge(models.Model):
+    order_id = models.CharField(max_length=255, primary_key=True)
+    # order_id = models.AutoField()
+    callbacktime = models.DateTimeField('回调时间', auto_now=False)
+    createtime = models.DateTimeField('创建时间', auto_now=True)
+    money = models.FloatField('充值金额', default='')
+    money_point = models.FloatField('充值点数')
+    origin = models.IntegerField(default=0)
+    recharge_source = models.CharField(max_length=255, default='')
+    share_area = models.CharField(max_length=255, default='')
+    share_content = models.CharField(max_length=255, default='')
+    shareid = models.IntegerField(default=0)
+    sign = models.CharField(max_length=255, default='')
+    sp_ip = models.CharField(max_length=255, default='')
+    status = models.IntegerField(default=0)
+    userid = models.IntegerField(default=0)
+    username = models.CharField(max_length=255, default='')
+    transaction_id = models.CharField(max_length=255, default='')
+    DealAgentId = models.IntegerField(default=0)
+    class Meta:
+        db_table = 'charge'
+        verbose_name = '充值记录表'
+        verbose_name_plural = '充值记录表'
+        managed = False

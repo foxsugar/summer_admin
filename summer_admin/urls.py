@@ -30,11 +30,13 @@ urlpatterns = [
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
+    url(r'^agent/chargelist$', playerViews.agent_charge_list),
 
 
     url(r'^player/charge$', playerViews.charge),
     url(r'^player/list$', playerViews.user_list),
 
+    url(r'^player/chargelist$', playerViews.charge_list),
 
     url(r'^constant$', views.constant),
 

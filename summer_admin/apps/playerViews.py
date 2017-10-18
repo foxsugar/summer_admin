@@ -2,7 +2,7 @@ import json
 
 from django.http import JsonResponse
 
-from summer_admin.apps.models import Users
+from summer_admin.apps.models import Users, Charge, Agent_charge
 from summer_admin.rpc.rpc import *
 
 
@@ -33,4 +33,25 @@ def user_list(request):
 
     data = {'tableData': user_data, 'totalPage': total_page}
 
+    return JsonResponse({'code': 20000, 'data': data})
+
+def charge_list(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    total_page = Charge.objects.count()
+    player_data = list(Charge.objects.values()[index_left:index_right])
+    data = {'tableData': player_data, 'totalPage': total_page}
+
+    return JsonResponse({'code': 20000, 'data': data})
+
+def agent_charge_list(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    total_page = Agent_charge.objects.count()
+    agent_data = list(Agent_charge.objects.values()[index_left:index_right])
+    data = {'tableData': agent_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
