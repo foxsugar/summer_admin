@@ -24,8 +24,6 @@ urlpatterns = [
     #登录
     url(r'^user/login$', views.login),
     url(r'^user/info$', views.get_info),
-
-
     #代理
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),
@@ -35,19 +33,14 @@ urlpatterns = [
     url(r'^agent/fetchdelegates', playerViews.fetch_delegates),
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
-
     url(r'^player/charge$', playerViews.charge),
     url(r'^player/list$', playerViews.user_list),
 
     #搜索用户列表
     url(r'^player/fetchlist$', playerViews.search_player),
-
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
-
     url(r'^player/chargelist$', playerViews.charge_list),
-
     url(r'^constant$', views.constant),
-
     url(r'^user/logout$', playerViews.logout)
 
 ]

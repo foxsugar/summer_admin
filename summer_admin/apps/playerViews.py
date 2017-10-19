@@ -107,48 +107,78 @@ def logout(request):
     cache.clear()
     return JsonResponse({'code': 20000, 'data': None})
 
+@check_login
 def search_player(request):
     page = int(str(request.GET['page']))
     size = int(str(request.GET['limit']))
     index_left = (page - 1) * size
     index_right = page * size
-    title = str(request.GET['title'])
+    title = None
+    try:
+        title = str(request.GET['title'])
+    except:
+        title = ""
+
     array = Charge.objects.filter(username__contains=title)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data) / size + 1
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
+@check_login
 def search_agent_charge(request):
     page = int(str(request.GET['page']))
     size = int(str(request.GET['limit']))
     index_left = (page - 1) * size
     index_right = page * size
-    title = str(request.GET['title'])
+    title = None
+
+    try:
+        title = str(request.GET['title'])
+    except:
+        player_data = []
+        total_page = 1
+        data = {'tableData': player_data, 'totalPage': total_page}
+        return JsonResponse({'code': 20000, 'data': data})
+
     array = Agent_charge.objects.filter(agent_id=title)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data) / size + 1
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
+@check_login
 def serarch_player_list(request):
     page = int(str(request.GET['page']))
     size = int(str(request.GET['limit']))
     index_left = (page - 1) * size
     index_right = page * size
-    title = str(request.GET['title'])
+    title = None
+
+    try:
+        title = str(request.GET['title'])
+    except:
+        title = ""
+
     array = Users.objects.filter(username__contains=title)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data) / size + 1
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
+@check_login
 def fetch_delegates(request):
     page = int(str(request.GET['page']))
     size = int(str(request.GET['limit']))
     index_left = (page - 1) * size
     index_right = page * size
-    title = str(request.GET['title'])
+    title = None
+
+    try:
+        title = str(request.GET['title'])
+    except:
+        title = ""
+
     array = Agent_user.objects.filter(username__contains=title)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data) / size + 1
