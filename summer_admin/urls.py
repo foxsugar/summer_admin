@@ -40,6 +40,7 @@ urlpatterns = [
     #搜索用户列表
     url(r'^player/fetchlist$', playerViews.search_player),
 
+    url(r'^player/fetchplayers$', playerViews.serarch_player_list),
 
     url(r'^player/chargelist$', playerViews.charge_list),
 
