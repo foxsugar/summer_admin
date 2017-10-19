@@ -20,7 +20,6 @@ from summer_admin.apps import playerViews
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-
     #登录
     url(r'^user/login$', views.login),
     url(r'^user/info$', views.get_info),
@@ -42,5 +41,4 @@ urlpatterns = [
     url(r'^player/chargelist$', playerViews.charge_list),
     url(r'^constant$', views.constant),
     url(r'^user/logout$', playerViews.logout)
-
 ]
