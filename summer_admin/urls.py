@@ -31,10 +31,15 @@ urlpatterns = [
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
     url(r'^agent/chargelist$', playerViews.agent_charge_list),
-
+    #搜索代理充值列表
+    url(r'^agent/fetchlist$', playerViews.search_agent_charge),
 
     url(r'^player/charge$', playerViews.charge),
     url(r'^player/list$', playerViews.user_list),
+
+    #搜索用户列表
+    url(r'^player/fetchlist$', playerViews.search_player),
+
 
     url(r'^player/chargelist$', playerViews.charge_list),
 

@@ -106,3 +106,28 @@ def logout(request):
 
     cache.clear()
     return JsonResponse({'code': 20000, 'data': None})
+
+def search_player(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    title = str(request.GET['title'])
+    array = Charge.objects.filter(username__contains=title)
+    player_data = list(array.values()[index_left:index_right])
+    total_page = len(player_data) / size + 1
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
+def search_agent_charge(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    title = str(request.GET['title'])
+    array = Agent_charge.objects.filter(agent_id=title)
+    player_data = list(array.values()[index_left:index_right])
+    total_page = len(player_data) / size + 1
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
