@@ -8,13 +8,20 @@ from summer_admin.apps.views import *
 import datetime
 @check_login
 def charge(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+
     param = json.loads(str(request.GET['chargeForm']))
     user_id = int(str(param['userId']))
     num = int(str(param['num']))
     rpc_client = get_client()
     agent_id = 1
     print(rpc_client.getUserInfo(1))
-    order = Order(userId=user_id, num=num, type=ChargeType.money, agentId=0)
+
+    order = Order(userId=user_id, num=num, type=ChargeType.money, agentId=agent_id)
     rtn = rpc_client.charge(order)
     if rtn == 0:
         return JsonResponse({'code': 20000, 'data': '充值成功'})
