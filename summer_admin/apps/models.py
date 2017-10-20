@@ -110,7 +110,6 @@ class Charge(models.Model):
     userid = models.IntegerField(default=0)
     username = models.CharField(max_length=255, default='')
     transaction_id = models.CharField(max_length=255, default='')
-    DealAgentId = models.IntegerField(default=0)
     class Meta:
         db_table = 'charge'
         verbose_name = '充值记录表'
