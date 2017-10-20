@@ -5,7 +5,8 @@ from django.core.cache import cache
 from summer_admin.apps.models import Users, Charge, Agent_charge
 from summer_admin.rpc.rpc import *
 from summer_admin.apps.views import *
-
+import datetime
+@check_login
 def charge(request):
     param = json.loads(str(request.GET['chargeForm']))
     user_id = int(str(param['userId']))
@@ -90,6 +91,9 @@ def agent_charge_list(request):
         agent_data = list(array.values()[index_left:index_right])
         total_page = len(array)
         data = {'tableData': agent_data, 'totalPage': total_page}
+
+        print(data)
+
         return JsonResponse({'code': 20000, 'data': data})
 
     else:
@@ -101,6 +105,7 @@ def agent_charge_list(request):
         agent_data = list(Agent_charge.objects.values()[index_left:index_right])
         data = {'tableData': agent_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
+
 
 def logout(request):
 
@@ -121,7 +126,7 @@ def search_player(request):
 
     array = Charge.objects.filter(username__contains=title)
     player_data = list(array.values()[index_left:index_right])
-    total_page = len(player_data) / size + 1
+    total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
@@ -137,13 +142,13 @@ def search_agent_charge(request):
         title = str(request.GET['title'])
     except:
         player_data = []
-        total_page = 1
+        total_page = len(player_data)
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
     array = Agent_charge.objects.filter(agent_id=title)
     player_data = list(array.values()[index_left:index_right])
-    total_page = len(player_data) / size + 1
+    total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
@@ -162,7 +167,7 @@ def serarch_player_list(request):
 
     array = Users.objects.filter(username__contains=title)
     player_data = list(array.values()[index_left:index_right])
-    total_page = len(player_data) / size + 1
+    total_page =  len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
@@ -181,7 +186,22 @@ def fetch_delegates(request):
 
     array = Agent_user.objects.filter(username__contains=title)
     player_data = list(array.values()[index_left:index_right])
-    total_page = len(player_data) / size + 1
+    total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
-    pass
+
+@check_login
+#超级管理员删除代理
+def delete_delegate(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    username = dict['username']
+
+    if username == 'admin':
+        pass
+    else:
+        pass
+

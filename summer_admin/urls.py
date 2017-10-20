@@ -40,5 +40,6 @@ urlpatterns = [
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
     url(r'^player/chargelist$', playerViews.charge_list),
     url(r'^constant$', views.constant),
-    url(r'^user/logout$', playerViews.logout)
+    url(r'^user/logout$', playerViews.logout),
+    url(r'^user/deldelegate', playerViews.delete_delegate),
 ]

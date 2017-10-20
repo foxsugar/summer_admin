@@ -53,8 +53,20 @@ def login(request):
 @check_login
 def get_info(request):
     """获得用户信息"""
-    roles = ['admin']
-    data = {'name': 'sun', 'role': roles,
+
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    username = dict['username']
+
+    roles = None
+    if username == 'admin':
+        roles = ['admin']
+    else:
+        roles = ['delegate']
+    data = {'name': username, 'role': roles,
             'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'}
     return JsonResponse({'code': 20000, 'data': data})
 
@@ -126,6 +138,7 @@ def agent_charge(request):
     agent_charge.charge_num = num
     agent_charge.charge_type = 7
     agent_charge.save()
+
 
     return JsonResponse({'code': 20000, 'data': agent.money})
 
