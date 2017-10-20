@@ -79,7 +79,18 @@ def agent_list(request):
     index_left = (page - 1) * size
     index_right = page * size
 
-    table_data = list(Agent_user.objects.values()[index_left:index_right])
+    # table_data = list(Agent_user.objects.values()[index_left:index_right])
+
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    array = Agent_user.objects.filter(parent_id=agent_id)
+    # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
+    table_data = list(array.values()[index_left:index_right])
+    total_page =  len(table_data)
+
     td = []
     for t in table_data:
         td.append(agent2vo(t))
@@ -104,14 +115,31 @@ def agent(request):
 
 @check_login
 def agent_charge(request):
+
+    x_token = request.META['HTTP_X_TOKEN']
+    dict = cache.get(x_token)
+    slf_name = dict["username"]
+    slf_id = dict["id"]
+
+    array = Agent_user.objects.filter(id=slf_id)
+    t_data = list(array.all())
+    agent_user = t_data[0]
+
     """代理充值"""
     param = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = param['num']
+
+    if agent_user.money < num:
+        return JsonResponse({'code': 100, 'data': '充值失败'})
+
     agent = Agent_user.objects.get(id=id)
     agent.money += num
     agent.save()
 
+    if slf_name != 'admin':
+        agent_user.money -= num
+        agent_user.save()
 
     # int
     # WX = 1;
@@ -126,9 +154,7 @@ def agent_charge(request):
     # int
     # AGENT = 7;
 
-    x_token = request.META['HTTP_X_TOKEN']
-    print(x_token)
-    dict = cache.get(x_token)
+
 
     level = dict["level"]
     agent_id = dict['id']

@@ -17,13 +17,26 @@ def charge(request):
     param = json.loads(str(request.GET['chargeForm']))
     user_id = int(str(param['userId']))
     num = int(str(param['num']))
+
+    array = Agent_user.objects.filter(id=agent_id)
+    entry_list = list(array.all())
+    leng = len(entry_list)
+
+    if leng == 0:
+        return JsonResponse({'code': 100, 'data': '充值失败'})
+
+    agent_user = entry_list[0]
+
+    if agent_user.money < num:
+        return JsonResponse({'code': 100, 'data': '充值失败'})
+
     rpc_client = get_client()
-    agent_id = 1
-    print(rpc_client.getUserInfo(1))
 
     order = Order(userId=user_id, num=num, type=ChargeType.money, agentId=agent_id)
     rtn = rpc_client.charge(order)
     if rtn == 0:
+        agent_user.money -= num
+        agent_user.save()
         return JsonResponse({'code': 20000, 'data': '充值成功'})
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
@@ -191,7 +204,14 @@ def fetch_delegates(request):
     except:
         title = ""
 
-    array = Agent_user.objects.filter(username__contains=title)
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+
+
+    array = Agent_user.objects.filter(username__contains=title, parent_id=agent_id)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
