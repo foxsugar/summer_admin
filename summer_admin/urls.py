@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^agent/charge$', views.agent_charge),
     url(r'^agent/chargelist$', playerViews.agent_charge_list),
 
+    url(r'^agent/fetchself$', playerViews.agent_fetch_slf),
+
     url(r'^agent/fetchdelegates', playerViews.fetch_delegates),
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),

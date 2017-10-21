@@ -237,3 +237,17 @@ def delete_delegate(request):
     else:
         pass
 
+@check_login
+def agent_fetch_slf(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    array = Agent_user.objects.filter(id = agent_id)
+    player_data = list(array.values()[0:1])
+    total_page = len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
+
