@@ -66,7 +66,11 @@ def get_info(request):
         roles = ['admin']
     else:
         roles = ['delegate']
-    data = {'name': username, 'role': roles,
+
+    array = Agent_user.objects.filter(id=agent_id)
+    au = array[0]
+
+    data = {'name': username, 'role': roles, 'money': au.money,
             'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'}
     return JsonResponse({'code': 20000, 'data': data})
 
@@ -86,7 +90,13 @@ def agent_list(request):
     dict = cache.get(x_token)
     level = dict["level"]
     agent_id = dict['id']
-    array = Agent_user.objects.filter(parent_id=agent_id)
+    agent_name = dict['username']
+
+    array = None
+    if agent_name == 'admin':
+        array = Agent_user.objects.all()
+    else:
+        array = Agent_user.objects.filter(parent_id=agent_id)
     # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
     table_data = list(array.values()[index_left:index_right])
     total_page =  len(table_data)
@@ -109,7 +119,9 @@ def agent(request):
 
     # 添加代理
     if method == "POST":
-        create_agent_user(param)
+        create_agent_user(param, request)
+
+        print("--")
         return JsonResponse({'code': 20000, 'data': param})
 
 
@@ -201,7 +213,14 @@ def agent2vo(agent):
     }
 
 
-def create_agent_user(agent):
+def create_agent_user(agent, request):
+
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_name = dict['username']
     """创建代理"""
     user = Agent_user()
     data = agent
@@ -210,7 +229,7 @@ def create_agent_user(agent):
     user.invite_code = data['invite_code']
     user.real_name = data['realName']
     user.level = data['level']
-    user.parent_id = data['parentId']
+    user.parent_id = agent_id
     user.email = data['email']
     user.create_time = datetime.datetime.now()
     user.id_card = data['idCard']

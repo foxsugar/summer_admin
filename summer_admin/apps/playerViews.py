@@ -210,8 +210,13 @@ def fetch_delegates(request):
     level = dict["level"]
     agent_id = dict['id']
 
+    agent_name = dict['username']
+    array = None
 
-    array = Agent_user.objects.filter(username__contains=title, parent_id=agent_id)
+    if agent_name == 'admin':
+        array = Agent_user.objects.filter(username__contains=title)
+    else:
+        array = Agent_user.objects.filter(username__contains=title, parent_id=agent_id)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
