@@ -42,7 +42,6 @@ def get_client():
     config.read(settings.BASE_DIR + '/config.conf')
     ip = config.get('rpc', 'gameIp')
     port = config.get('rpc', 'gamePort')
-    print(ip)
 
     transport = TSocket.TSocket(ip, port)
 
