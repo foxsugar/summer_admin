@@ -171,3 +171,4 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 
+
