@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from summer_admin.apps.models import *
+from summer_admin.rpc.rpc import *
 
 TIME_OUT = 60 * 60 * 2
 
@@ -41,7 +42,7 @@ def login(request):
     if users.values().count() > 0:
         user = users.values()[0]
         # 放入缓存
-        user_cache = {'id': user['id'], 'level': user['level'], 'username' : user['username']}
+        user_cache = {'id': user['id'], 'level': user['level'], 'username': user['username']}
         token = uuid.uuid4().hex
         cache.set(token, user_cache, TIME_OUT)
         result = {'code': 20000, 'data': {'token': token}}
@@ -99,7 +100,7 @@ def agent_list(request):
         array = Agent_user.objects.filter(parent_id=agent_id)
     # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
     table_data = list(array.values()[index_left:index_right])
-    total_page =  len(table_data)
+    total_page = len(table_data)
 
     td = []
     for t in table_data:
@@ -127,7 +128,6 @@ def agent(request):
 
 @check_login
 def agent_charge(request):
-
     x_token = request.META['HTTP_X_TOKEN']
     dict = cache.get(x_token)
     slf_name = dict["username"]
@@ -177,7 +177,6 @@ def agent_charge(request):
     agent_charge.charge_type = 7
     agent_charge.save()
 
-
     return JsonResponse({'code': 20000, 'data': agent.money})
 
 
@@ -186,6 +185,27 @@ def constant(request):
     con = Constant.objects.filter(id=1).values()[0]
 
     return JsonResponse({'code': 20000, 'data': con})
+
+
+@check_login
+def constant_update(request):
+    param = json.loads(str(request.GET['constantForm']))
+    constant = Constant.objects.get(id=1)
+    constant.init_money = param['init_money']
+    constant.apple_check = param['apple_check']
+    constant.download = param['download']
+    constant.marquee = param['marquee']
+    constant.version_of_android = param['version_of_android']
+    constant.version_of_ios = param['version_of_ios']
+    constant.apple_check = param['apple_check']
+    constant.save()
+
+    # 刷新游戏服务器数据
+    client = get_client()
+    # 调用这个是为了刷新服务器内存
+    client.getBlackList()
+    # client.modifyAndroidVersion(constant.version_of_android)
+    return JsonResponse({'code': 20000, 'data': 'ok'})
 
 
 def agent2vo(agent):
@@ -214,7 +234,6 @@ def agent2vo(agent):
 
 
 def create_agent_user(agent, request):
-
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)

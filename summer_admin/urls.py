@@ -18,6 +18,10 @@ from django.contrib import admin
 from summer_admin.apps import views
 from summer_admin.apps import playerViews
 
+
+
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     #登录
@@ -41,7 +45,11 @@ urlpatterns = [
     url(r'^player/fetchlist$', playerViews.search_player),
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
     url(r'^player/chargelist$', playerViews.charge_list),
-    url(r'^constant$', views.constant),
+
     url(r'^user/logout$', playerViews.logout),
     url(r'^user/deldelegate', playerViews.delete_delegate),
+
+    # 服务器信息
+    url(r'^constant$', views.constant),
+    url(r'^constant/update$', views.constant_update),
 ]

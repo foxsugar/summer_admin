@@ -1,2 +1,5 @@
 /.idea
 /dist
+/summer_admin.egg-info
+/build
+/summer_admin/__pycache__
