@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from summer_admin.apps import views
 from summer_admin.apps import playerViews
+from summer_admin.apps import robotViews
 
 
 
@@ -52,4 +53,11 @@ urlpatterns = [
     # 服务器信息
     url(r'^constant$', views.constant),
     url(r'^constant/update$', views.constant_update),
+
+
+    #机器人
+    url(r'^robot/createroom$', robotViews.create_room),
+    url(r'^robot/getRoomInfo$', robotViews.get_room_info),
+
+
 ]
