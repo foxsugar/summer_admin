@@ -28,6 +28,7 @@ urlpatterns = [
     #登录
     url(r'^user/login$', views.login),
     url(r'^user/info$', views.get_info),
+    url(r'^user/changepwd$', playerViews.change_password),
     #代理
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),

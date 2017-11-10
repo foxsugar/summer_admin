@@ -250,4 +250,23 @@ def agent_fetch_slf(request):
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
+@check_login
+def change_password(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    password = request.GET['pwd']
+    agent = Agent_user.objects.get(id=agent_id)
+    agent.password = password
+
+    state = 1
+    try:
+        agent.save()
+    except:
+        state = 0
+    data = {"state": state}
+    return JsonResponse({'code': 20000, 'data': data})
+
 
