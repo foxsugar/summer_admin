@@ -1,32 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-        <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-{#    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->#}
-{#    <script src="../static/js/jquery-3.1.0.min.js"></script>#}
-{#    <!-- 新 Bootstrap 核心 CSS 文件 -->#}
-{#    <link rel="stylesheet" href="../static/css/bootstrap.min.css">#}
-{##}
-{#    <!-- 可选的Bootstrap主题文件（一般不用引入） -->#}
-{#    <link rel="stylesheet" href="../testDjango/static/css/bootstrap-theme.min.css">#}
-{##}
-{#    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->#}
-{#    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>#}
-{##}
-{#    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->#}
-{#    <script src="../static/js/bootstrap.min.js"></script>#}
-    <title>Title</title>
-</head>
-<body>
 
-房间号:{{ params.roomId }}
-<br>
-{{ params.gameNumber }}局
+<head>
+    <meta charset="UTF-8">
+    <script src="/static/js/jquery-1.11.0.min.js"></script>
+    <title>Title</title>
+    <style>
+        #topbg {
+            /*border: 1px solid red;*/
+            background: url(../static/imgs/bg.png);
+            width: 1300px;
+            height: 1300px;
+            text-align: center;
+            /*margin: auto;*/
+            margin: auto;
+            border: 1px;
+{#            solid #000000;#}
+            float: none;
+            padding: 0px;
+            /*background-color: red;*/
+        }
+
+        #father {
+            width: 1400px;
+            height: 1400px;
+            margin: 0px;
+            border: 1px;
+            text-align: center;
+        }
+
+        #board {
+            top: 620px;
+            /*left: 188px;*/
+            width: 80%;
+            height: 48%;
+            /*margin: 0px;*/
+            /*background-color: green;*/
+            text-align: center;
+            margin: auto;
+            float: none;
+            background: url(../static/imgs/bar_1_diban.png);
+            background-size: cover;
+            /*position: absolute;*/
+        }
+
+        #board1 {
+            top: 620px;
+            /*left: 188px;*/
+            width: 80%;
+            height: 50%;
+            /*margin: 0px;*/
+            /*background-color: yellow;*/
+            text-align: center;
+            margin: auto;
+            float: none;
+            /*position: absolute;*/
+        }
+
+        #alert {
+            top: 84px;
+            left: 167px;
+            width: 900px;
+            margin: auto;
+            float: none;
+            padding: 0px;
+            position: absolute;
+        }
+
+        #title {
+            padding-top: 40px;
+            width: 500px;
+            height: 100px;
+            margin: auto;
+            float: none;
+        }
+
+        #content {
+            padding-top: 40px;
+            width: 80%;
+            height: 400px;
+            margin: auto;
+            float: none;
+            text-align: left;
+            /*background-color: red;*/
+        }
+
+        .player{
+             float: left;
+            width: 50%;
+            height: 60px;
+        }
+
+        #player1 {
+            float: left;
+            width: 50%;
+            height: 60px;
+            /*background-color: orange;*/
+        }
+
+        #player2 {
+            float: left;
+            width: 50%;
+            height: 60px;
+            /*background-color: yellow;*/
+        }
+
+        #player4 {
+            float: left;
+            width: 50%;
+            height: 60px;
+            /*background-color: orange;*/
+        }
+
+        #player3 {
+            float: left;
+            width: 50%;
+            height: 60px;
+            /*background-color: yellow;*/
+            visibility: visible;
+        }
+
+        .img1 {
+            height: 60px;
+            width: 60px;
+            border-radius: 30px;
+            /*background-color: aqua;*/
+        }
+
+        .avator {
+            float: left;
+        }
+
+        .label {
+            float: left;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body style="text-align: center;">
+<div id="topbg">
+    <div id="board1">
+        <!--<img src="../static/imgs/bar_1_diban.png" width="%80" height="80%" id="alert"/>-->
+    </div>
+
+    <div id="board">
+        <!--<img src="../static/imgs/bar_1_diban.png" width="%80" height="80%" id="alert"/>-->
+        <div id="title">
+            <img src="../static/imgs/bar_1_biaotizi.png" style="color: #008000;"/>
+        </div>
+        <div id="content">
+            <!--<h3 style="color: antiquewhite;">房号: 300000</h3>
+         <h2 style="color: antiquewhite;">规则：王牌麻将、8局，房主支付，一门牌</h2>
+         <h2 style="color: antiquewhite;">人员情况:</h2>-->
+            <span style="font-size: 20px; color: wheat;">房号: {{ data.roomId }}</span><br/><br/>
+            <span style="font-size: 20px; color: wheat;">规则：{{ data.rule }}</span><br/><br/>
+            <span style="font-size: 20px; color: wheat;">人员情况:</span><br/><br/>
+
+            {% for line in data.userList %}
+
+                <div class="player">
+                    <div class="avator">
+                        <img src= {{line.image}} class="img1"/>
+                    </div>
+
+                    <div class="label">
+                        <br/>
+                        <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;{{ line.username }}</span>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+
+{##}
+{#            <div id="player2">#}
+{#                <div class="avator">#}
+{#                    <img src="" id="img1"/>#}
+{#                </div>#}
+{##}
+{#                <div class="label">#}
+{#                    <br/>#}
+{#                    <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;name1</span>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div id="player3">#}
+{#                <div class="avator">#}
+{#                    <img src="" id="img1"/>#}
+{#                </div>#}
+{##}
+{#                <div class="label">#}
+{#                    <br/>#}
+{#                    <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;name1</span>#}
+{#                </div>#}
+{#            </div>#}
+{##}
+{#            <div id="player4">#}
+{#                <div class="avator">#}
+{#                    <img src="" id="img1"/>#}
+{##}
+{#                </div>#}
+{#                <div class="label">#}
+{#                    <br/>#}
+{#                    <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;name1</span>#}
+{#                </div>#}
+{#            </div>#}
+
+        </div>
+    </div>
+</div>
 </body>
 
-
-  <script type="text/javascript">
-  </script>
 </html>
