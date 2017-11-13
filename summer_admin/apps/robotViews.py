@@ -23,13 +23,13 @@ def create_room(request):
 def get_room_info(request):
     room_id = str(request.GET['roomId'])
     rtn = robot.get_room_info(room_id)
-    dict = eval(rtn)
-    code = dict['code']
+    d = json.loads(rtn)
+    code = d['code']
     rule = ""
     if code == 0:
-        rule = get_room_info(dict["params"])
-    dict['rule'] = rule
-    return render(request, 'roomInfo.html', {"data" : dict})
+        rule = get_room_rule(d["params"])
+    d['rule'] = rule
+    return render(request, 'roomInfo.html', {"data" : d})
     # return JsonResponse(json.loads(rtn))
 
 def get_room_rule(data):
