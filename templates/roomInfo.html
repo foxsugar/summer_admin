@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <script src="/static/js/jquery-1.11.0.min.js"></script>
-    <title>Title</title>
+    <title>房间信息</title>
     <style>
         #topbg {
             /*border: 1px solid red;*/
@@ -142,18 +142,14 @@
 <body style="text-align: center;">
 <div id="topbg">
     <div id="board1">
-        <!--<img src="../static/imgs/bar_1_diban.png" width="%80" height="80%" id="alert"/>-->
     </div>
-
     <div id="board">
-        <!--<img src="../static/imgs/bar_1_diban.png" width="%80" height="80%" id="alert"/>-->
+
         <div id="title">
             <img src="../static/imgs/bar_1_biaotizi.png" style="color: #008000;"/>
         </div>
         <div id="content">
-            <!--<h3 style="color: antiquewhite;">房号: 300000</h3>
-         <h2 style="color: antiquewhite;">规则：王牌麻将、8局，房主支付，一门牌</h2>
-         <h2 style="color: antiquewhite;">人员情况:</h2>-->
+
             <span style="font-size: 20px; color: wheat;">房号: {{ data.params.roomId }}</span><br/><br/>
             <span style="font-size: 20px; color: wheat;">规则：{{ data.rule }}</span><br/><br/>
             <span style="font-size: 20px; color: wheat;">人员情况:</span><br/><br/>
@@ -172,41 +168,6 @@
                 </div>
 
             {% endfor %}
-
-
-{##}
-{#            <div id="player2">#}
-{#                <div class="avator">#}
-{#                    <img src="" id="img1"/>#}
-{#                </div>#}
-{##}
-{#                <div class="label">#}
-{#                    <br/>#}
-{#                    <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;name1</span>#}
-{#                </div>#}
-{#            </div>#}
-{##}
-{#            <div id="player3">#}
-{#                <div class="avator">#}
-{#                    <img src="" id="img1"/>#}
-{#                </div>#}
-{##}
-{#                <div class="label">#}
-{#                    <br/>#}
-{#                    <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;name1</span>#}
-{#                </div>#}
-{#            </div>#}
-{##}
-{#            <div id="player4">#}
-{#                <div class="avator">#}
-{#                    <img src="" id="img1"/>#}
-{##}
-{#                </div>#}
-{#                <div class="label">#}
-{#                    <br/>#}
-{#                    <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;name1</span>#}
-{#                </div>#}
-{#            </div>#}
 
         </div>
     </div>
