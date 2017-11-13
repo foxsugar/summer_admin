@@ -155,10 +155,10 @@
          <h2 style="color: antiquewhite;">规则：王牌麻将、8局，房主支付，一门牌</h2>
          <h2 style="color: antiquewhite;">人员情况:</h2>-->
             <span style="font-size: 20px; color: wheat;">房号: {{ data.params.roomId }}</span><br/><br/>
-            <span style="font-size: 20px; color: wheat;">规则：</span><br/><br/>
+            <span style="font-size: 20px; color: wheat;">规则：{{ data.rule }}</span><br/><br/>
             <span style="font-size: 20px; color: wheat;">人员情况:</span><br/><br/>
 
-            {% for line in data.userList %}
+            {% for line in data.params.userList %}
 
                 <div class="player">
                     <div class="avator">
