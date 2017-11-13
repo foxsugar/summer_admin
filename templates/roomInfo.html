@@ -8,7 +8,7 @@
     <style>
         #topbg {
             /*border: 1px solid red;*/
-            background: url(../static/imgs/bg.png);
+            background: url(../static/imgs/longqi/bg.png);
             width: 1300px;
             height: 1300px;
             text-align: center;
@@ -39,7 +39,7 @@
             text-align: center;
             margin: auto;
             float: none;
-            background: url(../static/imgs/bar_1_diban.png);
+            background: url(../static/imgs/longqi/bar_1_diban.png);
             background-size: cover;
             /*position: absolute;*/
         }
@@ -140,13 +140,13 @@
 </head>
 
 <body style="text-align: center;">
-<div id="topbg">
+<div id="topbg" style= "background: url(../static/imgs/{{data.category}}/bg.png)">
     <div id="board1">
     </div>
     <div id="board">
 
         <div id="title">
-            <img src="../static/imgs/bar_1_biaotizi.png" style="color: #008000;"/>
+            <img src="../static/imgs/{{ data.category }}/bar_1_biaotizi.png" style="color: #008000;"/>
         </div>
         <div id="content">
 

@@ -3,6 +3,7 @@ import json
 from django.http import JsonResponse
 from django.core.cache import cache
 from summer_admin.apps.models import Users, Charge, Agent_charge
+from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
 from summer_admin.apps.views import *
 import datetime
@@ -29,6 +30,7 @@ def get_room_info(request):
     if code == 0:
         rule = get_room_rule(d["params"])
     d['rule'] = rule
+    d['category'] =  config.get('robot', 'gameCategory')
     return render(request, 'roomInfo.html', {"data" : d})
     # return JsonResponse(json.loads(rtn))
 
@@ -41,6 +43,8 @@ def get_room_rule(data):
         multiple = data["multiple"]
         option = data["mode"]
         roomId = data["roomId"]
+        if roomId == "" or roomId == None:
+            roomId = "（该房间不存在或已解散）"
 
         context = None
         huangStr = None
@@ -94,7 +98,7 @@ def get_room_rule(data):
 
         title += ",三缺一"
         context += str(turn) + "局" + str(multiple) + "倍" + huangStr
-        return title + ":" + context
+        return title  + context
 
     except:
         return ""
