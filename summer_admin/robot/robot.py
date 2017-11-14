@@ -21,13 +21,15 @@ config.read(settings.BASE_DIR + '/config.conf')
 ip = config.get('robot', 'gameIp')
 port = config.get('robot', 'loginServerPort')
 
-#机器人管理账号
+# 机器人管理账号
 manager_account = 'managerRobot'
 manager_password = 'managerRobot'
 
 # room_type
 room_type = {
-    '1': '''{"service":"mahjongRoomService","method":"createRoomButNotInRoom","params":{"userId":"0","modeTotal":"15","mode":"1024","multiple":"1","gameNumber":"8","personNumber":"4","gameType":"LQ","roomType":"1"}}'''
+    '1': '''{"service":"mahjongRoomService","method":"createRoomButNotInRoom","params":{"userId":"0",
+    "modeTotal":"15","mode":"1024","multiple":"1","gameNumber":"8","personNumber":"4","gameType":"LQ",
+    "roomType":"1"}} '''
 
 }
 
@@ -44,11 +46,15 @@ def create_room(account, password, game_type):
     # 登录
     login_code, s = __login(account, password)
 
-    result = {}
+    result = {'code': -1}
     # 登录gate成功
     if login_code == 0:
         # 发送创建房间
-        create_str = room_type[game_type]
+        try:
+            create_str = config.get('roomType', game_type)
+        except:
+            return json.dumps(result)
+
         json_node = json.loads(create_str)
 
         create_rtn = __send_msg(s, json_node)
