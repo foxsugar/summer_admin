@@ -31,9 +31,9 @@ def get_room_info(request):
     if code == 0:
 
         roomType = d["params"]["roomType"]
-        if roomType == 2:
+        if roomType == '2':
             rule = get_poker_room_rule(d["params"])
-        elif roomType == 1:
+        elif roomType == '1':
             rule = get_majiang_room_rule(d["params"])
 
     else:
