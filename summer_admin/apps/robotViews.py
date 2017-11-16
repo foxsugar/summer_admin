@@ -71,7 +71,7 @@ def get_poker_room_rule(data):
         elif limited == 5:
             limitedStr = "5炸封顶"
 
-        if roomType == 3 or roomType == 4:
+        if roomType == '3' or roomType == '4':
             gameType = "临汾斗地主"
         else:
             gameType = "标准斗地主"
