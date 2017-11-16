@@ -34,6 +34,14 @@ def get_room_info(request):
         else:
             rule = get_majiang_room_rule(d["params"])
 
+        try:
+            list = d["userList"]
+            for url_dic in list:
+                url = url_dic["image"]
+                url = url + "/96"
+        except:
+            pass
+
     d['rule'] = rule
 
     d['category'] =  config.get('robot', 'gameCategory')
