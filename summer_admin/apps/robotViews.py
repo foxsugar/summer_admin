@@ -24,7 +24,6 @@ def create_room(request):
 def get_room_info(request):
     room_id = str(request.GET['roomId'])
     rtn = robot.get_room_info(room_id)
-    print(rtn)
     d = json.loads(rtn)
     code = d['code']
     rule = ""

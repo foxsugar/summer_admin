@@ -153,7 +153,7 @@ def __send_msg(socket, msg):
 
     socket.sendall(msg_result)
 
-    re = socket.recv(1024)
+    re = socket.recv(3096)
 
     return bytearray(re)[4:].decode()
 
