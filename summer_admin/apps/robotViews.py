@@ -26,15 +26,66 @@ def get_room_info(request):
     rtn = robot.get_room_info(room_id)
     d = json.loads(rtn)
     code = d['code']
+    service = d['service']
     rule = ""
     if code == 0:
-        rule = get_room_rule(d["params"])
+        if service == "pokerRoomService":
+            rule = get_poker_room_rule(d["params"])
+        else:
+            rule = get_majiang_room_rule(d["params"])
+
     d['rule'] = rule
     d['category'] =  config.get('robot', 'gameCategory')
     return render(request, 'roomInfo.html', {"data" : d})
     # return JsonResponse(json.loads(rtn))
 
-def get_room_rule(data):
+
+def get_poker_room_rule(data):
+
+    rs = None
+    try:
+        roomType = data["gameType"]
+        limited = data["multiple"]
+        roomEach = data["isAA"]
+        roomAgency = data["isCreaterJoin"]
+        roomId = data["roomId"]
+        gameNumber = data["gameNumber"]
+
+        limitedStr = None
+        gameType = None
+
+        if limited == "-1":
+            limitedStr = "炸不封顶"
+        elif limited == "3":
+            limitedStr = "3炸封顶"
+        elif limited == "4":
+            limitedStr = "4炸封顶"
+        elif limited == "5":
+            limitedStr = "5炸封顶"
+
+        if roomType == "3" or roomType == "4":
+            gameType = "临汾斗地主"
+        else:
+            gameType = "标准斗地主"
+
+        optionStr = ""
+
+        if roomEach == True:
+            optionStr += " 3人建房"
+        else:
+            if roomAgency == True:
+                optionStr += " 代建房"
+            else:
+                optionStr += " 房主建房"
+
+        rs = "龙七棋牌" + str(gameType) + "、" + "房间ID：" + str(roomId) + "、" + str(
+            gameNumber) + "局、" + limitedStr + optionStr
+    except:
+        rs = ""
+
+    return rs
+
+def get_majiang_room_rule(data):
 
     try:
         type = data["modeTotal"]

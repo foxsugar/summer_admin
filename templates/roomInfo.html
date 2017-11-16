@@ -1,60 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <script src="/static/js/jquery-1.11.0.min.js"></script>
-    <title>房间信息</title>
+    <title>Title</title>
+
     <style>
-        #topbg {
-            /*border: 1px solid red;*/
-            background: url(../static/imgs/longqi/bg.png);
-            width: 1300px;
-            height: 1300px;
-            text-align: center;
-            /*margin: auto;*/
-            margin: auto;
-            border: 1px;
-{#            solid #000000;#}
-            float: none;
-            padding: 0px;
-            /*background-color: red;*/
-        }
 
-        #father {
-            width: 1400px;
-            height: 1400px;
-            margin: 0px;
-            border: 1px;
-            text-align: center;
-        }
-
-        #board {
-            top: 620px;
-            /*left: 188px;*/
-            width: 80%;
-            height: 48%;
-            /*margin: 0px;*/
-            /*background-color: green;*/
+        body{
             text-align: center;
             margin: auto;
-            float: none;
-            background: url(../static/imgs/longqi/bar_1_diban.png);
-            background-size: cover;
-            /*position: absolute;*/
+        }
+
+        .kech{
+
+            background-color: red;
+            /*background: url(../static/imgs/longqi/cbg.png) ;*/
+            background-size:100%;
+            text-align: center;
+            background-repeat: no-repeat;
+            height: 1109px;
+            width: 640px;
+            solid-color: red;
+
         }
 
         #board1 {
-            top: 620px;
+            top: 500px;
             /*left: 188px;*/
-            width: 80%;
-            height: 50%;
+            width: 100%;
+            height: 26%;
             /*margin: 0px;*/
-            /*background-color: yellow;*/
             text-align: center;
             margin: auto;
             float: none;
             /*position: absolute;*/
+        }
+
+        #board {
+
+            background: url("../static/imgs/longqi/bar_1_diban.png");
+            background-size:100%;
+            background-repeat: no-repeat;
+            width: 600px;
+            height: 500px;
+            margin: auto;
+            float: none;
+
         }
 
         #alert {
@@ -67,16 +58,32 @@
             position: absolute;
         }
 
-        #title {
-            padding-top: 40px;
-            width: 500px;
-            height: 100px;
+        /*#title {*/
+            /*background: url("../static/imgs/longqi/bar_1_biaotizi.png");*/
+            /*width: 200px;*/
+            /*height: 80px;*/
+            /*margin: auto;*/
+            /*float: none;*/
+
+            /*margin-top: 50px;*/
+            /*background-size:100%;*/
+            /*text-align: center;*/
+            /*background-repeat: no-repeat;*/
+
+        /*}*/
+
+        #title{
+
+            width: 200px;
+            height:50px;
+            margin-top: 30px;
+
             margin: auto;
-            float: none;
+
         }
 
         #content {
-            padding-top: 40px;
+            padding-top: 20px;
             width: 80%;
             height: 400px;
             margin: auto;
@@ -86,7 +93,7 @@
         }
 
         .player{
-             float: left;
+            float: left;
             width: 50%;
             height: 60px;
         }
@@ -121,12 +128,11 @@
         }
 
         .img1 {
-            height: 60px;
-            width: 60px;
-            border-radius: 30px;
+            height: 30px;
+            width: 30px;
+            border-radius: 15px;
             /*background-color: aqua;*/
         }
-
 
         .avator {
             float: left;
@@ -135,43 +141,74 @@
         .label {
             float: left;
             text-align: center;
+            margin-top: 5px;
         }
+
+        span{
+            font-family:'Microsoft Yahei';
+        }
+
+        #download{
+
+            padding-top: 247px;
+            padding-left: 469px;
+            position: relative;
+            right: 0px;
+            bottom: 0px;
+            width:  150px;
+            height: 40px;
+            /*background: red;*/
+        }
+
+        /*span{*/
+            /*font-family: "Microsoft Himalaya";*/
+            /*font-size: 15px;*/
+        /*}*/
+
     </style>
 </head>
+<body >
 
-<body style="text-align: center;">
-<div id="topbg" style= "background: url(../static/imgs/{{data.category}}/bg.png)">
-    <div id="board1">
-    </div>
-    <div id="board">
 
-        <div id="title">
-            <img src="../static/imgs/{{ data.category }}/bar_1_biaotizi.png" style="color: #008000;"/>
-        </div>
-        <div id="content">
-
-            <span style="font-size: 20px; color: wheat;">房号: {{ data.params.roomId }}</span><br/><br/>
-            <span style="font-size: 20px; color: wheat;">规则：{{ data.rule }}</span><br/><br/>
-            <span style="font-size: 20px; color: wheat;">人员情况:</span><br/><br/>
-
-            {% for line in data.params.userList %}
-
-                <div class="player">
-                    <div class="avator">
-                        <img src= {{line.image}} class="img1"/>
+    <div style="width: 640px; height: 1109px; text-align: center; margin: auto">
+        <div class="kech" style=" background: url(../static/imgs/{{ data.category }}/cbg.png) ; background-size:100%; background-repeat: no-repeat;">
+            <div id="board1" >
+{#                <a href="http://www.baidu.com">#}
+                    <div id="download">
+                        <a href="http://www.baidu.com">
+                            <img src="../static/imgs/{{ data.category }}/bar_1_yxxz.png" style="width: 100%">
+                        </a>
                     </div>
-
-                    <div class="label">
-                        <br/>
-                        <span style="font-size: 20px; color: darkturquoise;">&nbsp;&nbsp;&nbsp;&nbsp;{{ line.username }}</span>
-                    </div>
+{#                </a>#}
+            </div>
+            <div id="board">
+                <div id="title">
+                    <br>
+                    <img src="../static/imgs/longqi/bar_1_biaotizi.png" style="width: 75%">
                 </div>
+                <div id="content">
 
-            {% endfor %}
+                    <span style="font-size: 15px; color: wheat;">房号: {{ data.params.roomId }}</span><br/><br/>
+                    <span style="font-size: 15px; color: wheat;">规则：{{ data.rule }}</span><br/><br/>
+                    <span style="font-size: 15px; color: wheat;">人员情况:</span><br/><br/>
 
+                    {% for line in data.params.userList %}
+
+                    <div class="player">
+                        <div class="avator">
+                            <img src= {{line.image}} class="img1"/>
+                        </div>
+
+                        <div class="label">
+                            <span style="font-size: 15px; color: darkturquoise; ">&nbsp;&nbsp;&nbsp;&nbsp;{{ line.username }}</span>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </body>
-
 </html>
