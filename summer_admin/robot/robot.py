@@ -74,7 +74,7 @@ def get_room_info(room_id):
     # 登录 以管理账号登录
     login_code, s = __login(manager_account, manager_password)
 
-    result = {}
+    result = json.dumps({'code':'-1'})
     # 登录gate成功
     if login_code == 0:
         # 发送获得房间信息
