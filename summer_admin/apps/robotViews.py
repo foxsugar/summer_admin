@@ -62,16 +62,16 @@ def get_poker_room_rule(data):
         if roomId == "" or roomId == None:
             roomId = "（该房间不存在或已解散）"
 
-        if limited == "-1":
+        if limited == -1:
             limitedStr = "炸不封顶"
-        elif limited == "3":
+        elif limited == 3:
             limitedStr = "3炸封顶"
-        elif limited == "4":
+        elif limited == 4:
             limitedStr = "4炸封顶"
-        elif limited == "5":
+        elif limited == 5:
             limitedStr = "5炸封顶"
 
-        if roomType == "3" or roomType == "4":
+        if roomType == 3 or roomType == 4:
             gameType = "临汾斗地主"
         else:
             gameType = "标准斗地主"
@@ -86,12 +86,12 @@ def get_poker_room_rule(data):
             else:
                 optionStr += " 房主建房"
 
-        rs = "龙七棋牌" + str(gameType) + "、" + "房间ID：" + str(roomId) + "、" + str(
-            gameNumber) + "局、" + limitedStr + optionStr
+        rs = '龙七棋牌、%s、房间ID：%s、%s局、%s%s%s' %(str(gameType),  str(roomId), str(gameNumber), str(gameType), limitedStr, optionStr)
     except:
         rs = ""
 
     return rs
+
 
 def get_majiang_room_rule(data):
 
