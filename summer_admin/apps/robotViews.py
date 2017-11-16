@@ -35,6 +35,7 @@ def get_room_info(request):
             rule = get_majiang_room_rule(d["params"])
 
     d['rule'] = rule
+
     d['category'] =  config.get('robot', 'gameCategory')
     return render(request, 'roomInfo.html', {"data" : d})
     # return JsonResponse(json.loads(rtn))
