@@ -29,21 +29,17 @@ def get_room_info(request):
     service = d['service']
     rule = ""
     if code == 0:
-        if service == "pokerRoomService":
+
+        roomType = d["params"]["roomType"]
+        if roomType == 2:
             rule = get_poker_room_rule(d["params"])
-        else:
+        elif roomType == 1:
             rule = get_majiang_room_rule(d["params"])
 
-        try:
-            list = d["userList"]
-            for url_dic in list:
-                url = url_dic["image"]
-                url = url + "/96"
-        except:
-            pass
+    else:
+        d["params"] = {"roomId" : "（该房间不存在或已解散）"}
 
     d['rule'] = rule
-
     d['category'] =  config.get('robot', 'gameCategory')
     return render(request, 'roomInfo.html', {"data" : d})
     # return JsonResponse(json.loads(rtn))
@@ -62,6 +58,9 @@ def get_poker_room_rule(data):
 
         limitedStr = None
         gameType = None
+
+        if roomId == "" or roomId == None:
+            roomId = "（该房间不存在或已解散）"
 
         if limited == "-1":
             limitedStr = "炸不封顶"
