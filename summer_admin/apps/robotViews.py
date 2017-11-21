@@ -31,9 +31,9 @@ def get_room_info(request):
     if code == 0:
 
         roomType = d["params"]["roomType"]
-        if roomType == 2:
+        if roomType == '2':
             rule = get_poker_room_rule(d["params"])
-        elif roomType == 1:
+        elif roomType == '1':
             rule = get_majiang_room_rule(d["params"])
 
     else:
@@ -71,7 +71,7 @@ def get_poker_room_rule(data):
         elif limited == 5:
             limitedStr = "5炸封顶"
 
-        if roomType == 3 or roomType == 4:
+        if roomType == '3' or roomType == '4':
             gameType = "临汾斗地主"
         else:
             gameType = "标准斗地主"
