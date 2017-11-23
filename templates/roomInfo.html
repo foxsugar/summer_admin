@@ -109,8 +109,8 @@
 {#            margin-right: 10px;#}
         }
 
-        .div1, .div2{
-            width: 50%;
+        .div2{
+            width: 100%;
             float: left;
 {#            background-color: red;#}
             height: 80px;
@@ -121,9 +121,9 @@
 
         }
 
-        .div2{
+{#        .div2{#}
 {#            background-color: green;#}
-        }
+{#        }#}
 
         .aaa{
             font-size: 15px;
@@ -166,10 +166,8 @@
         }
 
         function goto_room(room_id) {
-            alert(1)
             var schema = 'blossomlongqi://longqi.app/joinroom?RoomID=' + room_id
-            alert(schema)
-            window.location = url
+            window.location = schema
         }
 
         function close_room(room_id) {
@@ -213,11 +211,11 @@
 
                     </div>
                     {% endfor %}
-                      <div class="div1">
-                          <img src="../static/imgs/longqi/bar_1_anniu.png" style="width: 120px; margin:auto;" onclick="close_room(data.params.roomId)" id="im1">
-                      </div>
+{#                      <div class="div1">#}
+{#                          <img src="../static/imgs/longqi/bar_1_anniu.png" style="width: 120px; margin:auto;" onclick="close_room(data.params.roomId)" id="im1">#}
+{#                      </div>#}
                       <div class="div2">
-                          <img src="../static/imgs/longqi/bar_1_jrfj1.png" style="width: 120px; margin:auto;" onclick="goto_room(data.params.roomId)" id="im2">
+                          <img src="../static/imgs/longqi/bar_1_jrfj.png" style="width: 120px; margin:auto;" onclick="goto_room(data.params.roomId)" id="im2">
                       </div>
                 </div>
             </div>
