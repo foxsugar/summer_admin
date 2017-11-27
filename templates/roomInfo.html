@@ -6,10 +6,13 @@
     initial-scale-0.5, maximum-scale-0.5, minimum-scale-0.5">
     <title> 房间信息</title>
     <script type="text/javascript" src="../static/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.11.0.js"></script>
     <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/wechatcover.css">
+
     <style type="text/css">
-        #aaa{
+        #aaa {
 
             margin-top: 0px;
             background: url("../static/imgs/longqi/cbg.png");
@@ -27,13 +30,13 @@
             /*background-color: aqua;*/
         }
 
-        #conTop{
+        #conTop {
             /*border: solid 1px red;*/
             width: 100%;
             height: 23%;
         }
 
-        #conBottom{
+        #conBottom {
             /*border: solid 2px green;*/
             width: 100%;
             height: 63.5%;
@@ -43,7 +46,7 @@
             padding-right: 25px;
         }
 
-        #im{
+        #im {
 
             width: 18%;
             height: 12%;
@@ -54,15 +57,14 @@
 
         }
 
-        #board{
+        #board {
             /*background-color: red;*/
             width: 98%;
             height: 80%;
             /*width: 700px;*/
             /*height: 1000px;*/
             /*background: url("../static/imgs/longqi/ad.png");*/
-{#            background: url("../static/imgs/longqi/ad.png");#}
-            background-color: rgb(121, 79, 55);
+        {#            background: url("../static/imgs/longqi/ad.png");#} background-color: rgb(121, 79, 55);
             background-repeat: no-repeat;
             background-size: cover;
             overflow: hidden;
@@ -71,16 +73,16 @@
             text-align: left;
         }
 
-        #longqiImg{
+        #longqiImg {
             margin-top: 19px;
             width: 39%;
         }
 
-        .player{
+        .player {
             float: left;
             width: 50%;
             height: 60px;
-{#            border: solid 2px red;#}
+        {#            border: solid 2px red;#}
             /*background-color: red;*/
         }
 
@@ -89,31 +91,29 @@
         }
 
         .label {
-{#            float: left;#}
-            text-align: center;
+        {#            float: left;#} text-align: center;
             margin-top: 5px;
-            word-wrap:break-word;
+            word-wrap: break-word;
 
         }
 
-        .sp{
+        .sp {
             float: left;
             margin-left: 30px;
             /*width: 80%;*/
         }
 
-        .open, .close{
+        .open, .close {
             width: 120px;
             height: 35px;
             text-align: left;
-{#            margin-right: 10px;#}
+        {#            margin-right: 10px;#}
         }
 
-        .div2{
+        .div2 {
             width: 100%;
             float: left;
-{#            background-color: red;#}
-            height: 80px;
+        {#            background-color: red;#} height: 80px;
             position: relative;
             left: 0px;
             bottom: 0px;
@@ -121,11 +121,11 @@
 
         }
 
-{#        .div2{#}
-{#            background-color: green;#}
-{#        }#}
+        {#        .div2{#}
+        {#            background-color: green;#}
+        {#        }#}
 
-        .aaa{
+        .aaa {
             font-size: 15px;
             text-indent: 25px;
             padding-left: 15px;
@@ -137,12 +137,12 @@
 
     <script type="text/javascript">
 
-        function adjust(obj){
+        function adjust(obj) {
             var div = document.getElementById("aaa")
-            var w  = div.offsetWidth;
-            var h  = div.offsetHeight;
+            var w = div.offsetWidth;
+            var h = div.offsetHeight;
             var a = w / 1000 * 1800
-            div['style']['height'] =  "" + a + "px";
+            div['style']['height'] = "" + a + "px";
 
             var board = document.getElementById("board")
 
@@ -151,13 +151,13 @@
             var im1 = document.getElementById("im1")
             var im2 = document.getElementById("im2")
 
-{#            alert(im1)#}
-            if (a > 1100){
+            {#            alert(im1)#}
+            if (a > 1100) {
                 board['style']['height'] = "480px"
                 longqiEle['style']['width'] = "28%"
                 im1['style']['width'] = "120px"
                 im2['style']['width'] = "120px"
-            }else {
+            } else {
                 board['style']['height'] = "400px"
                 longqiEle['style']['width'] = "38%"
                 im1['style']['width'] = "95px"
@@ -166,14 +166,34 @@
         }
 
         function goto_room(room_id) {
-            var schema = 'blossomlongqi://longqi.app/joinroom?RoomID=' + room_id
-            window.location = schema
+
+            var is_weixin = (function () {
+                return navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1
+            })();
+            var winHeight = typeof window.innerHeight != 'undefined' ? window.innerHeight : document.documentElement.clientHeight; //兼容IOS，不需要的可以去掉
+            var btn = document.getElementById('J_weixin');
+            var tip = document.getElementById('weixin-tip');
+            var close = document.getElementById('close');
+
+            close.onclick = function () {
+                tip.style.display = 'none';
+            }
+
+            if (is_weixin) {
+                tip.style.height = winHeight + 'px'; //兼容IOS弹窗整屏
+                tip.style.display = 'block';
+            } else {
+                var schema = 'blossomlongqi://longqi.app/joinroom?RoomID=' + room_id
+
+                window.location = schema
+            }
+
         }
 
         function close_room(room_id) {
         }
 
-        window.onload=function(){
+        window.onload = function () {
             window.onresize = adjust;
             adjust();
         }
@@ -183,44 +203,53 @@
     <link rel="stylesheet" href="../static/css/bootstrap.css">
 </head>
 <body>
-    <div class="container">
-        <div class="row" id="aaa">
-            <div class="col-xs-12" id="conTop">
-                <a href="http://www.l7sy.com"><img src="../static/imgs/longqi/bar_1_yxxz.png" id="im"></a>
-            </div>
-            <div class="col-xs-12 " id="conBottom">
-                <div id="board">
-                    <div style="margin: 0px auto; text-align: center">
-                         <img src="../static/imgs/longqi/bar_1_biaotizi.png" id="longqiImg">
-                    </div>
-                    <br>
-                    <a class="aaa">房号: {{ data.params.roomId }}</a><br>
-{#                    <a class="aaa">规则：{{ data.rule }}</a><br>#}
-                    <div style="font-size: 15px; margin: 10px 10px 10px 27px;  color: wheat;">规则：{{ data.rule }}</div>
-                    <a class="aaa"> 人员情况:</a><br>
+<div class="container">
 
-                    <br>
-                    {% for line in data.params.userList %}
+    <div id="weixin-tip">
+        <p>
+            <img src="../static/imgs/longqi/acov.png" alt="微信打开" style="width: 100%; height: auto;"/>
+            <span id="close" title="关闭" class="close">×</span>
+        </p>
+    </div>
+
+    <div class="row" id="aaa">
+        <div class="col-xs-12" id="conTop">
+            <a href="http://www.l7sy.com"><img src="../static/imgs/longqi/bar_1_yxxz.png" id="im"></a>
+        </div>
+        <div class="col-xs-12 " id="conBottom">
+            <div id="board">
+                <div style="margin: 0px auto; text-align: center">
+                    <img src="../static/imgs/longqi/bar_1_biaotizi.png" id="longqiImg">
+                </div>
+                <br>
+                <a class="aaa">房号: {{ data.params.roomId }}</a><br>
+                {#                    <a class="aaa">规则：{{ data.rule }}</a><br>#}
+                <div style="font-size: 15px; margin: 10px 10px 10px 27px;  color: wheat;">规则：{{ data.rule }}</div>
+                <a class="aaa"> 人员情况:</a><br>
+
+                <br>
+                {% for line in data.params.userList %}
 
                     <div class="player">
                         <div class="avator">
-                            <img src= {{line.image}}/96 class="img1"/>
+                            <img src={{ line.image }}/96 class="img1"/>
                         </div>
 
                         <a style="font-size: 15px; color: wheat;">&nbsp;&nbsp;&nbsp;&nbsp;{{ line.username }}</a>
 
                     </div>
-                    {% endfor %}
-{#                      <div class="div1">#}
-{#                          <img src="../static/imgs/longqi/bar_1_anniu.png" style="width: 120px; margin:auto;" onclick="close_room(data.params.roomId)" id="im1">#}
-{#                      </div>#}
-                      <div class="div2">
-                          <img src="../static/imgs/longqi/bar_1_jrfj.png" style="width: 120px; margin:auto;" onclick="goto_room('{{data.params.roomId}}')" id="im2">
-                      </div>
+                {% endfor %}
+                {#                      <div class="div1">#}
+                {#                          <img src="../static/imgs/longqi/bar_1_anniu.png" style="width: 120px; margin:auto;" onclick="close_room(data.params.roomId)" id="im1">#}
+                {#                      </div>#}
+                <div class="div2">
+                    <img src="../static/imgs/longqi/bar_1_jrfj.png" style="width: 120px; margin:auto;"
+                         onclick="goto_room('{{ data.params.roomId }}')" id="im2">
                 </div>
             </div>
         </div>
-
     </div>
+
+</div>
 </body>
 </html>
