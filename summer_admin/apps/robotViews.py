@@ -35,7 +35,7 @@ def get_room_info(request):
             rule = get_poker_room_rule(d["params"])
         elif roomType == '1':
             rule = get_majiang_room_rule(d["params"])
-
+        d["params"]["roomId"] = room_id
     else:
         d["params"] = {"roomId" : "（该房间不存在或已解散）"}
 
