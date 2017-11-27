@@ -18,6 +18,7 @@ from django.contrib import admin
 from summer_admin.apps import views
 from summer_admin.apps import playerViews
 from summer_admin.apps import robotViews
+from summer_admin.apps import wxViews
 
 
 
@@ -59,6 +60,11 @@ urlpatterns = [
     #机器人
     url(r'^robot/createroom$', robotViews.create_room),
     url(r'^robot/getRoomInfo$', robotViews.get_room_info),
+
+
+    url(r'^wx/run', wxViews.run_wx),
+
+
 
 
 ]

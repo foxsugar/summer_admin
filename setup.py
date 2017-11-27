@@ -22,7 +22,8 @@ setup(
         'django-cors-headers>=2.1.0',
         'thrift>=0.10.0',
         'configparser>=3.5.0',
-        'redis>=2.10.6'
+        'redis>=2.10.6',
+        'itchat>=1.3.10'
     ],
 
     scripts=[],
