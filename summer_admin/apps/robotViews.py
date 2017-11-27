@@ -29,7 +29,6 @@ def get_room_info(request):
     service = d['service']
     rule = ""
     if code == 0:
-
         roomType = d["params"]["roomType"]
         if roomType == '2':
             rule = get_poker_room_rule(d["params"])
