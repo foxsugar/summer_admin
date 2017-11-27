@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable = no,
+    initial-scale-0.5, maximum-scale-0.5, minimum-scale-0.5">
+    <title>{{ data.game_name }}手游官网</title>
+    <script type="text/javascript" src="../static/js/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+    <style type="text/css">
+
+        .cont{
+            /*border: solid 1px red;*/
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        .mImg{
+            width: 100%;
+            height: auto;
+        }
+
+        .bot{
+            position: relative;
+
+        }
+
+        .two{
+            position: absolute;
+            right: 30px;
+            width: 21%;
+            height: auto;
+            background-color: green;
+            display: inline-block;
+            border-radius: 5px;
+        }
+
+        .andiord{
+            top: 1%;
+        }
+
+        .iOS{
+            top: 4%;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="container cont">
+        <div class="row">
+            <div class="col-lg-12">
+                <img src="../static/imgs/{{ data.category }}/1.png" class="mImg">
+            </div >
+            <div class="col-lg-12 bot">
+                <img src="../static/imgs/{{ data.category }}/1x.png" class="mImg">
+                <!--安卓下载和iOS下载-->
+                <a href={{ data.url }}> <img src="../static/imgs/{{ data.category }}/A1.png" class="two andiord"></a>
+                <a href={{ data.url }}> <img src="../static/imgs/{{ data.category }}/A2.png" class="two iOS"></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
