@@ -36,16 +36,15 @@ def get_room_info(request):
             rule = get_majiang_room_rule(d["params"])
         d["params"]["roomId"] = room_id
     else:
-        d["params"] = {"roomId" : "（该房间不存在或已解散）"}
+        d["params"] = {"roomId": "（该房间不存在或已解散）"}
 
     d['rule'] = rule
-    d['category'] =  config.get('robot', 'gameCategory')
-    return render(request, 'roomInfo.html', {"data" : d})
+    d['category'] = config.get('robot', 'gameCategory')
+    return render(request, 'roomInfo.html', {"data": d})
     # return JsonResponse(json.loads(rtn))
 
 
 def get_poker_room_rule(data):
-
     rs = None
     try:
         roomType = data["gameType"]
@@ -85,7 +84,8 @@ def get_poker_room_rule(data):
             else:
                 optionStr += " 房主建房"
 
-        rs = '龙七棋牌、%s、房间ID：%s、%s局、%s%s%s' %(str(gameType),  str(roomId), str(gameNumber), str(gameType), limitedStr, optionStr)
+        rs = '龙七棋牌、%s、房间ID：%s、%s局、%s%s%s' % (
+        str(gameType), str(roomId), str(gameNumber), str(gameType), limitedStr, optionStr)
     except:
         rs = ""
 
@@ -93,7 +93,6 @@ def get_poker_room_rule(data):
 
 
 def get_majiang_room_rule(data):
-
     try:
         type = data["modeTotal"]
         roomType = data["each"]
@@ -156,16 +155,7 @@ def get_majiang_room_rule(data):
 
         title += ",三缺一"
         context += str(turn) + "局" + str(multiple) + "倍" + huangStr
-        return title  + context
+        return title + context
 
     except:
         return ""
-
-
-
-
-
-
-
-
-
