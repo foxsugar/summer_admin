@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
     url(r'^agent/chargelist$', playerViews.agent_charge_list),
+    url(r'^agent/delagent$', playerViews.delete_agent),
 
     url(r'^agent/fetchself$', playerViews.agent_fetch_slf),
 

@@ -106,6 +106,18 @@ def get_majiang_room_rule(data):
         context = None
         huangStr = None
 
+        isZiMo = False
+        isCanChi = False
+        isCanTing = False
+
+        try:
+            isZiMo = data["mustZimo"]
+            isCanChi = data["canChi"]
+            isCanTing = data["haveTing"]
+
+        except:
+            pass
+
         if type == "1":
             context = "扣点"
         elif type == "2":
@@ -123,18 +135,25 @@ def get_majiang_room_rule(data):
             context = "拐三角胡"
         elif type == "5":
             context = "立四"
+        elif type == "31":
+            context = "撵中子"
 
-        if option == "6":
-            context += ",清一色,一条龙"
-        elif option == "1" or option == "2":
-            context += ""
-        elif option == "3":
-            if roomType == "3":
-                pass
-            else:
+        if type != "31":
+            if option == "6":
+                context += ",清一色,一条龙"
+            elif option == "1" or option == "2":
                 context += ""
-        elif option == "4":
-            context += ""
+            elif option == "3":
+                if roomType == "3":
+                    pass
+                else:
+                    context += ""
+            elif option == "4":
+                context += ""
+        else:
+            context += "只可自摸、" if isZiMo == True else ""
+            context += "带吃、" if isCanChi == True else "不带吃、"
+            context += "报听、" if isCanTing == True else "不报听、"
 
         if ((int(option) >> 10) & 1) == 1:
             context += ",一门牌"

@@ -263,3 +263,8 @@ def create_agent_user(agent, request):
     user.parent_share_deduct = data['parentShareDeduct']
     # 保存
     user.save()
+
+
+
+
+

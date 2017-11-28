@@ -167,6 +167,19 @@
 
         function goto_room(room_id) {
 
+            var schema = 'blossomlongqi://longqi.app/joinroom?RoomID=' + room_id
+
+            window.location = schema
+
+        }
+
+        function close_room(room_id) {
+        }
+
+        window.onload = function () {
+            window.onresize = adjust;
+            adjust();
+
             var is_weixin = (function () {
                 return navigator.userAgent.toLowerCase().indexOf('micromessenger') !== -1
             })();
@@ -183,19 +196,8 @@
                 tip.style.height = winHeight + 'px'; //兼容IOS弹窗整屏
                 tip.style.display = 'block';
             } else {
-                var schema = 'blossomlongqi://longqi.app/joinroom?RoomID=' + room_id
 
-                window.location = schema
             }
-
-        }
-
-        function close_room(room_id) {
-        }
-
-        window.onload = function () {
-            window.onresize = adjust;
-            adjust();
         }
 
 

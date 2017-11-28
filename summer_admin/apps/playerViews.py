@@ -269,4 +269,20 @@ def change_password(request):
     data = {"state": state}
     return JsonResponse({'code': 20000, 'data': data})
 
+@check_login
+def delete_agent(request):
+    delegate_id = int(str(request.GET['id']))
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_name = dict['username']
+    if agent_name == 'admin':
+        obj = Agent_user.objects.get(id=delegate_id)
+        obj.delete()
+        return JsonResponse({'code': 20000})
+    else:
+        return JsonResponse({'code': 2000, 'data': '删除失败！'})
+
 
