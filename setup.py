@@ -23,7 +23,7 @@ setup(
         'thrift>=0.10.0',
         'configparser>=3.5.0',
         'redis>=2.10.6',
-        'itchat>=1.3.10'
+        # 'itchat>=1.3.10'
     ],
 
     scripts=[],
