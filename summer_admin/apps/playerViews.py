@@ -132,7 +132,7 @@ def logout(request):
     cache.clear()
     return JsonResponse({'code': 20000, 'data': None})
 
-@check_login
+# @check_login
 def fetchplayer(request):
     player_id = int(str(request.GET['id']))
     array = User.objects.filter(id=player_id)
