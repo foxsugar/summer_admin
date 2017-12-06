@@ -133,6 +133,18 @@ def logout(request):
     return JsonResponse({'code': 20000, 'data': None})
 
 @check_login
+def fetchplayer(request):
+    index_left = 0
+    index_right = 20
+    id = str(request.GET['id'])
+    array = Charge.objects.filter(id__contains=id)
+    player_data = list(array.values()[index_left:index_right])
+    total_page = len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
+
+@check_login
 def search_player(request):
     page = int(str(request.GET['page']))
     size = int(str(request.GET['limit']))
