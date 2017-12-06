@@ -134,15 +134,12 @@ def logout(request):
 
 @check_login
 def fetchplayer(request):
-    index_left = 0
-    index_right = 20
-    uid = str(request.GET['id'])
-    array = Charge.objects.filter(userid=uid)
-    player_data = list(array.values()[index_left:index_right])
+    player_id = int(str(request.GET['id']))
+    array = User.objects.filter(id=player_id)
+    player_data = list(array.values()[0:1])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
-
 
 @check_login
 def search_player(request):
