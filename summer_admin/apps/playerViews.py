@@ -136,8 +136,8 @@ def logout(request):
 def fetchplayer(request):
     index_left = 0
     index_right = 20
-    id = str(request.GET['id'])
-    array = Charge.objects.filter(id__contains=id)
+    uid = str(request.GET['id'])
+    array = Charge.objects.filter(userid=uid)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
