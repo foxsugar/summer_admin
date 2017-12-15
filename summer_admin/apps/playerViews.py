@@ -132,6 +132,16 @@ def logout(request):
     cache.clear()
     return JsonResponse({'code': 20000, 'data': None})
 
+# @check_login
+def fetchplayer(request):
+    player_id = int(str(request.GET['id']))
+    array = Users.objects.filter(id=player_id)
+    player_data = list(array.values()[0:1])
+    total_page = len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
+
 @check_login
 def search_player(request):
     page = int(str(request.GET['page']))
@@ -149,6 +159,8 @@ def search_player(request):
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
+
+
 
 @check_login
 def search_agent_charge(request):
