@@ -36,19 +36,20 @@ urlpatterns = [
     url(r'^agent/charge$', views.agent_charge),
     url(r'^agent/chargelist$', playerViews.agent_charge_list),
     url(r'^agent/delagent$', playerViews.delete_agent),
-
     url(r'^agent/fetchself$', playerViews.agent_fetch_slf),
-
     url(r'^agent/fetchdelegates', playerViews.fetch_delegates),
+    url(r'^agent/upGoal', playerViews.agent_upGoal),
+    url(r'^agent/downGoal', playerViews.agent_downGoal),
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
     url(r'^player/charge$', playerViews.charge),
     url(r'^player/list$', playerViews.user_list),
-
+    url(r'^player/listvip$', playerViews.user_list_vip),
     #搜索用户列表
     url(r'^player/fetchlist$', playerViews.search_player),
     url(r'^player/fetchplayer$', playerViews.fetchplayer),
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
+    url(r'^player/fetchplayersvip$', playerViews.serarch_player_list_vip),
     url(r'^player/chargelist$', playerViews.charge_list),
 
     url(r'^user/logout$', playerViews.logout),
@@ -58,16 +59,10 @@ urlpatterns = [
     url(r'^constant$', views.constant),
     url(r'^constant/update$', views.constant_update),
 
-
     #机器人
     url(r'^robot/createroom$', robotViews.create_room),
     url(r'^robot/getRoomInfo$', robotViews.get_room_info),
 
     # 官网
     url(r'^game$', officailWebViews.officail_web),
-
-
-
-
-
 ]

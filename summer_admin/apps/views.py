@@ -179,6 +179,27 @@ def agent_charge(request):
 
     return JsonResponse({'code': 20000, 'data': agent.money})
 
+@check_login
+def agent_upGoal(request):
+    param = json.loads(str(request.GET['chargeForm']))
+    uid = param['id']
+    gold = param['goal']
+    user = Users.objects.get(id=uid)
+    user.gold += int(gold)
+    user.save()
+    return JsonResponse({'code': 20000, 'data': user.gold})
+
+@check_login
+def agent_downGoal(request):
+    param = json.loads(str(request.GET['chargeForm']))
+    uid = param['id']
+    gold = param['goal']
+    user = Users.objects.get(id=uid)
+    user.gold -= int(gold)
+    user.save()
+    return JsonResponse({'code': 20000, 'data': user.gold})
+
+
 
 @check_login
 def constant(request):
