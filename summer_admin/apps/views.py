@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from summer_admin.apps.models import *
 from summer_admin.rpc.rpc import *
 
+
 TIME_OUT = 60 * 60 * 2
 
 
@@ -182,23 +183,35 @@ def agent_charge(request):
 @check_login
 def agent_upGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
-    uid = param['id']
-    gold = param['goal']
+    uid = int(param['id'])
+    gold = int(param['goal'])
     user = Users.objects.get(id=uid)
-    user.gold += int(gold)
-    user.save()
-    return JsonResponse({'code': 20000, 'data': user.gold})
+
+    rpc_client = get_client()
+    o = Order(userId=uid, num=gold, type=ChargeType.gold, agentId=1)
+    rtn = rpc_client.charge(o)
+    if rtn == 0:
+        user.gold += int(gold)
+        user.save()
+        return JsonResponse({'code': 20000, 'data': user.gold})
+    else:
+        return JsonResponse({'code': 100, 'data': '下分成功'})
 
 @check_login
 def agent_downGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
-    uid = param['id']
-    gold = param['goal']
+    uid = int(param['id'])
+    gold = int( param['goal'])
     user = Users.objects.get(id=uid)
-    user.gold -= int(gold)
-    user.save()
-    return JsonResponse({'code': 20000, 'data': user.gold})
-
+    rpc_client = get_client()
+    order = Order(userId=uid, num=-gold, type=ChargeType.gold, agentId=1)
+    rtn = rpc_client.charge(order)
+    if rtn == 0:
+        user.gold -= int(gold)
+        user.save()
+        return JsonResponse({'code': 20000, 'data': user.gold})
+    else:
+        return JsonResponse({'code': 100, 'data': ' 下分失败'})
 
 
 @check_login
