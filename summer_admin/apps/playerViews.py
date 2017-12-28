@@ -56,6 +56,29 @@ def user_list(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
+#奔驰宝马的代理接口
+@check_login
+def user_list_vip(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    # user_data = list(Users.objects.values()[page:page_right])
+    # user_data = list(Users.objects.values()[index_left:index_right])
+
+    #   array = Agent_user.objects.filter(username__contains=title, parent_id=agent_id)
+    # player_data = list(array.values()[index_left:index_right])
+
+    qset = Users.objects.filter(vip__gt=0)
+    user_data = list(qset.values()[index_left:index_right])
+
+    total_page = Users.objects.count()
+
+    data = {'tableData': user_data, 'totalPage': total_page}
+
+    return JsonResponse({'code': 20000, 'data': data})
+
+
 
 @check_login
 def charge_list(request):
@@ -203,6 +226,26 @@ def serarch_player_list(request):
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
+#vip搜索
+@check_login
+def serarch_player_list_vip(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    title = None
+
+    try:
+        title = str(request.GET['title'])
+    except:
+        title = ""
+    #user.object.filter(Q(question__startswith='Who') | Q(question__startswith='What'))
+    array = Users.objects.filter(username__contains=title, vip__gt=0)
+    player_data = list(array.values()[index_left:index_right])
+    total_page =  len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
 @check_login
 def fetch_delegates(request):
     page = int(str(request.GET['page']))
@@ -296,5 +339,7 @@ def delete_agent(request):
         return JsonResponse({'code': 20000})
     else:
         return JsonResponse({'code': 2000, 'data': '删除失败！'})
+
+
 
 
