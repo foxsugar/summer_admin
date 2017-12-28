@@ -191,9 +191,7 @@ def agent_upGoal(request):
     o = Order(userId=uid, num=gold, type=ChargeType.gold, agentId=1)
     rtn = rpc_client.charge(o)
     if rtn == 0:
-        user.gold += int(gold)
-        user.save()
-        return JsonResponse({'code': 20000, 'data': user.gold})
+        return JsonResponse({'code': 20000, 'data': user.gold + gold})
     else:
         return JsonResponse({'code': 100, 'data': '下分成功'})
 
@@ -207,9 +205,7 @@ def agent_downGoal(request):
     order = Order(userId=uid, num=-gold, type=ChargeType.gold, agentId=1)
     rtn = rpc_client.charge(order)
     if rtn == 0:
-        user.gold -= int(gold)
-        user.save()
-        return JsonResponse({'code': 20000, 'data': user.gold})
+        return JsonResponse({'code': 20000, 'data': user.gold - gold})
     else:
         return JsonResponse({'code': 100, 'data': ' 下分失败'})
 
