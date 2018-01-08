@@ -216,6 +216,27 @@ def constant(request):
 
     return JsonResponse({'code': 20000, 'data': con})
 
+#更新奔宝竞猜的常量表
+@check_login
+def constant_update_bb(request):
+    param = json.loads(str(request.GET['constantForm']))
+    constant = Constant.objects.get(id=1)
+    constant.init_money = param['init_money']
+    constant.apple_check = param['apple_check']
+    constant.download = param['download']
+    constant.marquee = param['marquee']
+    constant.version_of_android = param['version_of_android']
+    constant.version_of_ios = param['version_of_ios']
+    constant.apple_check = param['apple_check']
+    constant.access_code = param['access_code']
+    constant.save()
+
+    # 刷新游戏服务器数据
+    client = get_client()
+    # 调用这个是为了刷新服务器内存
+    client.getBlackList()
+    # client.modifyAndroidVersion(constant.version_of_android)
+    return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @check_login
 def constant_update(request):
@@ -228,6 +249,10 @@ def constant_update(request):
     constant.version_of_android = param['version_of_android']
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
+    try:
+        constant.access_code = param['access_code']
+    except:
+        pass
     constant.save()
 
     # 刷新游戏服务器数据
