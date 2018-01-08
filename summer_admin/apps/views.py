@@ -228,6 +228,10 @@ def constant_update(request):
     constant.version_of_android = param['version_of_android']
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
+    try:
+        constant.access_code = param['access_code']
+    except:
+        pass
     constant.save()
 
     # 刷新游戏服务器数据

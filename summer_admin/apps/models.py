@@ -86,6 +86,7 @@ class Constant(models.Model):
     marquee2 = models.CharField(max_length=255, default='')
     version_of_android = models.CharField(max_length=255, default='')
     version_of_ios = models.CharField(max_length=255, default='')
+    access_code = models.CharField(max_length=255, default='')
 
     class Meta:
         db_table = 'constant'
