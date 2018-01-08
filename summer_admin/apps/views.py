@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from summer_admin.apps.models import *
+from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
 
 
@@ -228,10 +229,10 @@ def constant_update(request):
     constant.version_of_android = param['version_of_android']
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
-    try:
+    category = config.get('robot', 'gameCategory')
+    if category == 'bcbm':
         constant.access_code = param['access_code']
-    except:
-        pass
+
     constant.save()
 
     # 刷新游戏服务器数据
