@@ -118,6 +118,16 @@ def agent_list(request):
 @check_login
 def agent(request):
     param = json.loads(str(request.GET['agentForm']))
+    param['invite_code'] = '1'
+    param['level'] = 0
+    param['parentId'] = 0
+    param['idCard'] = "000000000000000000"
+    param['area'] = '1'
+    param['address'] = '1'
+    param['payDeduct'] = 0
+    param['shareDeduct'] = 0
+    param['parentPayDeduct'] = 0
+    param['parentShareDeduct'] = 0
     method = request.method
 
     # 添加代理
@@ -232,7 +242,6 @@ def constant_update(request):
     category = config.get('robot', 'gameCategory')
     if category == 'bcbm':
         constant.access_code = param['access_code']
-
     constant.save()
 
     # 刷新游戏服务器数据
