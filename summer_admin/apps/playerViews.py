@@ -314,6 +314,28 @@ def search_player(request):
     return JsonResponse({'code': 20000, 'data': data})
 
 
+@check_login
+def search_agent_record(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    agent_id = None
+
+    try:
+        agent_id = int(request.GET['title'])
+    except:
+        player_data = []
+        total_page = len(player_data)
+        data = {'tableData': player_data, 'totalPage': total_page}
+        return JsonResponse({'code': 20000, 'data': data})
+
+    array = Agent_charge.objects.filter(Q(charge_type=10) | Q(charge_type=9) , Q(agent_id=agent_id))
+    player_data = list(array.values()[index_left:index_right])
+    total_page = len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
 
 @check_login
 def search_agent_charge(request):
