@@ -47,6 +47,7 @@ urlpatterns = [
 
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
+    url(r'^agent/fetchgoldlist$', playerViews.search_agent_record),
     url(r'^player/charge$', playerViews.charge),
     url(r'^player/chargeGold$', playerViews.charge_gold),
     url(r'^player/changeUserDelegate$', playerViews.change_user_delegate),

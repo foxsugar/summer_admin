@@ -24,6 +24,12 @@ def change_user_delegate(request):
     if agent_id != 1:
         return JsonResponse({'code': 101, 'data': '没有权限'})
 
+    if aid == 0:
+        user = Users.objects.get(id=pid)
+        user.referee = aid
+        user.save()
+        return JsonResponse({'code': 20000, 'data': aid})
+
     # Task.object.get(user_id=1)
     array = Agent_user.objects.filter(id=aid)
     entry_list = list(array.all())
@@ -32,7 +38,7 @@ def change_user_delegate(request):
         return JsonResponse({'code': 100, 'data': '不存在该代理'})
 
     user = Users.objects.get(id=pid)
-    user.referee = pid
+    user.referee = aid
     user.save()
     return JsonResponse({'code': 20000, 'data': aid})
 
