@@ -34,15 +34,23 @@ urlpatterns = [
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
+    url(r'^agent/chargeGold$', views.agent_charge_gold),
     url(r'^agent/chargelist$', playerViews.agent_charge_list),
     url(r'^agent/delagent$', playerViews.delete_agent),
     url(r'^agent/fetchself$', playerViews.agent_fetch_slf),
-    url(r'^agent/fetchdelegates', playerViews.fetch_delegates),
-    url(r'^agent/upGoal', playerViews.agent_upGoal),
-    url(r'^agent/downGoal', playerViews.agent_downGoal),
+    url(r'^agent/fetchdelegates$', playerViews.fetch_delegates),
+    url(r'^agent/upGoal$', playerViews.agent_upGoal),
+    url(r'^agent/downGoal$', playerViews.agent_downGoal),
+    url(r'^agent/goldCashList$', playerViews.gold_cash_list),
+    url(r'^agent/changeState$', playerViews.agent_change_state),
+
+
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
+    url(r'^agent/fetchgoldlist$', playerViews.search_agent_record),
     url(r'^player/charge$', playerViews.charge),
+    url(r'^player/chargeGold$', playerViews.charge_gold),
+    url(r'^player/changeUserDelegate$', playerViews.change_user_delegate),
     url(r'^player/list$', playerViews.user_list),
     url(r'^player/listvip$', playerViews.user_list_vip),
     #搜索用户列表
@@ -54,6 +62,7 @@ urlpatterns = [
 
     url(r'^user/logout$', playerViews.logout),
     url(r'^user/deldelegate', playerViews.delete_delegate),
+    url(r'^user/cashGold', playerViews.cash_gold),
 
     # 服务器信息
     url(r'^constant$', views.constant),

@@ -118,7 +118,7 @@ def agent_list(request):
 @check_login
 def agent(request):
     param = json.loads(str(request.GET['agentForm']))
-    param['invite_code'] = '1'
+    # param['invite_code'] = 'in'
     param['level'] = 0
     param['parentId'] = 0
     param['idCard'] = "000000000000000000"
@@ -137,6 +137,59 @@ def agent(request):
         print("--")
         return JsonResponse({'code': 20000, 'data': param})
 
+
+@check_login
+def agent_charge_gold(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    dict = cache.get(x_token)
+    slf_name = dict["username"]
+    slf_id = dict["id"]
+
+    array = Agent_user.objects.filter(id=slf_id)
+    t_data = list(array.all())
+    agent_user = t_data[0]
+
+    """代理充值"""
+    param = json.loads(str(request.GET['chargeForm']))
+    id = param['id']
+    num = param['gold_num']
+
+    if agent_user.gold < num:
+        return JsonResponse({'code': 100, 'data': '充值失败'})
+
+    agent = Agent_user.objects.get(id=id)
+    agent.gold += num
+    agent.save()
+
+    if slf_name != 'admin':
+        agent_user.gold -= num
+        agent_user.save()
+
+    # int
+    # WX = 1;
+    # int
+    # ZFB = 2;
+    # int
+    # SHARE = 3;
+    # int
+    # CHARGE_CARD = 4;
+    # int
+    # BIND_REFERRER = 5;
+    # int
+    # AGENT = 7;
+
+
+
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_charge = Agent_charge()
+    agent_charge.agent_id = id
+    agent_charge.charge_src_agent = agent_id
+    agent_charge.charge_num = num
+    agent_charge.charge_type = 8
+    agent_charge.save()
+
+    return JsonResponse({'code': 20000, 'data': agent.gold})
 
 @check_login
 def agent_charge(request):
