@@ -59,11 +59,13 @@ urlpatterns = [
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
     url(r'^player/fetchplayersvip$', playerViews.serarch_player_list_vip),
     url(r'^player/chargelist$', playerViews.charge_list),
+    url(r'^upload$', playerViews.upload),
 
     url(r'^user/logout$', playerViews.logout),
-    url(r'^user/deldelegate', playerViews.delete_delegate),
-    url(r'^user/cashGold', playerViews.cash_gold),
-
+    url(r'^user/deldelegate$', playerViews.delete_delegate),
+    url(r'^user/cashGold$', playerViews.cash_gold),
+    url(r'^user/upload$', playerViews.goto_upload),
+    url(r'^user/showimg$', playerViews.show_img),
     # 服务器信息
     url(r'^constant$', views.constant),
     url(r'^constant/update$', views.constant_update),

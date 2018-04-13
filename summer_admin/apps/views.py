@@ -153,8 +153,22 @@ def agent_charge_gold(request):
     param = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = param['gold_num']
+    isadd = None
+
+    try:
+        isadd = param['isadd']
+    except:
+        isadd = 1
+
+    if isadd == 0:
+        num = -num;
 
     if agent_user.gold < num:
+        str1 = None
+        if isadd:
+            str1 = "充值失败"
+        else:
+            str1 = "减值失败"
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
     agent = Agent_user.objects.get(id=id)
@@ -203,12 +217,32 @@ def agent_charge(request):
     agent_user = t_data[0]
 
     """代理充值"""
-    param = json.loads(str(request.GET['chargeForm']))
+    param  = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = param['num']
+    isadd = None
+
+    try:
+        isadd = param['isadd']
+    except:
+        isadd = 1
+
+    if isadd == 0:
+        num = -num;
+
+    if isadd:
+        str1 = "充值失败"
+    else:
+        str1 = "减值失败"
+
 
     if agent_user.money < num:
-        return JsonResponse({'code': 100, 'data': '充值失败'})
+
+        if agent_user.gold < num:
+            str1 = None
+
+            return JsonResponse({'code': 100, 'data': str1})
+        return JsonResponse({'code': 100, 'data': str1})
 
     agent = Agent_user.objects.get(id=id)
     agent.money += num
