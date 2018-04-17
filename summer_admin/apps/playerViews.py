@@ -68,7 +68,8 @@ def charge_gold(request):
 
     player = Users.objects.get(id=user_id)
     from_agent = Agent_user.objects.get(id=agent_id)
-    if (player.referee != from_agent.invite_code) & (from_agent.id != 1):
+    str1 = '%d' % (player.referee)
+    if (str1 != from_agent.invite_code) & (from_agent.id != 1):
         return JsonResponse({'code': 100, 'data': '没有权限'})
 
     if leng == 0:
@@ -109,7 +110,9 @@ def charge(request):
 
     player = Users.objects.get(id=user_id)
     from_agent = Agent_user.objects.get(id=agent_id)
-    if (player.referee != from_agent.invite_code) & (from_agent.id != 1):
+
+    str1 = '%d' % (player.referee)
+    if (str1!= from_agent.invite_code) & (from_agent.id != 1):
         return JsonResponse({'code': 100, 'data': '没有权限'})
 
     if leng == 0:
@@ -360,7 +363,8 @@ def fetchplayer(request):
     #不是总代理不能搜到不是自己
     if agent_id != 1:
         u = array[0]
-        if u.referee != agent_user.invite_code:
+        str1 = '%d' % (u.referee)
+        if str1 != agent_user.invite_code:
             return JsonResponse({'code': 2000, 'data': '没有权限查看该用户'})
 
     total_page = len(player_data)
