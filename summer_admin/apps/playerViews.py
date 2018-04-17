@@ -129,6 +129,31 @@ def charge(request):
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
+
+
+@check_login
+def user_member_list(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent = Agent_user.objects.get(id=agent_id)
+
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    # user_data = list(Users.objects.values()[page:page_right])
+    arr = Users.objects.filter(referee=agent.invite_code).values()
+    user_data = list(arr[index_left:index_right])
+
+    total_page = arr.count()
+
+    data = {'tableData': user_data, 'totalPage': total_page}
+
+    return JsonResponse({'code': 20000, 'data': data})
+
 @check_login
 def user_list(request):
     page = int(str(request.GET['page']))
@@ -324,6 +349,10 @@ def fetchplayer(request):
     agent_id = dict['id']
     agent_user = Agent_user.objects.get(id = agent_id)
     player_id = int(str(request.GET['id']))
+
+    # config.read(settings.BASE_DIR + '/config.conf')
+    # gameCategory = config.get('robot', 'gameCategory')
+
     array = Users.objects.filter(id=player_id)
     player_data = list(array.values()[0:1])
     #不是总代理不能搜到不是自己
