@@ -52,7 +52,7 @@ def change_user_delegate(request):
     # user.referee = agent.invite_code
     # user.save()
     rpc_client = get_client()
-    rtn = rpc_client.bindReferee(pid, agent.invite_code)
+    rtn = rpc_client.bindReferee(pid, int(agent.invite_code))
     if rtn == 0:
         return JsonResponse({'code': 20000, 'data': aid})
     else:
