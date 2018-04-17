@@ -31,7 +31,8 @@ def change_user_delegate(request):
 
     if aid == 0:
         user = Users.objects.get(id=pid)
-        user.referee = aid
+        #agent = Agent_user.objects.get(id=aid)
+        user.referee = 0
         user.save()
         return JsonResponse({'code': 20000, 'data': aid})
 
@@ -42,8 +43,9 @@ def change_user_delegate(request):
     if leng == 0:
         return JsonResponse({'code': 100, 'data': '不存在该代理'})
 
+    agent = Agent_user.objects.get(id=aid)
     user = Users.objects.get(id=pid)
-    user.referee = aid
+    user.referee = agent.invite_code
     user.save()
     return JsonResponse({'code': 20000, 'data': aid})
 
