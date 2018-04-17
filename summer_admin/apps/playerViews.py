@@ -31,10 +31,14 @@ def change_user_delegate(request):
 
     if aid == 0:
         user = Users.objects.get(id=pid)
-        #agent = Agent_user.objects.get(id=aid)
-        user.referee = 0
-        user.save()
-        return JsonResponse({'code': 20000, 'data': aid})
+        #user.referee = 0
+        #user.save()
+        rpc_client = get_client()
+        rtn = rpc_client.bindReferee(pid, 0)
+        if rtn == 0:
+            return JsonResponse({'code': 20000, 'data': aid})
+        else:
+            return JsonResponse({'code': 100, 'data': '失败'})
 
     # Task.object.get(user_id=1)
     array = Agent_user.objects.filter(id=aid)
@@ -44,10 +48,15 @@ def change_user_delegate(request):
         return JsonResponse({'code': 100, 'data': '不存在该代理'})
 
     agent = Agent_user.objects.get(id=aid)
-    user = Users.objects.get(id=pid)
-    user.referee = agent.invite_code
-    user.save()
-    return JsonResponse({'code': 20000, 'data': aid})
+    # user = Users.objects.get(id=pid)
+    # user.referee = agent.invite_code
+    # user.save()
+    rpc_client = get_client()
+    rtn = rpc_client.bindReferee(pid, agent.invite_code)
+    if rtn == 0:
+        return JsonResponse({'code': 20000, 'data': aid})
+    else:
+        return JsonResponse({'code': 1000, 'data': '充值失败'})
 
 
 @check_login
@@ -81,13 +90,12 @@ def charge_gold(request):
         return JsonResponse({'code': 100, 'data': '金币不足'})
 
     rpc_client = get_client()
-
     order = Order(userId=user_id, num=num, type=ChargeType.gold, agentId=agent_id)
     rtn = rpc_client.charge(order)
     rtn = 0
     if rtn == 0:
-        agent_user.gold -= num
-        agent_user.save()
+        # agent_user.gold -= num
+        # agent_user.save()
         return JsonResponse({'code': 20000, 'data': '充值成功'})
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
@@ -134,8 +142,8 @@ def charge(request):
     order = Order(userId=user_id, num=num, type=ChargeType.money, agentId=agent_id)
     rtn = rpc_client.charge(order)
     if rtn == 0:
-        agent_user.money -= num
-        agent_user.save()
+        # agent_user.money -= num
+        # agent_user.save()
         return JsonResponse({'code': 20000, 'data': '充值成功'})
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
