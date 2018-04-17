@@ -111,9 +111,15 @@ def charge(request):
     player = Users.objects.get(id=user_id)
     from_agent = Agent_user.objects.get(id=agent_id)
 
+    gameCategory = config.get('robot', 'gameCategory')
+
+    if gameCategory == 'kunlun_bb':
+        if from_agent.id != 1:
+            return JsonResponse({'code': 100, 'data': '非总代理暂时没有权限充值房卡！'})
+
     str1 = '%d' % (player.referee)
     if (str1!= from_agent.invite_code) & (from_agent.id != 1):
-        return JsonResponse({'code': 100, 'data': '没有权限'})
+        return JsonResponse({'code': 100, 'data': '没有权限充值非自己绑定的玩家'})
 
     if leng == 0:
         return JsonResponse({'code': 100, 'data': '充值失败'})
