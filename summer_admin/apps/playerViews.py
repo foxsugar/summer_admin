@@ -92,10 +92,9 @@ def charge_gold(request):
     rpc_client = get_client()
     order = Order(userId=user_id, num=num, type=ChargeType.gold, agentId=agent_id)
     rtn = rpc_client.charge(order)
-    rtn = 0
     if rtn == 0:
-        # agent_user.gold -= num
-        # agent_user.save()
+        agent_user.gold -= num
+        agent_user.save()
         return JsonResponse({'code': 20000, 'data': '充值成功'})
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
@@ -142,8 +141,8 @@ def charge(request):
     order = Order(userId=user_id, num=num, type=ChargeType.money, agentId=agent_id)
     rtn = rpc_client.charge(order)
     if rtn == 0:
-        # agent_user.money -= num
-        # agent_user.save()
+        agent_user.money -= num
+        agent_user.save()
         return JsonResponse({'code': 20000, 'data': '充值成功'})
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
