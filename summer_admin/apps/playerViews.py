@@ -86,8 +86,13 @@ def charge_gold(request):
 
     agent_user = entry_list[0]
 
-    if agent_user.gold < num:
-        return JsonResponse({'code': 100, 'data': '金币不足'})
+    if num < 0:
+        if agent_user.gold + num < 0:
+            return JsonResponse({'code': 100, 'data': '金币不足'})
+
+    else:
+        if agent_user.gold < num:
+            return JsonResponse({'code': 100, 'data': '金币不足'})
 
     rpc_client = get_client()
     order = Order(userId=user_id, num=num, type=ChargeType.gold, agentId=agent_id)
