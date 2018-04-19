@@ -87,7 +87,7 @@ def charge_gold(request):
     agent_user = entry_list[0]
 
     if num < 0:
-        if agent_user.gold + num < 0:
+        if player.gold + num < 0:
             return JsonResponse({'code': 100, 'data': '金币不足'})
 
     else:
