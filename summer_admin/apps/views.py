@@ -128,7 +128,18 @@ def agent(request):
     param['shareDeduct'] = 0
     param['parentPayDeduct'] = 0
     param['parentShareDeduct'] = 0
+    param['email'] = '1@qq.com'
+    param['cell'] = '11111111111'
+    param['invite_code'] = '0'
+    param['invite_code'] = '0'
+    param['realName'] = '0'
     method = request.method
+
+    array = Agent_user.objects.filter(username=param['username'])
+
+    print(len(array))
+    if len(array) != 0:
+        return JsonResponse({'code': 100, 'data': '该用户名已存在'})
 
     # 添加代理
     if method == "POST":
