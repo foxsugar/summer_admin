@@ -130,8 +130,8 @@ def agent(request):
     param['parentShareDeduct'] = 0
     param['email'] = '1@qq.com'
     param['cell'] = '11111111111'
-    param['invite_code'] = '0'
-    param['invite_code'] = '0'
+    # param['invite_code'] = '0'
+    # param['invite_code'] = '0'
     param['realName'] = '0'
     method = request.method
 
