@@ -57,7 +57,6 @@ class Users(models.Model):
         verbose_name_plural = '用户'
         managed = False
 
-
 class Agent_charge(models.Model):
     id = models.AutoField(primary_key=True)
     agent_id = models.IntegerField('充值id', default=0)

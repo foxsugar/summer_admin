@@ -128,7 +128,18 @@ def agent(request):
     param['shareDeduct'] = 0
     param['parentPayDeduct'] = 0
     param['parentShareDeduct'] = 0
+    param['email'] = '1@qq.com'
+    param['cell'] = '11111111111'
+    # param['invite_code'] = '0'
+    # param['invite_code'] = '0'
+    param['realName'] = '0'
     method = request.method
+
+    array = Agent_user.objects.filter(username=param['username'])
+
+    print(len(array))
+    if len(array) != 0:
+        return JsonResponse({'code': 100, 'data': '该用户名已存在'})
 
     # 添加代理
     if method == "POST":
@@ -153,8 +164,22 @@ def agent_charge_gold(request):
     param = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = param['gold_num']
+    isadd = None
+
+    try:
+        isadd = param['isadd']
+    except:
+        isadd = 1
+
+    if isadd == 0:
+        num = -num;
 
     if agent_user.gold < num:
+        str1 = None
+        if isadd:
+            str1 = "充值失败"
+        else:
+            str1 = "减值失败"
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
     agent = Agent_user.objects.get(id=id)
@@ -203,12 +228,32 @@ def agent_charge(request):
     agent_user = t_data[0]
 
     """代理充值"""
-    param = json.loads(str(request.GET['chargeForm']))
+    param  = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = param['num']
+    isadd = None
+
+    try:
+        isadd = param['isadd']
+    except:
+        isadd = 1
+
+    if isadd == 0:
+        num = -num;
+
+    if isadd:
+        str1 = "充值失败"
+    else:
+        str1 = "减值失败"
+
 
     if agent_user.money < num:
-        return JsonResponse({'code': 100, 'data': '充值失败'})
+
+        if agent_user.gold < num:
+            str1 = None
+
+            return JsonResponse({'code': 100, 'data': str1})
+        return JsonResponse({'code': 100, 'data': str1})
 
     agent = Agent_user.objects.get(id=id)
     agent.money += num

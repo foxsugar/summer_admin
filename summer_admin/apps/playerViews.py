@@ -1,7 +1,12 @@
+import imghdr
 import json
+import random
 
+import os
 from django.http import JsonResponse
 from django.core.cache import cache
+from django.shortcuts import render
+
 from summer_admin.apps.models import Users, Charge, Agent_charge
 from summer_admin.rpc.rpc import *
 from summer_admin.apps.views import *
@@ -26,9 +31,14 @@ def change_user_delegate(request):
 
     if aid == 0:
         user = Users.objects.get(id=pid)
-        user.referee = aid
-        user.save()
-        return JsonResponse({'code': 20000, 'data': aid})
+        #user.referee = 0
+        #user.save()ź
+        rpc_client = get_client()
+        rtn = rpc_client.bindReferee(pid, 0)
+        if rtn == 0:
+            return JsonResponse({'code': 20000, 'data': aid})
+        else:
+            return JsonResponse({'code': 100, 'data': '失败'})
 
     # Task.object.get(user_id=1)
     array = Agent_user.objects.filter(id=aid)
@@ -37,10 +47,16 @@ def change_user_delegate(request):
     if leng == 0:
         return JsonResponse({'code': 100, 'data': '不存在该代理'})
 
-    user = Users.objects.get(id=pid)
-    user.referee = aid
-    user.save()
-    return JsonResponse({'code': 20000, 'data': aid})
+    agent = Agent_user.objects.get(id=aid)
+    # user = Users.objects.get(id=pid)
+    # user.referee = agent.invite_code
+    # user.save()
+    rpc_client = get_client()
+    rtn = rpc_client.bindReferee(pid, int(agent.invite_code))
+    if rtn == 0:
+        return JsonResponse({'code': 20000, 'data': aid})
+    else:
+        return JsonResponse({'code': 1000, 'data': '充值失败'})
 
 
 @check_login
@@ -55,23 +71,32 @@ def charge_gold(request):
     user_id = int(str(param['userId']))
     num = int(str(param['gold_num']))
 
-    array = Agent_user.objects.filter(id=agent_id)
+    array = Agent_user.objects.filter(Q(id=agent_id))
     entry_list = list(array.all())
     leng = len(entry_list)
+
+    player = Users.objects.get(id=user_id)
+    from_agent = Agent_user.objects.get(id=agent_id)
+    str1 = '%d' % (player.referee)
+    if (str1 != from_agent.invite_code) & (from_agent.id != 1):
+        return JsonResponse({'code': 100, 'data': '没有权限'})
 
     if leng == 0:
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
     agent_user = entry_list[0]
 
-    if agent_user.gold < num:
-        return JsonResponse({'code': 100, 'data': '充值失败'})
+    if num < 0:
+        if player.gold + num < 0:
+            return JsonResponse({'code': 100, 'data': '金币不足'})
+
+    else:
+        if agent_user.gold < num:
+            return JsonResponse({'code': 100, 'data': '金币不足'})
 
     rpc_client = get_client()
-
     order = Order(userId=user_id, num=num, type=ChargeType.gold, agentId=agent_id)
     rtn = rpc_client.charge(order)
-    rtn = 0
     if rtn == 0:
         agent_user.gold -= num
         agent_user.save()
@@ -95,13 +120,26 @@ def charge(request):
     entry_list = list(array.all())
     leng = len(entry_list)
 
+    player = Users.objects.get(id=user_id)
+    from_agent = Agent_user.objects.get(id=agent_id)
+
+    gameCategory = config.get('robot', 'gameCategory')
+
+    if gameCategory == 'kunlun_bb':
+        if from_agent.id != 1:
+            return JsonResponse({'code': 100, 'data': '非总代理暂时没有权限充值房卡！'})
+
+    str1 = '%d' % (player.referee)
+    if (str1!= from_agent.invite_code) & (from_agent.id != 1):
+        return JsonResponse({'code': 100, 'data': '没有权限充值非自己绑定的玩家'})
+
     if leng == 0:
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
     agent_user = entry_list[0]
 
     if agent_user.money < num:
-        return JsonResponse({'code': 100, 'data': '充值失败'})
+        return JsonResponse({'code': 100, 'data': '金额不足'})
 
     rpc_client = get_client()
 
@@ -114,20 +152,61 @@ def charge(request):
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
+
+
 @check_login
-def user_list(request):
+def user_member_list(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent = Agent_user.objects.get(id=agent_id)
+
     page = int(str(request.GET['page']))
     size = int(str(request.GET['size']))
     index_left = (page - 1) * size
     index_right = page * size
     # user_data = list(Users.objects.values()[page:page_right])
-    user_data = list(Users.objects.values()[index_left:index_right])
+    arr = Users.objects.filter(referee=agent.invite_code).values()
+    user_data = list(arr[index_left:index_right])
 
-    total_page = Users.objects.count()
+    total_page = arr.count()
 
     data = {'tableData': user_data, 'totalPage': total_page}
 
     return JsonResponse({'code': 20000, 'data': data})
+
+@check_login
+def user_list(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+
+    if agent_id == 1:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        # user_data = list(Users.objects.values()[page:page_right])
+        user_data = list(Users.objects.values()[index_left:index_right])
+        total_page = Users.objects.count()
+        data = {'tableData': user_data, 'totalPage': total_page, "show" : True}
+        return JsonResponse({'code': 20000, 'data': data})
+    else:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        agent = Agent_user.objects.get(id=agent_id)
+        user_data = list(Users.objects.filter(referee=agent.invite_code).values()[index_left:index_right])
+        total_page = Users.objects.count()
+        data = {'tableData': user_data, 'totalPage': total_page, "show": False}
+        return JsonResponse({'code': 20000, 'data': data})
+
+
 
 #奔驰宝马的代理接口
 @check_login
@@ -195,11 +274,11 @@ def agent_change_state(request):
     agent_id = dict['id']
     username = dict['username']
 
+    if agent_id != 1:
+        return JsonResponse({'code': 2000, 'data': '没有权限更改状态'})
+
     order_id = int(str(request.GET['id']))
-
-
     agent_charge = Agent_charge.objects.get(id = order_id)
-
     if agent_charge.charge_type == 9:
         agent_charge.charge_type = 10
     elif agent_charge.charge_type == 10:
@@ -223,7 +302,7 @@ def gold_cash_list(request):
     print(x_token)
     dict = cache.get(x_token)
     level = dict["level"]
-    agent_id = dict['id']
+    agent_id_ = dict['id']
 
     username = dict['username']
 
@@ -232,7 +311,14 @@ def gold_cash_list(request):
     index_left = (page - 1) * size
     index_right = page * size
 
-    array = Agent_charge.objects.filter(Q(charge_type__startswith='9') | Q(charge_type__startswith='10'))
+    array = None
+
+    if agent_id_ == 1:
+        array = Agent_charge.objects.filter(Q(charge_type__startswith='9') | Q(charge_type__startswith='10'))
+    else:
+        array = Agent_charge.objects.filter(
+            (Q(charge_type__startswith='9') | Q(charge_type__startswith='10')) & Q(agent_id=agent_id_))
+
     agent_data = list(array.values()[index_left:index_right])
     total_page = len(array)
 
@@ -293,9 +379,28 @@ def logout(request):
 
 # @check_login
 def fetchplayer(request):
+
+    #只能查自己邀请码的 id
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_user = Agent_user.objects.get(id = agent_id)
     player_id = int(str(request.GET['id']))
+
+    # config.read(settings.BASE_DIR + '/config.conf')
+    # gameCategory = config.get('robot', 'gameCategory')
+
     array = Users.objects.filter(id=player_id)
     player_data = list(array.values()[0:1])
+    #不是总代理不能搜到不是自己
+    if agent_id != 1:
+        u = array[0]
+        str1 = '%d' % (u.referee)
+        if str1 != agent_user.invite_code:
+            return JsonResponse({'code': 2000, 'data': '没有权限查看该用户'})
+
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
@@ -529,7 +634,93 @@ def delete_agent(request):
         obj.delete()
         return JsonResponse({'code': 20000})
     else:
-        return JsonResponse({'code': 2000, 'data': '删除失败！'})
+        return JsonResponse({'code': 2000, 'data': '没有权限！'})
+
+
+# @csrf_exempt
+@check_login
+def upload(request):
+    ret = {'status': False, 'data': None, 'error': None}
+    try:
+        user = request.GET['data']
+        img = request.FILES.get('img')
+        ret = random.randint(0, 9999)
+        str = '%d_%s.png' % (ret, "aaa")
+        f = open(os.path.join('static/wb', str), 'wb')
+        for chunk in img.chunks(chunk_size=1024):
+            f.write(chunk)
+        ret['status'] = True
+        ret['data'] = os.path.join('static', str)
+    except Exception as e:
+        ret['error'] = e
+    finally:
+        f.close()
+        return JsonResponse({'code': 200, 'data': 'ok'})
+
+@csrf_exempt
+def goto_upload(request):
+    if request.method == 'POST':
+        ret = {'status': False, 'data': None, 'error': None}
+        try:
+            user = request.POST.get('user')
+            img = request.FILES.get('img')
+            uid = request.POST['uid']
+            ret = uid
+            filename = img.name
+            arr = filename.split('.')
+            str = arr[len(arr) - 1]
+
+            website = "" + ret  + "." + str
+            f = open(os.path.join('static/wb', website), 'wb')
+            for chunk in img.chunks(chunk_size=1024):
+                f.write(chunk)
+            ret['status'] = True
+            ret['data'] = os.path.join('static', str)
+        except Exception as e:
+            ret['error'] = e
+        finally:
+            f.close()
+
+            if str == "jpg":
+                data = {}
+                data["title"] = "error"
+                data["msg"] = "错误：只能传png格式的二维码"
+                return render(request, 'errorview.html', {"data": data})
+            else:
+                data = {}
+                data["title"] = "success"
+                data["msg"] = "上传成功"
+                return render(request, 'errorview.html', {"data": data})
+
+
+    uid = request.GET['uid']
+
+    d = {}
+    d['uid'] = uid
+    return render(request, 'upload.html',{"data": d})
+
+
+@csrf_exempt
+def show_img(request):
+    uid = request.GET['uid']
+    agent = Agent_user.objects.get(id=uid)
+
+    data = {}
+    data["username"] = "用户名:" + agent.username
+    data["userId"] = "用户ID：" + uid
+    data["url"] = "../static/wb/" + uid + ".png"
+    path = os.path.abspath('static/wb')
+    path = path + "/" + uid + ".png"
+    is_exist = os.path.isfile(path)
+    if is_exist:
+        return render(request, 'showImage.html', {"data": data})
+    else:
+        data["msg"] = "错误：该代理没有上传二维码"
+        data["title"] = "error"
+        return render(request, 'errorview.html',{"data": data})
+
+
+
 
 
 
