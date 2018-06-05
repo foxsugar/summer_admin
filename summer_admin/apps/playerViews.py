@@ -32,7 +32,7 @@ def change_user_delegate(request):
     if aid == 0:
         user = Users.objects.get(id=pid)
         #user.referee = 0
-        #user.save()
+        #user.save()ź
         rpc_client = get_client()
         rtn = rpc_client.bindReferee(pid, 0)
         if rtn == 0:
@@ -179,18 +179,34 @@ def user_member_list(request):
 
 @check_login
 def user_list(request):
-    page = int(str(request.GET['page']))
-    size = int(str(request.GET['size']))
-    index_left = (page - 1) * size
-    index_right = page * size
-    # user_data = list(Users.objects.values()[page:page_right])
-    user_data = list(Users.objects.values()[index_left:index_right])
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
 
-    total_page = Users.objects.count()
+    if agent_id == 1:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        # user_data = list(Users.objects.values()[page:page_right])
+        user_data = list(Users.objects.values()[index_left:index_right])
+        total_page = Users.objects.count()
+        data = {'tableData': user_data, 'totalPage': total_page, "show" : True}
+        return JsonResponse({'code': 20000, 'data': data})
+    else:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        agent = Agent_user.objects.get(id=agent_id)
+        user_data = list(Users.objects.filter(referee=agent.invite_code).values()[index_left:index_right])
+        total_page = Users.objects.count()
+        data = {'tableData': user_data, 'totalPage': total_page, "show": False}
+        return JsonResponse({'code': 20000, 'data': data})
 
-    data = {'tableData': user_data, 'totalPage': total_page}
 
-    return JsonResponse({'code': 20000, 'data': data})
 
 #奔驰宝马的代理接口
 @check_login
