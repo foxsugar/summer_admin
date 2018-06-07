@@ -65,6 +65,39 @@ def create_room(account, password, game_type):
     return result
 
 
+def send_message(account, password, message):
+    """
+    发送消息
+    :param account:
+    :param password:
+    :param game_type:
+    :return:
+    """
+
+    # 登录
+    login_code, s = __login(account, password)
+
+    result = {'code': -1}
+    # 登录gate成功
+    if login_code == 0:
+        # 发送创建房间
+        # try:
+        #     create_str = config.get('roomType', game_type)
+        # except:
+        #     return json.dumps(result)
+
+        json_node = json.loads(message)
+
+        create_rtn = __send_msg(s, json_node)
+        result = create_rtn
+        logger.debug("发送消息返回: " + create_rtn)
+
+    s.close()
+    return result
+
+
+
+
 def get_room_info(room_id):
     """
     获得房间信息

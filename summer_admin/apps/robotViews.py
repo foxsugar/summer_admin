@@ -21,6 +21,15 @@ def create_room(request):
     return JsonResponse(json.loads(rtn))
 
 
+def send_message(request):
+    account = str(request.GET['account'])
+    password = str(request.GET['password'])
+    message = request.GET['message']
+    rtn = robot.send_message(account, password, message)
+    print(rtn)
+    return JsonResponse(json.loads(rtn))
+
+
 def get_room_info(request):
     room_id = str(request.GET['roomId'])
     rtn = robot.get_room_info(room_id)
