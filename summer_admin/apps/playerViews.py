@@ -470,6 +470,27 @@ def search_agent_charge(request):
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
+
+#通过邀请码搜索玩家
+@check_login
+def serarch_player_list_with_referee(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    referee = None
+
+    try:
+        referee = str(request.GET['referee'])
+    except:
+        referee = ""
+
+    array = Users.objects.filter(referee=referee)
+    player_data = list(array.values()[index_left:index_right])
+    total_page =  len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
 @check_login
 def serarch_player_list(request):
     page = int(str(request.GET['page']))

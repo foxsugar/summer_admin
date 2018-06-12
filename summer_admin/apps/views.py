@@ -230,22 +230,16 @@ def agent_charge(request):
     """代理充值"""
     param  = json.loads(str(request.GET['chargeForm']))
     id = param['id']
-    num = param['num']
-    isadd = None
+    num = int(param['num'])
 
-    try:
-        isadd = param['isadd']
-    except:
-        isadd = 1
+    #
+    # if not ret:
+    #     return JsonResponse({'code': 100, 'data': ' 下分失败'})
 
-    if isadd == 0:
-        num = -num;
-
-    if isadd:
+    if num >= 0:
         str1 = "充值失败"
     else:
         str1 = "减值失败"
-
 
     if agent_user.money < num:
 

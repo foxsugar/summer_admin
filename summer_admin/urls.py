@@ -58,6 +58,8 @@ urlpatterns = [
     url(r'^player/fetchlist$', playerViews.search_player),
     url(r'^player/fetchplayer$', playerViews.fetchplayer),
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
+    url(r'^player/fetchPlayersRef$', playerViews.serarch_player_list_with_referee),
+
     url(r'^player/fetchplayersvip$', playerViews.serarch_player_list_vip),
     url(r'^player/chargelist$', playerViews.charge_list),
     url(r'^upload$', playerViews.upload),
