@@ -9,26 +9,31 @@ from summer_admin import settings
 
 
 def main():
-    # transport = TSocket.TSocket('localhost', 9090)
+    transport = TSocket.TSocket('47.92.72.232', 9090)
     #
     # # Buffering is critical. Raw sockets are very slow
     # # transport = TTransport.TBufferedTransport(transport)
-    # transport = TTransport.TFramedTransport(transport)
+    transport = TTransport.TFramedTransport(transport)
     #
     # # Wrap in a protocol
-    # protocol = TBinaryProtocol.TBinaryProtocol(transport)
+    protocol = TBinaryProtocol.TBinaryProtocol(transport)
     #
     # # Create a client to use the protocol encoder
     #
     #
     # # Connect!
-    # transport.open()
+    transport.open()
     #
-    # client = Client(protocol)
+    client = Client(protocol)
+    order = Order()
+    order.agentId = 1
+    order.id = 3
+    order.num = 100000
+    client.charge(order=order)
     #
     # print(client.getUserInfo(1))
 
-    client = get_client()
+    # client = get_client()
     # order = Order()
     # order.agentId = 1
     # order.id = 1
