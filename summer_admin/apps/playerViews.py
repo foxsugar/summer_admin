@@ -499,12 +499,25 @@ def serarch_player_list(request):
     index_right = page * size
     title = None
 
+    # 只能查自己邀请码的 id
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_user = Agent_user.objects.get(id=agent_id)
+
     try:
         title = str(request.GET['title'])
     except:
         title = ""
 
-    array = Users.objects.filter(username__contains=title)
+    array = None
+    if agent_user.username == 'admin':
+        array = Users.objects.filter(username__contains=title)
+    else:
+        array = Users.objects.filter(username__contains=title, referee=agent_user.invite_code)
+
     player_data = list(array.values()[index_left:index_right])
     total_page =  len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
