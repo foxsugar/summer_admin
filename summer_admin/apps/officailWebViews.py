@@ -13,6 +13,9 @@ def officail_web(request):
     elif category == "laotie":
         url = "http://fir.im/ncjb"
         game_name = "老铁棋牌"
+    elif category == "dxj":
+        url = ""
+        game_name = "董小姐棋牌室"
     else:
         url = ""
         game_name = ""
