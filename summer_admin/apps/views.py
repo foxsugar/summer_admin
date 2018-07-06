@@ -163,7 +163,7 @@ def agent_charge_gold(request):
     """代理充值"""
     param = json.loads(str(request.GET['chargeForm']))
     id = param['id']
-    num = param['gold_num']
+    num = int(str(param['gold_num']))
     isadd = None
 
     try:
@@ -286,7 +286,7 @@ def agent_charge(request):
 @check_login
 def agent_upGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
-    uid = int(param['id'])
+    uid = int(param['userId'])
     gold = int(param['goal'])
     user = Users.objects.get(id=uid)
 
@@ -301,7 +301,7 @@ def agent_upGoal(request):
 @check_login
 def agent_downGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
-    uid = int(param['id'])
+    uid = int(param['userId'])
     gold = int( param['goal'])
     user = Users.objects.get(id=uid)
     rpc_client = get_client()
