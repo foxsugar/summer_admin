@@ -310,6 +310,8 @@ def agent_upGoal(request):
     o = Order(userId=uid, num=gold, type=ChargeType.gold, agentId=1)
     rtn = rpc_client.charge(o)
     if rtn == 0:
+        agent_user.gold -= gold
+        agent_user.save()
         return JsonResponse({'code': 20000, 'data': user.gold + gold})
     else:
         return JsonResponse({'code': 100, 'data': '失败'})
