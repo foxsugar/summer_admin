@@ -100,6 +100,7 @@ class Charge(models.Model):
     money = models.FloatField('充值金额', default='')
     money_point = models.FloatField('充值点数')
     origin = models.IntegerField(default=0)
+    charge_type = models.IntegerField(default=0)
     recharge_source = models.CharField(max_length=255, default='')
     share_area = models.CharField(max_length=255, default='')
     share_content = models.CharField(max_length=255, default='')
