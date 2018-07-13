@@ -288,15 +288,15 @@ def agent_upGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
     uid = int(param['userId'])
     gold = int(param['goal'])
-
-    if gold < 0:
-        return JsonResponse({'code': 100, 'data': '失败, 没有权限'})
-
     x_token = request.META['HTTP_X_TOKEN']
 
     dic = cache.get(x_token)
     slf_id = dic["id"]
-    agent_user = Agent_user.objects.get(id =slf_id)
+    agent_user = Agent_user.objects.get(id=slf_id)
+
+    if gold < 0 and agent_user.id != 1:
+        return JsonResponse({'code': 100, 'data': '失败, 没有权限'})
+
     if agent_user.gold < gold:
         return JsonResponse({'code': 100, 'data': '金币不足，请充值'})
 
@@ -305,7 +305,7 @@ def agent_upGoal(request):
     if user.id != 1:
         if user.referee != agent_user.invite_code:
             return JsonResponse({'code': 100, 'data': '您不能给该用户上下分'})
-    
+
     rpc_client = get_client()
     o = Order(userId=uid, num=gold, type=ChargeType.gold, agentId=1)
     rtn = rpc_client.charge(o)
