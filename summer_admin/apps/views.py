@@ -302,9 +302,9 @@ def agent_upGoal(request):
 
     user = Users.objects.get(id=uid)
 
-    if user.id != 1:
-        if user.referee != agent_user.invite_code:
-            return JsonResponse({'code': 100, 'data': '您不能给该用户上下分'})
+    # if user.id != 1:
+    #     if user.referee != agent_user.invite_code:
+    #         return JsonResponse({'code': 100, 'data': '您不能给该用户上下分'})
 
     rpc_client = get_client()
     o = Order(userId=uid, num=gold, type=ChargeType.gold, agentId=1)
