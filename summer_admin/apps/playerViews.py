@@ -392,14 +392,18 @@ def fetchplayer(request):
     # config.read(settings.BASE_DIR + '/config.conf')
     # gameCategory = config.get('robot', 'gameCategory')
 
+
     array = Users.objects.filter(id=player_id)
     player_data = list(array.values()[0:1])
     #不是总代理不能搜到不是自己
-    if agent_id != 1:
-        u = array[0]
-        str1 = '%d' % (u.referee)
-        if str1 != agent_user.invite_code:
-            return JsonResponse({'code': 2000, 'data': '没有权限查看该用户'})
+
+    gameCategory = config.get('robot', 'gameCategory')
+    if gameCategory != "zhongxin":
+        if agent_id != 1:
+            u = array[0]
+            str1 = '%d' % (u.referee)
+            if str1 != agent_user.invite_code:
+                return JsonResponse({'code': 2000, 'data': '没有权限查看该用户'})
 
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
