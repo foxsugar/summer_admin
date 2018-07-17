@@ -525,10 +525,6 @@ def serarch_player_list(request):
     else:
         array = Users.objects.filter(username__contains=title, referee=agent_user.invite_code)
 
-    gameCategory = config.get('robot', 'gameCategory')
-    if gameCategory != "zhongxin":
-        array = Users.objects.filter(username__contains=title)
-
     player_data = list(array.values()[index_left:index_right])
     total_page =  len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
