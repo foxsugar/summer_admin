@@ -130,8 +130,11 @@ def charge(request):
             return JsonResponse({'code': 100, 'data': '非总代理暂时没有权限充值房卡！'})
 
     str1 = '%d' % (player.referee)
-    if (str1!= from_agent.invite_code) & (from_agent.id != 1):
-        return JsonResponse({'code': 100, 'data': '没有权限充值非自己绑定的玩家'})
+
+    gameCategory = config.get('robot', 'gameCategory')
+    if gameCategory != "zhongxin":
+        if (str1 != from_agent.invite_code) & (from_agent.id != 1):
+            return JsonResponse({'code': 100, 'data': '没有权限充值非自己绑定的玩家'})
 
     if leng == 0:
         return JsonResponse({'code': 100, 'data': '充值失败'})
@@ -521,6 +524,10 @@ def serarch_player_list(request):
         array = Users.objects.filter(username__contains=title)
     else:
         array = Users.objects.filter(username__contains=title, referee=agent_user.invite_code)
+
+    gameCategory = config.get('robot', 'gameCategory')
+    if gameCategory != "zhongxin":
+        array = Users.objects.filter(username__contains=title)
 
     player_data = list(array.values()[index_left:index_right])
     total_page =  len(player_data)
