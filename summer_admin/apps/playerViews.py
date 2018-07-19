@@ -252,7 +252,7 @@ def charge_list(request):
         index_left = (page - 1) * size
         index_right = page * size
 
-        array = Charge.objects.filter(origin=agent_id)
+        array = Charge.objects.filter(origin=agent_id).order_by('-createtime')
         player_data = list(array.values()[index_left:index_right])
         total_page = len(player_data)
         data = {'tableData': player_data, 'totalPage': total_page}
