@@ -234,6 +234,11 @@ def user_list_vip(request):
     return JsonResponse({'code': 20000, 'data': data})
 
 
+def test1(request):
+    pass
+
+def test2(request):
+    pass
 
 @check_login
 def charge_list(request):
@@ -264,7 +269,8 @@ def charge_list(request):
         index_left = (page - 1) * size
         index_right = page * size
         total_page = Charge.objects.count()
-        player_data = list(Charge.objects.values()[index_left:index_right])
+        array = Charge.objects.all().order_by('-createtime')
+        player_data = list(array.values()[index_left:index_right])
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
