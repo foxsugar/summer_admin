@@ -19,6 +19,7 @@ from summer_admin.apps import views
 from summer_admin.apps import playerViews
 from summer_admin.apps import robotViews
 from summer_admin.apps import officailWebViews
+from summer_admin.apps import wxRo
 
 
 
@@ -79,4 +80,6 @@ urlpatterns = [
 
     # 官网
     url(r'^game$', officailWebViews.officail_web),
+
+    url(r'^startWx$', wxRo.start),
 ]
