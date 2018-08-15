@@ -1,5 +1,4 @@
 
-import itchat
 import threading
 
 # def run_wx():
@@ -23,36 +22,36 @@ import threading
 # itchat.auto_login(hotReload=True)
 # itchat.run()
 
-instancePool = {}
-
-
-
-
-
-
-def start(request):
-    uid = str(request.GET['id'])
-    newInstance = itchat.new_instance()
-    instancePool[uid] = newInstance
-    newInstance.auto_login(hotReload=True, statusStorageDir=uid+'.pkl')
-
-    # newInstance.msg_register(itchat.content.TEXT,isGroupChat=True)
-    # newInstance.start_receiving(exitCallback=exitFun, getReceivingFnOnly=True)
-
-    @newInstance.msg_register(itchat.content.TEXT,isGroupChat=True)
-    def reply(msg):
-        print(msg.text)
-
-    t = threading.Thread(target=newInstance.run(), args=())
-
-    t.start()
-
-    return "请在手机确认登录"
-    # newInstance.run()
-
-
-def exitFun():
-    print("exit")
+# instancePool = {}
+#
+#
+#
+#
+#
+#
+# def start(request):
+#     uid = str(request.GET['id'])
+#     newInstance = itchat.new_instance()
+#     instancePool[uid] = newInstance
+#     newInstance.auto_login(hotReload=True, statusStorageDir=uid+'.pkl')
+#
+#     # newInstance.msg_register(itchat.content.TEXT,isGroupChat=True)
+#     # newInstance.start_receiving(exitCallback=exitFun, getReceivingFnOnly=True)
+#
+#     @newInstance.msg_register(itchat.content.TEXT,isGroupChat=True)
+#     def reply(msg):
+#         print(msg.text)
+#
+#     t = threading.Thread(target=newInstance.run(), args=())
+#
+#     t.start()
+#
+#     return "请在手机确认登录"
+#     # newInstance.run()
+#
+#
+# def exitFun():
+#     print("exit")
 
 
 #
