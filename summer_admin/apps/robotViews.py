@@ -255,7 +255,7 @@ def get_majiang_room_rule(data):
         else:
             ss = "圈"
 
-        finalStr = "%s,%s,%s,%s,%倍%s%s" % (gameTypeName,personType,turn, ss,multiple,context,huangStr)
+        finalStr = "%s,%s,%s,%s,%s倍%s%s" % (gameTypeName,personType,turn, ss,multiple,context,huangStr)
         return  finalStr
     except:
         return ""
