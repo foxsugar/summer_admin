@@ -172,8 +172,9 @@ def get_majiang_room_rule(data):
             if isZiMo:
                 context += ",只可自摸"
         elif type == "15":
-            context = "硬三嘴"
-            huangStr = "\n荒庄时,下家坐庄"
+            # context = "硬三嘴"
+            gameTypeName = "硬三嘴";
+            huangStr = "荒庄时,下家坐庄"
 
             if (int(option) >> 10) & 1 == 1:
                 gameTypeName = "一门牌"
