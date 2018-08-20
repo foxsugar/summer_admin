@@ -88,12 +88,14 @@ def agent_list(request):
 
     # table_data = list(Agent_user.objects.values()[index_left:index_right])
 
-    x_token = request.META['HTTP_X_TOKEN']
-    print(x_token)
-    dict = cache.get(x_token)
-    level = dict["level"]
-    agent_id = dict['id']
-    agent_name = dict['username']
+    # x_token = request.META['HTTP_X_TOKEN']
+    # print(x_token)
+    # dict = cache.get(x_token)
+    # level = dict["level"]
+    # agent_id = dict['id']
+    # agent_name = dict['username']
+    agent_name = 'admin'
+    agent_id = 111
 
     array = None
     if agent_name == 'admin':
@@ -111,6 +113,8 @@ def agent_list(request):
     total_page = Agent_user.objects.count()
 
     data = {'tableData': td, 'totalPage': total_page}
+
+    print(data)
 
     return JsonResponse({'code': 20000, 'data': data})
 
@@ -349,6 +353,8 @@ def constant_update(request):
     constant.version_of_android = param['version_of_android']
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
+    constant.income1 = param['income1']
+    constant.income2 = param['income2']
     category = config.get('robot', 'gameCategory')
     if category == 'bcbm':
         constant.access_code = param['access_code']
@@ -364,6 +370,8 @@ def constant_update(request):
 
 def agent2vo(agent):
     """代理显示"""
+
+    dic = cal_income(int(agent["id"]))
     return {
         'id': agent['id'],
         'username': agent['username'],
@@ -384,7 +392,54 @@ def agent2vo(agent):
         'shareDeduct': agent['share_deduct'],
         'parentPayDeduct': agent['parent_pay_deduct'],
         'parentShareDeduct': agent['parent_share_deduct'],
+        'total1': dic["total1"],
+        'firstLevel1': dic['firstLevel1'],
+        'secondLevel1': dic['firstLevel1'],
+        'total2': dic["total2"],
+        'firstLevel2': dic['firstLevel2'],
+        'secondLevel2': dic['firstLevel2'],
     }
+
+def cal_income(agent_id):
+    agent = Agent_user.objects.get(id=agent_id)
+    agent_info = json.loads(agent.agent_info)
+
+    total1 = 0
+    first_level1 = 0
+    second_level1 = 0
+
+    total2 = 0
+    first_level2 = 0
+    second_level2 = 0
+
+    for key, value in agent_info["everyDayCost"].items():
+        print(key, ' value : ', value)
+        partner = value["partner"]
+
+        # 没有结算
+        if int(partner) == 0:
+            total1 += value["firstLevel"]
+            total1 += value["secondLevel"]
+            first_level1 += value["firstLevel"]
+            second_level1 += value["secondLevel"]
+        else:
+            total2 += value["firstLevel"]
+            total2 += value["secondLevel"]
+            first_level2 += value["firstLevel"]
+            second_level2 += value["secondLevel"]
+
+    dic = {}
+    dic["total1"] = total1
+    dic["firstLevel1"] = first_level1
+    dic["secondLevel1"] = second_level1
+
+    dic["total2"] = total2
+    dic["firstLevel2"] = first_level2
+    dic["secondLevel2"] = second_level2
+
+
+
+    return dic
 
 
 def create_agent_user(agent, request):

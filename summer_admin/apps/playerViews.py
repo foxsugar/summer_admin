@@ -766,6 +766,108 @@ def show_img(request):
         data["title"] = "error"
         return render(request, 'errorview.html',{"data": data})
 
+# 清理打款状态
+@check_login
+def clear_rebate(request):
+
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dic = cache.get(x_token)
+    agent_name = dic['username']
+    if agent_name == 'admin':
+        return JsonResponse({'code': 100, 'data': '没有权限'})
+
+    agent_id = request.GET['uid']
+    agent = Agent_user.objects.get(id=agent_id)
+    agent_info = json.loads(agent.agent_info)
+
+    for key, value in agent_info["everyDayCost"].items():
+        print(key, ' value : ', value)
+        partner = value["partner"]
+        if int(partner) == 0:
+            value["partner"] = 1
+    j = json.dumps(agent_info)
+    agent.agent_info = j
+    agent.save()
+    return JsonResponse({'code': 20000, 'data': cal_income(agent_id)})
+
+# @check_login
+# 返利记录
+def rebate_record_from_admin(request):
+
+    # x_token = request.META['HTTP_X_TOKEN']
+    # print(x_token)
+    # dic = cache.get(x_token)
+    # agent_name = dic['username']
+    # if agent_name == 'admin':
+    #     return JsonResponse({'code': 100, 'data': '没有权限'})
+
+    uid = request.GET['uid']
+    is_close = int(request.GET['close'])
+    agent = Agent_user.objects.get(id=uid)
+    agent_info = json.loads(agent.agent_info)
+    date_cost = []
+    child_costs = []
+    for key, value in agent_info["everyDayCost"].items():
+        print(key, ' value : ', value)
+        partner = value["partner"]
+
+        dic = {}
+        # 没有结算
+        if int(partner) == 0:
+            if is_close == 0:
+                child_costs.append(value)
+                date_cost.append(key)
+        else:
+            if is_close == 1:
+                child_costs.append(value)
+                date_cost.append(key)
+    rs = {}
+    rs["child_costs"] = child_costs
+    rs["date_cost"] = date_cost
+    return JsonResponse({'code': 20000, 'data': rs})
+
+
+# def cal_income(agent_id):
+#     agent = Agent_user.objects.get(id=agent_id)
+#     agent_info = json.loads(agent.agent_info)
+#
+#     total1 = 0
+#     first_level1 = 0
+#     second_level1 = 0
+#
+#     total2 = 0
+#     first_level2 = 0
+#     second_level2 = 0
+#
+#     for key, value in agent_info["everyDayCost"].items():
+#         print(key, ' value : ', value)
+#         partner = value["partner"]
+#
+#         # 没有结算
+#         if int(partner) == 0:
+#             total1 += value["firstLevel"]
+#             total1 += value["secondLevel"]
+#             first_level1 += value["firstLevel"]
+#             second_level1 += value["secondLevel"]
+#         else:
+#             total2 += value["firstLevel"]
+#             total2 += value["secondLevel"]
+#             first_level2 += value["firstLevel"]
+#             second_level2 += value["secondLevel"]
+#
+#         dic = {}
+#         dic["total1"] = total1
+#         dic["firstLevel1"] = first_level1
+#         dic["secondLevel1"] = second_level1
+#
+#         dic["total2"] = total2
+#         dic["firstLevel2"] = first_level2
+#         dic["secondLevel2"] = second_level2
+#
+#     return dic
+
+
 
 
 

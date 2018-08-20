@@ -21,6 +21,7 @@ class Agent_user(models.Model):
     share_deduct = models.FloatField('分享提成', default=0)
     parent_pay_deduct = models.FloatField('上级支付提成', default=0)
     parent_share_deduct = models.FloatField('上级分享提成', default=0)
+    agent_info = models.CharField('代理返利信息', max_length=255, default='')
 
     class Meta:
         db_table = 'agent_user'
@@ -86,7 +87,8 @@ class Constant(models.Model):
     version_of_android = models.CharField(max_length=255, default='')
     version_of_ios = models.CharField(max_length=255, default='')
     access_code = models.CharField(max_length=255, default='')
-
+    income1 = models.IntegerField(default=0)
+    income2 = models.IntegerField(default=0)
     class Meta:
         db_table = 'constant'
         verbose_name = '常量表'
@@ -111,6 +113,7 @@ class Charge(models.Model):
     userid = models.IntegerField(default=0)
     username = models.CharField(max_length=255, default='')
     transaction_id = models.CharField(max_length=255, default='')
+    finish_time = models.CharField(max_length=255, default='')
     class Meta:
         db_table = 'charge'
         verbose_name = '充值记录表'
