@@ -109,11 +109,28 @@ def get_majiang_room_rule(data):
         multiple = data["multiple"]
         option = data["mode"]
         roomId = data["roomId"]
+        yiPaoDuoXiang = data["yipaoduoxiang"]
+        peopleNum = data["personNumber"]
+        clubId = ""
+
+        try:
+            data["clubRoomModel"]
+        except:
+            pass
+
+        gps = False
+        try:
+            if ((int(data["otherMode"]) >> 1) & 1) == 1:
+                gps = True
+        except:
+            pass
+
         if roomId == "" or roomId == None:
             roomId = "（该房间不存在或已解散）"
 
-        context = None
-        huangStr = None
+        gameTypeName = ""
+        context = ""
+        huangStr = ""
 
         isZiMo = False
         isCanChi = False
@@ -129,61 +146,117 @@ def get_majiang_room_rule(data):
 
         if type == "1":
             context = "扣点"
+            if option == "6":
+                context = context + ",清一色,一条龙,加倍"
+        # 推到胡
         elif type == "2":
-            if option == "3" and roomType == "3":
-                context = "点炮胡"
+            if option == "1" or option == "3" or option == "11" or option == "13":
+                gameTypeName = "平胡"
             else:
-                if option == "1" or option == "3":
-                    context = "平胡"
-                else:
-                    context = "大胡"
+                gameTypeName = "大胡"
+
+            if option == "1" or option == "2":
+                context += ",带风,不报听"
+            if option == "3":
+                context += ",不带风,不报听"
+            if option == "4":
+                context += ",不带风,不报听"
+            if option == "11" or option == "12":
+                if type != "30":
+                    context += ",带风,报听"
+            if option == "13" or option == "14":
+                context += ",不带风,报听"
+            # context += yiPaoDuoXiang ? ",一炮多响": ""
+            if yiPaoDuoXiang:
+                context += ",一炮多响"
+            if isZiMo:
+                context += ",只可自摸"
         elif type == "15":
-            context = "硬三嘴"
-            huangStr = "\n荒庄时,下家坐庄"
+            # context = "硬三嘴"
+            gameTypeName = "硬三嘴";
+            huangStr = "荒庄时,下家坐庄"
+
+            if (int(option) >> 10) & 1 == 1:
+                gameTypeName = "一门牌"
+            if (int(option) >> 11) & 1 == 1:
+                context += ",数页"
         elif type == "4":
             context = "拐三角胡"
         elif type == "5":
             context = "立四"
         elif type == "31":
             context = "撵中子"
+            if option == "2":
+                context += ",1中子"
+            else:
+                context += ",2中子"
 
-        if type != "31":
-            if option == "6":
-                context += ",清一色,一条龙"
-            elif option == "1" or option == "2":
-                context += ""
-            elif option == "3":
-                if roomType == "3":
-                    pass
-                else:
-                    context += ""
+            if isCanChi:
+                context += ",带吃"
+            else:
+                context += ",不带吃"
+
+            if isCanTing:
+                context += ",报听"
+            else:
+                context += ",不报听"
+
+            if isZiMo:
+                context += ",只可自摸"
+
+        if type == "34":
+            gameTypeName = "扭叶子"
+            if option == "1":
+                context += ",庄+1分"
+            elif option == "2":
+                context += ",庄+2分"
             elif option == "4":
-                context += ""
+                context += ",庄+3分"
+            else:
+                context += ",庄+4分"
+
+            if isZiMo:
+                context += ",只可自摸"
+
+        if type == "100":
+            gameTypeName = "侯马推倒胡"
+            if isZiMo:
+                context += ",只可自摸"
+
+        if gps:
+            context += ",防作弊模式"
+
+        personType = ""
+
+        if peopleNum == "2":
+            personType = "2人麻将"
+        if peopleNum == "3":
+            personType = "3人麻将"
+        if peopleNum == "4":
+            personType = "4人麻将"
+
+        club = ""
+
+        if clubId != None:
+            title = "亲友圈房间号：" + roomId
+            club = ",亲友圈号：" + clubId
         else:
-            context += "只可自摸、" if isZiMo == True else ""
-            context += "带吃、" if isCanChi == True else "不带吃、"
-            context += "报听、" if isCanTing == True else "不报听、"
+            title = "房间号：" + roomId
 
-        if ((int(option) >> 10) & 1) == 1:
-            context += ",一门牌"
-            context = context.replace("硬三嘴", "", 2)
-            huangStr = "\n荒庄时,下家坐庄"
+            if roomType == "0":
+                title += "(房主建房)"
+            if roomType == "1":
+                title += "(AA建房)"
+            if roomType == "2":
+                title += "(代建房)"
 
-        if ((int(option) >> 11) & 1) == 1:
-            context += ",数页"
+        ss = ""
+        if type != 100:
+            ss = "局"
+        else:
+            ss = "圈"
 
-        title = "房间号" + roomId
-
-        if roomType == "0":
-            title += "(房主建房)"
-        elif roomType == "1":
-            title += "(4人建房)"
-        elif roomType == "2":
-            title += "(代建房)"
-
-        title += ",三缺一"
-        context += str(turn) + "局" + str(multiple) + "倍" + huangStr
-        return title + context
-
+        finalStr = "%s,%s,%s,%s,%s倍%s%s" % (gameTypeName,personType,turn, ss,multiple,context,huangStr)
+        return  finalStr
     except:
         return ""
