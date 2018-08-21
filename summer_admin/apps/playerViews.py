@@ -774,10 +774,11 @@ def clear_rebate(request):
     print(x_token)
     dic = cache.get(x_token)
     agent_name = dic['username']
-    if agent_name == 'admin':
+    if agent_name != 'admin':
         return JsonResponse({'code': 100, 'data': '没有权限'})
 
-    agent_id = request.GET['uid']
+    param = json.loads(str(request.GET['chargeForm']))
+    agent_id = int(str(param['id']))
     agent = Agent_user.objects.get(id=agent_id)
     agent_info = json.loads(agent.agent_info)
 

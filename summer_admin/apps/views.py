@@ -86,20 +86,20 @@ def agent_list(request):
     index_left = (page - 1) * size
     index_right = page * size
 
-    # table_data = list(Agent_user.objects.values()[index_left:index_right])
+    table_data = list(Agent_user.objects.values()[index_left:index_right])
 
-    # x_token = request.META['HTTP_X_TOKEN']
-    # print(x_token)
-    # dict = cache.get(x_token)
-    # level = dict["level"]
-    # agent_id = dict['id']
-    # agent_name = dict['username']
-    agent_name = 'admin'
-    agent_id = 111
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    agent_id = dict['id']
+    agent_name = dict['username']
 
+    if_show = False
     array = None
     if agent_name == 'admin':
         array = Agent_user.objects.all()
+        if_show = True
     else:
         array = Agent_user.objects.filter(parent_id=agent_id)
     # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
@@ -112,7 +112,7 @@ def agent_list(request):
 
     total_page = Agent_user.objects.count()
 
-    data = {'tableData': td, 'totalPage': total_page}
+    data = {'tableData': td, "ifShow" : if_show, 'totalPage': total_page}
 
     print(data)
 
@@ -372,6 +372,7 @@ def agent2vo(agent):
     """代理显示"""
 
     dic = cal_income(int(agent["id"]))
+    print(dic)
     return {
         'id': agent['id'],
         'username': agent['username'],
@@ -392,12 +393,12 @@ def agent2vo(agent):
         'shareDeduct': agent['share_deduct'],
         'parentPayDeduct': agent['parent_pay_deduct'],
         'parentShareDeduct': agent['parent_share_deduct'],
-        'total1': dic["total1"],
-        'firstLevel1': dic['firstLevel1'],
-        'secondLevel1': dic['firstLevel1'],
-        'total2': dic["total2"],
-        'firstLevel2': dic['firstLevel2'],
-        'secondLevel2': dic['firstLevel2'],
+        'total1': "¥" + str(dic["total1"]),
+        'firstLevel1': "¥" + str(dic['firstLevel1']),
+        'secondLevel1':" ¥" + str(dic['secondLevel1']),
+        'total2': "¥" + str(dic["total2"]),
+        'firstLevel2': "¥" + str(dic['firstLevel2']),
+        'secondLevel2': "¥" + str(dic['secondLevel2']),
     }
 
 def cal_income(agent_id):
@@ -470,7 +471,12 @@ def create_agent_user(agent, request):
     user.share_deduct = data['shareDeduct']
     user.parent_pay_deduct = data['parentPayDeduct']
     user.parent_share_deduct = data['parentShareDeduct']
+
+    j = {"allRebate": 0, "everyDayCost": {}, "everyDayRebate": {}, "everyPartnerRebate": {}}
+    user.agent_info = json.dumps(j)
     # 保存
+    user.save()
+    user.invite_code = str(user.id)
     user.save()
 
 
