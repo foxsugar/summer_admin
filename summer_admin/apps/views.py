@@ -470,6 +470,9 @@ def create_agent_user(agent, request):
     user.parent_share_deduct = data['parentShareDeduct']
 
     j = {"allRebate": 0, "everyDayCost": {}, "everyDayRebate": {}, "everyPartnerRebate": {}}
+
+    jr = {"clearingRecord": []}
+    user.agent_info_record = json.dumps(jr)
     user.agent_info = json.dumps(j)
     # 保存
     user.save()
