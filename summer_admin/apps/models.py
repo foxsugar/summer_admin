@@ -21,7 +21,8 @@ class Agent_user(models.Model):
     share_deduct = models.FloatField('分享提成', default=0)
     parent_pay_deduct = models.FloatField('上级支付提成', default=0)
     parent_share_deduct = models.FloatField('上级分享提成', default=0)
-    agent_info = models.CharField('代理返利信息', max_length=255, default='')
+    agent_info = models.TextField('代理返利信息', max_length=255, default='')
+    agent_info_record = models.TextField('代理返利记录', default='')
 
     class Meta:
         db_table = 'agent_user'

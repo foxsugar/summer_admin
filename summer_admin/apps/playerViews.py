@@ -782,18 +782,46 @@ def clear_rebate(request):
     agent = Agent_user.objects.get(id=agent_id)
     agent_info = json.loads(agent.agent_info)
 
+    first = 0
+    second = 0
     for key, value in agent_info["everyDayCost"].items():
-        print(key, ' value : ', value)
-        partner = value["partner"]
-        if int(partner) == 0:
-            value["partner"] = 1
-    j = json.dumps(agent_info)
-    agent.agent_info = j
+        first += value['firstLevel']
+        second += value['secondLevel']
+
+     # 所有返利总金额
+    total = first + second
+
+    agent_info_record = json.loads(agent.agent_info_record)
+    clear_list = agent_info_record['clearingRecord']
+
+    # 之前已经结算过的
+    already_clear = 0;
+    already_clear_first = 0
+    already_clear_second = 0
+    for item in clear_list:
+        already_clear += item['total']
+        already_clear_first += item['first']
+        already_clear_second += item['second']
+
+    clear_dict = {}
+    date_key = datetime.datetime.now().strftime('%Y-%m-%d')
+    # 本次结算的金额
+    clear_dict['total'] = total - already_clear
+
+    if total - already_clear == 0 :
+        return JsonResponse({'code': 20000, 'data': "成功"})
+
+    clear_dict['first'] = first - already_clear_first
+    clear_dict['second'] = second - already_clear_second
+    clear_dict['date'] = date_key
+    clear_list.append(clear_dict)
+    r = json.dumps(agent_info_record)
+    agent.agent_info_record = r
     agent.save()
     return JsonResponse({'code': 20000, 'data': cal_income(agent_id)})
 
+# 打款记录
 # @check_login
-# 返利记录
 def rebate_record_from_admin(request):
 
     # x_token = request.META['HTTP_X_TOKEN']
@@ -802,31 +830,31 @@ def rebate_record_from_admin(request):
     # agent_name = dic['username']
     # if agent_name == 'admin':
     #     return JsonResponse({'code': 100, 'data': '没有权限'})
+    #
+    # page = int(str(request.GET['page']))
+    # size = int(str(request.GET['size']))
+    # index_left = (page - 1) * size
+    # index_right = page * size
+    # # user_data = list(Users.objects.values()[page:page_right])
+    # arr = Users.objects.filter(referee=agent.invite_code).values()
+    # user_data = list(arr[index_left:index_right])
+    #
 
-    uid = request.GET['uid']
-    is_close = int(request.GET['close'])
+    uid = int(request.GET['id'])
+    page = int(request.GET['page'])
+    size = 20
+    index_left = (page - 1) * size
+    index_right = page * size
+
     agent = Agent_user.objects.get(id=uid)
-    agent_info = json.loads(agent.agent_info)
-    date_cost = []
-    child_costs = []
-    for key, value in agent_info["everyDayCost"].items():
-        print(key, ' value : ', value)
-        partner = value["partner"]
+    agent_info_record = json.loads(agent.agent_info_record)
 
-        dic = {}
-        # 没有结算
-        if int(partner) == 0:
-            if is_close == 0:
-                child_costs.append(value)
-                date_cost.append(key)
-        else:
-            if is_close == 1:
-                child_costs.append(value)
-                date_cost.append(key)
-    rs = {}
-    rs["child_costs"] = child_costs
-    rs["date_cost"] = date_cost
-    return JsonResponse({'code': 20000, 'data': rs})
+    clearing_record = agent_info_record["clearingRecord"]
+    rs = list(clearing_record[index_left:index_right])
+    agent_info_record["clearingRecord"] = rs
+    agent_info_record["size"] = len(rs)
+
+    return JsonResponse({'code': 20000, 'data': agent_info_record ,})
 
 
 # def cal_income(agent_id):

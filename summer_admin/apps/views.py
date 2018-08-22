@@ -405,40 +405,37 @@ def cal_income(agent_id):
     agent = Agent_user.objects.get(id=agent_id)
     agent_info = json.loads(agent.agent_info)
 
-    total1 = 0
-    first_level1 = 0
-    second_level1 = 0
-
-    total2 = 0
-    first_level2 = 0
-    second_level2 = 0
+    total = 0
+    first_level = 0
+    second_level = 0
 
     for key, value in agent_info["everyDayCost"].items():
-        print(key, ' value : ', value)
-        partner = value["partner"]
 
-        # 没有结算
-        if int(partner) == 0:
-            total1 += value["firstLevel"]
-            total1 += value["secondLevel"]
-            first_level1 += value["firstLevel"]
-            second_level1 += value["secondLevel"]
-        else:
-            total2 += value["firstLevel"]
-            total2 += value["secondLevel"]
-            first_level2 += value["firstLevel"]
-            second_level2 += value["secondLevel"]
+        first_level += value["firstLevel"]
+        second_level += value["secondLevel"]
+
+    total = first_level + second_level
+
+    agent_info_record = json.loads(agent.agent_info_record)
+    clear_list = agent_info_record['clearingRecord']
+
+    # 之前已经结算过的
+    already_clear = 0;
+    already_clear_first = 0
+    already_clear_second = 0
+    for item in clear_list:
+        already_clear += item['total']
+        already_clear_first += item['first']
+        already_clear_second += item['second']
 
     dic = {}
-    dic["total1"] = total1
-    dic["firstLevel1"] = first_level1
-    dic["secondLevel1"] = second_level1
+    dic["total1"] = total - already_clear
+    dic["firstLevel1"] = first_level - already_clear_first
+    dic["secondLevel1"] = second_level - already_clear_second
 
-    dic["total2"] = total2
-    dic["firstLevel2"] = first_level2
-    dic["secondLevel2"] = second_level2
-
-
+    dic["total2"] = already_clear
+    dic["firstLevel2"] = already_clear_first
+    dic["secondLevel2"] = already_clear_second
 
     return dic
 
