@@ -306,6 +306,10 @@ def agent_upGoal(request):
 
     user = Users.objects.get(id=uid)
 
+    if gold < 0:
+        if user.gold + gold < 0:
+            return JsonResponse({'code': 100, 'data': '操作错误'})
+
     # if user.id != 1:
     #     if user.referee != agent_user.invite_code:
     #         return JsonResponse({'code': 100, 'data': '您不能给该用户上下分'})
