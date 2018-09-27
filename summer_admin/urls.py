@@ -78,6 +78,9 @@ urlpatterns = [
     url(r'^robot/getRoomInfo$', robotViews.get_room_info),
     url(r'^robot/sendMessage', robotViews.send_message),
 
+    #房间信息
+    url(r'^room/getInfo', playerViews.get_room_info),
+
     # 官网
     url(r'^game$', officailWebViews.officail_web),
 

@@ -120,3 +120,17 @@ class Charge(models.Model):
         verbose_name = '充值记录表'
         verbose_name_plural = '充值记录表'
         managed = False
+
+
+class Log_record(models.Model):
+    id = models.CharField(max_length=255, primary_key=True)
+    charge_rebate = models.FloatField(default=0)
+    game_num_data = models.TextField(default='')
+    gold_room_income_data = models.TextField(default='')
+    online_data = models.TextField(default='')
+    log_info = models.TextField(default='')
+    class Meta:
+        db_table = 'log_record'
+        verbose_name = 'log记录表'
+        verbose_name_plural = 'log记录表'
+        managed = False

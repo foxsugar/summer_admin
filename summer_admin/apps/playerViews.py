@@ -13,26 +13,27 @@ from summer_admin.apps.views import *
 import datetime
 from django.db.models import Q
 
+
 @check_login
 def change_user_delegate(request):
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)
     level = dict["level"]
-     # 总代理id
+    # 总代理id
     agent_id = dict['id']
     # 需要修改的用户id
     dic = json.loads(str(request.GET['chargeForm']))
     pid = dic['id']
     # 需要修改的代理id
-    aid  = int(dic['agent_id'])
+    aid = int(dic['agent_id'])
     if agent_id != 1:
         return JsonResponse({'code': 101, 'data': '没有权限'})
 
     if aid == 0:
         user = Users.objects.get(id=pid)
-        #user.referee = 0
-        #user.save()ź
+        # user.referee = 0
+        # user.save()ź
         rpc_client = get_client()
         rtn = rpc_client.bindReferee(pid, 0)
         if rtn == 0:
@@ -108,6 +109,7 @@ def charge_gold(request):
     else:
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
+
 @check_login
 def charge(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -164,7 +166,6 @@ def charge(request):
         return JsonResponse({'code': 100, 'data': '充值失败'})
 
 
-
 @check_login
 def user_member_list(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -188,6 +189,7 @@ def user_member_list(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
+
 @check_login
 def user_list(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -204,7 +206,7 @@ def user_list(request):
         # user_data = list(Users.objects.values()[page:page_right])
         user_data = list(Users.objects.values()[index_left:index_right])
         total_page = Users.objects.count()
-        data = {'tableData': user_data, 'totalPage': total_page, "show" : True}
+        data = {'tableData': user_data, 'totalPage': total_page, "show": True}
         return JsonResponse({'code': 20000, 'data': data})
     else:
         page = int(str(request.GET['page']))
@@ -218,8 +220,7 @@ def user_list(request):
         return JsonResponse({'code': 20000, 'data': data})
 
 
-
-#奔驰宝马的代理接口
+# 奔驰宝马的代理接口
 @check_login
 def user_list_vip(request):
     page = int(str(request.GET['page']))
@@ -245,12 +246,13 @@ def user_list_vip(request):
 def test1(request):
     pass
 
+
 def test2(request):
     pass
 
+
 @check_login
 def charge_list(request):
-
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)
@@ -282,6 +284,7 @@ def charge_list(request):
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
+
 @check_login
 def agent_change_state(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -295,7 +298,7 @@ def agent_change_state(request):
         return JsonResponse({'code': 2000, 'data': '没有权限更改状态'})
 
     order_id = int(str(request.GET['id']))
-    agent_charge = Agent_charge.objects.get(id = order_id)
+    agent_charge = Agent_charge.objects.get(id=order_id)
     if agent_charge.charge_type == 9:
         agent_charge.charge_type = 10
     elif agent_charge.charge_type == 10:
@@ -312,7 +315,8 @@ def agent_change_state(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
-#兑换记录
+
+# 兑换记录
 @check_login
 def gold_cash_list(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -351,10 +355,8 @@ def gold_cash_list(request):
     return JsonResponse({'code': 20000, 'data': data})
 
 
-
 @check_login
 def agent_charge_list(request):
-
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)
@@ -390,20 +392,19 @@ def agent_charge_list(request):
 
 
 def logout(request):
-
     cache.clear()
     return JsonResponse({'code': 20000, 'data': None})
 
+
 # @check_login
 def fetchplayer(request):
-
-    #只能查自己邀请码的 id
+    # 只能查自己邀请码的 id
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)
     level = dict["level"]
     agent_id = dict['id']
-    agent_user = Agent_user.objects.get(id = agent_id)
+    agent_user = Agent_user.objects.get(id=agent_id)
     player_id = int(str(request.GET['id']))
 
     # config.read(settings.BASE_DIR + '/config.conf')
@@ -412,7 +413,7 @@ def fetchplayer(request):
 
     array = Users.objects.filter(id=player_id)
     player_data = list(array.values()[0:1])
-    #不是总代理不能搜到不是自己
+    # 不是总代理不能搜到不是自己
 
     gameCategory = config.get('robot', 'gameCategory')
     if gameCategory != "zhongxin":
@@ -462,7 +463,7 @@ def search_agent_record(request):
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
-    array = Agent_charge.objects.filter(Q(charge_type=10) | Q(charge_type=9) , Q(agent_id=agent_id))
+    array = Agent_charge.objects.filter(Q(charge_type=10) | Q(charge_type=9), Q(agent_id=agent_id))
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
@@ -492,7 +493,7 @@ def search_agent_charge(request):
     return JsonResponse({'code': 20000, 'data': data})
 
 
-#通过邀请码搜索玩家
+# 通过邀请码搜索玩家
 @check_login
 def serarch_player_list_with_referee(request):
     page = int(str(request.GET['page']))
@@ -508,9 +509,10 @@ def serarch_player_list_with_referee(request):
 
     array = Users.objects.filter(referee=referee)
     player_data = list(array.values()[index_left:index_right])
-    total_page =  len(player_data)
+    total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
+
 
 @check_login
 def serarch_player_list(request):
@@ -540,11 +542,12 @@ def serarch_player_list(request):
         array = Users.objects.filter(username__contains=title, referee=agent_user.invite_code)
 
     player_data = list(array.values()[index_left:index_right])
-    total_page =  len(player_data)
+    total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
-#vip搜索
+
+# vip搜索
 @check_login
 def serarch_player_list_vip(request):
     page = int(str(request.GET['page']))
@@ -557,12 +560,13 @@ def serarch_player_list_vip(request):
         title = str(request.GET['title'])
     except:
         title = ""
-    #user.object.filter(Q(question__startswith='Who') | Q(question__startswith='What'))
+    # user.object.filter(Q(question__startswith='Who') | Q(question__startswith='What'))
     array = Users.objects.filter(username__contains=title, vip__gt=0)
     player_data = list(array.values()[index_left:index_right])
-    total_page =  len(player_data)
+    total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
+
 
 @check_login
 def fetch_delegates(request):
@@ -595,7 +599,8 @@ def fetch_delegates(request):
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
 
-#兑换金币
+
+# 兑换金币
 @check_login
 def cash_gold(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -614,7 +619,7 @@ def cash_gold(request):
     agent_charge.agent_id = agent_id
     agent_charge.charge_src_agent = agent_id
     agent_charge.charge_num = -gold
-    #9代表申请兑换金币并未兑换 10 表示兑换完成
+    # 9代表申请兑换金币并未兑换 10 表示兑换完成
     agent_charge.charge_type = 9
     agent.save()
     agent_charge.save()
@@ -628,8 +633,9 @@ def cash_gold(request):
 
     return JsonResponse({'code': 20000, 'data': agent.gold})
 
+
 @check_login
-#超级管理员删除代理
+# 超级管理员删除代理
 def delete_delegate(request):
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
@@ -643,6 +649,7 @@ def delete_delegate(request):
     else:
         pass
 
+
 @check_login
 def agent_fetch_slf(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -650,11 +657,12 @@ def agent_fetch_slf(request):
     dict = cache.get(x_token)
     level = dict["level"]
     agent_id = dict['id']
-    array = Agent_user.objects.filter(id = agent_id)
+    array = Agent_user.objects.filter(id=agent_id)
     player_data = list(array.values()[0:1])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
     return JsonResponse({'code': 20000, 'data': data})
+
 
 @check_login
 def change_password(request):
@@ -674,6 +682,7 @@ def change_password(request):
         state = 0
     data = {"state": state}
     return JsonResponse({'code': 20000, 'data': data})
+
 
 @check_login
 def delete_agent(request):
@@ -712,6 +721,7 @@ def upload(request):
         f.close()
         return JsonResponse({'code': 200, 'data': 'ok'})
 
+
 @csrf_exempt
 def goto_upload(request):
     if request.method == 'POST':
@@ -725,7 +735,7 @@ def goto_upload(request):
             arr = filename.split('.')
             str = arr[len(arr) - 1]
 
-            website = "" + ret  + "." + str
+            website = "" + ret + "." + str
             f = open(os.path.join('static/wb', website), 'wb')
             for chunk in img.chunks(chunk_size=1024):
                 f.write(chunk)
@@ -747,12 +757,11 @@ def goto_upload(request):
                 data["msg"] = "上传成功"
                 return render(request, 'errorview.html', {"data": data})
 
-
     uid = request.GET['uid']
 
     d = {}
     d['uid'] = uid
-    return render(request, 'upload.html',{"data": d})
+    return render(request, 'upload.html', {"data": d})
 
 
 @csrf_exempt
@@ -772,12 +781,12 @@ def show_img(request):
     else:
         data["msg"] = "错误：该代理没有上传二维码"
         data["title"] = "error"
-        return render(request, 'errorview.html',{"data": data})
+        return render(request, 'errorview.html', {"data": data})
+
 
 # 清理打款状态
 @check_login
 def clear_rebate(request):
-
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dic = cache.get(x_token)
@@ -796,7 +805,7 @@ def clear_rebate(request):
         first += value['firstLevel']
         second += value['secondLevel']
 
-     # 所有返利总金额
+        # 所有返利总金额
     total = first + second
 
     agent_info_record = json.loads(agent.agent_info_record)
@@ -816,7 +825,7 @@ def clear_rebate(request):
     # 本次结算的金额
     clear_dict['total'] = total - already_clear
 
-    if total - already_clear == 0 :
+    if total - already_clear == 0:
         return JsonResponse({'code': 20000, 'data': "成功"})
 
     clear_dict['first'] = first - already_clear_first
@@ -828,10 +837,10 @@ def clear_rebate(request):
     agent.save()
     return JsonResponse({'code': 20000, 'data': cal_income(agent_id)})
 
+
 # 打款记录
 # @check_login
 def rebate_record_from_admin(request):
-
     # x_token = request.META['HTTP_X_TOKEN']
     # print(x_token)
     # dic = cache.get(x_token)
@@ -862,8 +871,28 @@ def rebate_record_from_admin(request):
     agent_info_record["clearingRecord"] = rs
     agent_info_record["size"] = len(rs)
 
-    return JsonResponse({'code': 20000, 'data': agent_info_record ,})
+    return JsonResponse({'code': 20000, 'data': agent_info_record, })
 
+
+def get_room_info(request):
+    """
+    获取开房信息
+    :param request:
+    :return:
+    """
+    date = str(request.GET['date'])
+
+    date = date.split('T')[0]
+    print(date)
+    gameNumJson = {}
+    try:
+        log = Log_record.objects.get(id=date)
+        gameNumJson = json.loads(log.game_num_data)
+
+    except:
+        gameNumJson = {}
+
+    return JsonResponse({'code': 20000, 'data': gameNumJson})
 
 # def cal_income(agent_id):
 #     agent = Agent_user.objects.get(id=agent_id)
@@ -903,11 +932,3 @@ def rebate_record_from_admin(request):
 #         dic["secondLevel2"] = second_level2
 #
 #     return dic
-
-
-
-
-
-
-
-
