@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
-from django.db.models import Q
+
 
 TIME_OUT = 60 * 60 * 2
 
@@ -101,7 +101,7 @@ def agent_list(request):
         array = Agent_user.objects.all()
         if_show = True
     else:
-        array = Agent_user.objects.filter(Q(id=agent_id) | Q(parent_id=agent_id))
+        array = Agent_user.objects.filter(parent_id=agent_id)
     # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
     table_data = list(array.values()[index_left:index_right])
     total_page = len(table_data)
@@ -112,7 +112,7 @@ def agent_list(request):
 
     total_page = Agent_user.objects.count()
 
-    data = {'tableData': td, "ifShow": if_show, 'totalPage': total_page}
+    data = {'tableData': td, "ifShow" : if_show, 'totalPage': total_page}
 
     print(data)
 
@@ -170,9 +170,6 @@ def agent_charge_gold(request):
     num = int(str(param['gold_num']))
     isadd = None
 
-    if id == slf_id:
-        return JsonResponse({'code': 100, 'data': "不能给自己充值"})
-
     try:
         isadd = param['isadd']
     except:
@@ -223,7 +220,6 @@ def agent_charge_gold(request):
 
     return JsonResponse({'code': 20000, 'data': agent.gold})
 
-
 @check_login
 def agent_charge(request):
     x_token = request.META['HTTP_X_TOKEN']
@@ -236,12 +232,10 @@ def agent_charge(request):
     agent_user = t_data[0]
 
     """代理充值"""
-    param = json.loads(str(request.GET['chargeForm']))
+    param  = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = int(param['num'])
 
-    if id == slf_id:
-        return JsonResponse({'code': 100, 'data': "不能给自己充值"})
     #
     # if not ret:
     #     return JsonResponse({'code': 100, 'data': ' 下分失败'})
@@ -293,7 +287,6 @@ def agent_charge(request):
 
     return JsonResponse({'code': 20000, 'data': agent.money})
 
-
 @check_login
 def agent_upGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
@@ -331,12 +324,11 @@ def agent_upGoal(request):
     else:
         return JsonResponse({'code': 100, 'data': '失败'})
 
-
 @check_login
 def agent_downGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
     uid = int(param['userId'])
-    gold = int(param['goal'])
+    gold = int( param['goal'])
     user = Users.objects.get(id=uid)
     rpc_client = get_client()
     order = Order(userId=uid, num=-gold, type=ChargeType.gold, agentId=1)
@@ -407,12 +399,11 @@ def agent2vo(agent):
         'parentShareDeduct': agent['parent_share_deduct'],
         'total1': "¥" + str(dic["total1"]),
         'firstLevel1': "¥" + str(dic['firstLevel1']),
-        'secondLevel1': " ¥" + str(dic['secondLevel1']),
+        'secondLevel1':" ¥" + str(dic['secondLevel1']),
         'total2': "¥" + str(dic["total2"]),
         'firstLevel2': "¥" + str(dic['firstLevel2']),
         'secondLevel2': "¥" + str(dic['secondLevel2']),
     }
-
 
 def cal_income(agent_id):
     agent = Agent_user.objects.get(id=agent_id)
@@ -423,6 +414,7 @@ def cal_income(agent_id):
     second_level = 0
 
     for key, value in agent_info["everyDayCost"].items():
+
         first_level += value["firstLevel"]
         second_level += value["secondLevel"]
 
@@ -490,3 +482,8 @@ def create_agent_user(agent, request):
     user.save()
     user.invite_code = str(user.id)
     user.save()
+
+
+
+
+
