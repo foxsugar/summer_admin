@@ -84,5 +84,9 @@ urlpatterns = [
     # 官网
     url(r'^game$', officailWebViews.officail_web),
 
+
+    url(r'^changeAgent', officailWebViews.changeAgent),
+    url(r'^doChangeAgent', officailWebViews.doChangeAgent),
+
     # url(r'^startWx$', wxRo.start),
 ]
