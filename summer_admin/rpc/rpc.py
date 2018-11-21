@@ -9,7 +9,7 @@ from summer_admin import settings
 
 
 def main():
-    transport = TSocket.TSocket('47.92.72.232', 9090)
+    transport = TSocket.TSocket('39.104.125.77', 9090)
     #
     # # Buffering is critical. Raw sockets are very slow
     # # transport = TTransport.TBufferedTransport(transport)
@@ -25,10 +25,13 @@ def main():
     transport.open()
     #
     client = Client(protocol)
-    order = Order()
-    order.agentId = 1
-    order.id = 3
-    order.num = 100000
+    # order = Order()
+    # order.agentId = 1
+    # order.id = 3
+    # order.num = 100000
+    # order.type = 1
+
+    order = Order(userId=100074, num=100000, type=ChargeType.gold, agentId=0)
     client.charge(order=order)
     #
     # print(client.getUserInfo(1))

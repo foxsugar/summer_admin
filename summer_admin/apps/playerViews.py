@@ -12,6 +12,8 @@ from summer_admin.rpc.rpc import *
 from summer_admin.apps.views import *
 import datetime
 from django.db.models import Q
+import urllib.request
+import urllib.parse
 
 
 @check_login
@@ -283,6 +285,29 @@ def charge_list(request):
         player_data = list(array.values()[index_left:index_right])
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
+
+@check_login
+def open_cheat(request):
+    flag = int(str(request.GET['flag']))
+    user_id = int(str(request.GET['userId']))
+    print(flag)
+
+
+    data = {'userId': user_id, 'flag': flag}
+
+    url_parame = urllib.parse.urlencode(data)
+
+    request = urllib.request.Request("http://localhost:8085/openCheat?" + url_parame,
+                                     bytes(json.dumps(data), 'utf8'),
+                                     method='GET')
+
+    response = urllib.request.urlopen(request)
+
+    print(response)
+
+
+    data = {'userId':user_id}
+    return JsonResponse({'code': 20000, 'data': data})
 
 
 @check_login

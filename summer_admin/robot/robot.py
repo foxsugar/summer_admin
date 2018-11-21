@@ -7,6 +7,7 @@ import logging
 import redis
 from configparser import ConfigParser
 from summer_admin import settings
+import time
 
 # 日志
 logging.basicConfig(level=logging.DEBUG)
@@ -96,8 +97,6 @@ def send_message(account, password, message):
     return result
 
 
-
-
 def get_room_info(room_id):
     """
     获得房间信息
@@ -107,7 +106,7 @@ def get_room_info(room_id):
     # 登录 以管理账号登录
     login_code, s = __login(manager_account, manager_password)
 
-    result = json.dumps({'code':'-1'})
+    result = json.dumps({'code': '-1'})
     # 登录gate成功
     if login_code == 0:
         # 发送获得房间信息
@@ -191,6 +190,33 @@ def __send_msg(socket, msg):
     return bytearray(re)[4:].decode()
 
 
+def __send_msg_nolen(socket, msg):
+    """
+    发送消息
+    :param socket:
+    :param msg:
+    :return:
+    """
+
+    msg_str = msg
+    if type(msg) != 'str':
+        msg_str = json.dumps(msg)
+
+    msg_bytes = bytearray(msg_str, 'utf-8')
+
+    msg_bytes_len = len(msg_bytes)
+    # 数字转字符数组
+    msg_bytes_len_bytes = bytearray(struct.pack(">I", msg_bytes_len))
+    msg_result = msg_bytes_len_bytes + msg_bytes
+
+    socket.sendall(msg_bytes)
+
+    # re = socket.recv(3096)
+    # socket.close()
+
+    # return bytearray(re).decode()
+
+
 def __login(account, password):
     """
     登录
@@ -225,10 +251,20 @@ def __get_socket(host, port):
 
 
 def main():
-    to = r.get('user_token:1').decode()
-    print(to)
+    # to = r.get('user_token:1').decode()
+    # print(to)
     # create_room('888', '111', 1)
     # get_room_info('888', '111','565224')
+
+    s = __get_socket('127.0.0.1', 8999)
+
+    msg = {"msgId": "1", "data": 'hello world'}
+
+    while True:
+        __send_msg_nolen(s, msg)
+        time.sleep(1)
+
+    s.close()
 
 
 if __name__ == '__main__':
