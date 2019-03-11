@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^player/list$', playerViews.user_list),
     url(r'^player/memberlist$', playerViews.user_member_list),
     url(r'^player/listvip$', playerViews.user_list_vip),
+    url(r'^player/editVIP', playerViews.edit_vip),
     #搜索用户列表
     url(r'^player/fetchlist$', playerViews.search_player),
     url(r'^player/fetchplayer$', playerViews.fetchplayer),
@@ -89,6 +90,41 @@ urlpatterns = [
 
     url(r'^changeAgent', officailWebViews.changeAgent),
     url(r'^doChangeAgent', officailWebViews.doChangeAgent),
+
+    # 商品
+    url(r'^goods/list$', views.get_goods_list),
+    url(r'^goods/detail$', views.goods_detail),
+    url(r'^goods/save$', views.save_goods),
+    url(r'^goods/delete$', views.delete_goods),
+    url(r'^goods/delete_batch$', views.delete_batch_goods),
+    url(r'^goods/upload', views.upload),
+
+    # 商品种类
+    url(r'^goods_category/list$', views.get_goods_categories_list),
+
+    # 商品兑换记录
+    url(r'^goods_exchange_record/list$', views.goods_exchange_record_list),
+
+    # 公告
+    url(r'^notice/list$', views.notice_list),
+    url(r'^notice/detail$', views.notice_detail),
+    url(r'^notice/save$', views.notice_save),
+    url(r'^notice/delete$', views.notice_delete),
+
+    # 图文
+    url(r'^image_text/list$', views.image_text_list),
+    url(r'^image_text/detail$', views.image_text_detail),
+    url(r'^image_text/save$', views.image_text_save),
+    url(r'^image_text/delete$', views.image_text_delete),
+
+    # Every day share settings
+    url(r'^share$', views.set_share),
+    url(r'^share_detail$', views.share_detail),
+
+    # agent withdraw
+    url(r'^agent_withdraw/save$', views.agent_withdraw),
+    url(r'^agent_withdraw/list$', views.agent_withdraw_list),
+    url(r'^agent_withdraw/confirm$', views.agent_withdraw_confirm),
 
     # url(r'^startWx$', wxRo.start),
 ]

@@ -1,5 +1,8 @@
 import datetime
 import json
+import math
+import os
+import random
 import uuid
 
 from django.core.cache import cache
@@ -9,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
-
 
 TIME_OUT = 60 * 60 * 2
 
@@ -86,8 +88,6 @@ def agent_list(request):
     index_left = (page - 1) * size
     index_right = page * size
 
-    table_data = list(Agent_user.objects.values()[index_left:index_right])
-
     x_token = request.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)
@@ -98,10 +98,21 @@ def agent_list(request):
     if_show = False
     array = None
     if agent_name == 'admin':
-        array = Agent_user.objects.all()
+        if 'agent_type' in request.GET:
+            array = Agent_user.objects.filter(agent_type=request.GET['agent_type']).order_by('-id').all()
+            pass
+        else:
+            print('没有')
+            array = Agent_user.objects.order_by('-id').all()
+            pass
         if_show = True
     else:
-        array = Agent_user.objects.filter(parent_id=agent_id)
+        if 'agent_type' in request.GET:
+            array = Agent_user.objects.filter(parent_id=agent_id, agent_type=request.GET['agent_type']).order_by('-id')
+            pass
+        else:
+            array = Agent_user.objects.filter(parent_id=agent_id).order_by('-id')
+            pass
     # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
     table_data = list(array.values()[index_left:index_right])
     total_page = len(table_data)
@@ -112,7 +123,7 @@ def agent_list(request):
 
     total_page = Agent_user.objects.count()
 
-    data = {'tableData': td, "ifShow" : if_show, 'totalPage': total_page}
+    data = {'tableData': td, "ifShow": if_show, 'totalPage': total_page}
 
     print(data)
 
@@ -126,7 +137,7 @@ def agent(request):
     param['level'] = 0
     param['parentId'] = 0
     param['idCard'] = "000000000000000000"
-    param['area'] = '1'
+    # param['area'] = '1'
     param['address'] = '1'
     param['payDeduct'] = 0
     param['shareDeduct'] = 0
@@ -207,8 +218,6 @@ def agent_charge_gold(request):
     # int
     # AGENT = 7;
 
-
-
     level = dict["level"]
     agent_id = dict['id']
     agent_charge = Agent_charge()
@@ -219,6 +228,7 @@ def agent_charge_gold(request):
     agent_charge.save()
 
     return JsonResponse({'code': 20000, 'data': agent.gold})
+
 
 @check_login
 def agent_charge(request):
@@ -232,7 +242,7 @@ def agent_charge(request):
     agent_user = t_data[0]
 
     """代理充值"""
-    param  = json.loads(str(request.GET['chargeForm']))
+    param = json.loads(str(request.GET['chargeForm']))
     id = param['id']
     num = int(param['num'])
 
@@ -274,8 +284,6 @@ def agent_charge(request):
     # int
     # AGENT = 7;
 
-
-
     level = dict["level"]
     agent_id = dict['id']
     agent_charge = Agent_charge()
@@ -286,6 +294,7 @@ def agent_charge(request):
     agent_charge.save()
 
     return JsonResponse({'code': 20000, 'data': agent.money})
+
 
 @check_login
 def agent_upGoal(request):
@@ -324,11 +333,12 @@ def agent_upGoal(request):
     else:
         return JsonResponse({'code': 100, 'data': '失败'})
 
+
 @check_login
 def agent_downGoal(request):
     param = json.loads(str(request.GET['chargeForm']))
     uid = int(param['userId'])
-    gold = int( param['goal'])
+    gold = int(param['goal'])
     user = Users.objects.get(id=uid)
     rpc_client = get_client()
     order = Order(userId=uid, num=-gold, type=ChargeType.gold, agentId=1)
@@ -393,17 +403,19 @@ def agent2vo(agent):
         'address': agent['address'],
         'money': agent['money'],
         'gold': agent['gold'],
+        'agent_type': agent['agent_type'],
         'payDeduct': agent['pay_deduct'],
         'shareDeduct': agent['share_deduct'],
         'parentPayDeduct': agent['parent_pay_deduct'],
         'parentShareDeduct': agent['parent_share_deduct'],
         'total1': "¥" + str(dic["total1"]),
         'firstLevel1': "¥" + str(dic['firstLevel1']),
-        'secondLevel1':" ¥" + str(dic['secondLevel1']),
+        'secondLevel1': " ¥" + str(dic['secondLevel1']),
         'total2': "¥" + str(dic["total2"]),
         'firstLevel2': "¥" + str(dic['firstLevel2']),
         'secondLevel2': "¥" + str(dic['secondLevel2']),
     }
+
 
 def cal_income(agent_id):
     agent = Agent_user.objects.get(id=agent_id)
@@ -414,7 +426,6 @@ def cal_income(agent_id):
     second_level = 0
 
     for key, value in agent_info["everyDayCost"].items():
-
         first_level += value["firstLevel"]
         second_level += value["secondLevel"]
 
@@ -484,6 +495,380 @@ def create_agent_user(agent, request):
     user.save()
 
 
+# 商品分组列表
+def get_goods_categories_list(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    print(dict)
+    try:
+        categories = list(GoodsCategory.objects.all().values("id", "name"))
+        data = {"code": 20000, 'data': categories}
+        return JsonResponse(data)
+    except:
+        data = {"code": 50000}
+        return JsonResponse(data)
+        pass
 
 
+# 商品列表
+def get_goods_list(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    goods_list = list(Goods.objects.filter(enabled=True).all().order_by("-id").values(
+        "id",
+        "name",
+        "create_date",
+        "last_modified_date",
+        "logo",
+        "price",
+        "goods_category_id",
+        "gift_voucher"
+    )[index_left:index_right])
 
+    totalElements = Goods.objects.filter(enabled=True).all().count()
+    totalPages = math.ceil(totalElements / size)
+
+    for goods in goods_list:
+        id = goods["goods_category_id"]
+        goods_category_name = GoodsCategory.objects.get(id=id).name
+        goods["goods_category"] = {"name": goods_category_name}
+        pass
+    data = {"code": 20000, 'data': goods_list, "total_elements": totalElements,
+            "total_pages": totalPages}
+    return JsonResponse(data)
+
+
+# 商品详情
+def goods_detail(request):
+    try:
+        x_token = request.META['HTTP_X_TOKEN']
+        print(x_token)
+        dict = cache.get(x_token)
+        print(dict)
+        goods_id = int(request.GET["id"])
+        goods = Goods.objects.values("id",
+                                     "name",
+                                     "create_date",
+                                     "last_modified_date",
+                                     "logo",
+                                     "price",
+                                     "goods_category_id",
+                                     "gift_voucher").get(id=goods_id)
+        data = {"code": 20000, 'data': goods}
+        return JsonResponse(data)
+    except:
+        data = {"code": 50000}
+        return JsonResponse(data)
+        pass
+
+
+# 保存商品
+def save_goods(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    print(dict)
+    data = json.loads(request.body.decode())
+    goods = Goods()
+    if "id" in data:
+        goods = Goods.objects.get(id=data["id"])
+        pass
+    goods.name = data["name"]
+    goods.logo = data["logo"]
+    goods.goods_category_id = data["goods_category_id"]
+    goods.price = data["price"]
+    goods.gift_voucher = data["gift_voucher"]
+    goods.enabled = True
+    goods.save()
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# 删除商品
+def delete_goods(request):
+    try:
+        x_token = request.META['HTTP_X_TOKEN']
+        print(x_token)
+        dict = cache.get(x_token)
+        print(dict)
+        data = json.loads(request.body.decode())
+        goods = Goods.objects.get(id=data["id"])
+        goods.enabled = False
+        goods.save()
+        data = {"code": 20000, 'data': 1}
+        return JsonResponse(data)
+    except:
+        data = {"code": 50000}
+        return JsonResponse(data)
+        pass
+
+
+# 批量删除商品
+def delete_batch_goods(request):
+    try:
+        x_token = request.META['HTTP_X_TOKEN']
+        print(x_token)
+        dict = cache.get(x_token)
+        print(dict)
+        data = json.loads(request.body.decode())
+        for obj in data:
+            goods = Goods.objects.get(id=obj["id"])
+            goods.enabled = False
+            goods.save()
+            pass
+        data = {"code": 20000, 'data': 1}
+        return JsonResponse(data)
+    except:
+        data = {"code": 50000}
+        return JsonResponse(data)
+        pass
+
+
+# 商品兑换列表
+def goods_exchange_record_list(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    records = list(GoodsExchangeRecord.objects.all().order_by("-created_date").values(
+        "id",
+        "users_id",
+        "goods_id",
+        "id_card",
+        "location",
+        "status",
+        "phone",
+        "name",
+        "created_date"
+    )[index_left:index_right])
+    for record in records:
+        goods = Goods.objects.values("id",
+                                     "name",
+                                     "create_date",
+                                     "last_modified_date",
+                                     "logo",
+                                     "price",
+                                     "goods_category_id",
+                                     "gift_voucher").get(id=record["goods_id"])
+        record["goods"] = dict(goods)
+        users = Users.objects.values().get(id=record["users_id"])
+        record["users"] = dict(users)
+        pass
+    data = {"code": 20000, 'data': records}
+    return JsonResponse(data)
+
+
+# 公告列表
+def notice_list(request):
+    try:
+        page = int(str(request.GET['page']))
+        size = int(str(request.GET['size']))
+        index_left = (page - 1) * size
+        index_right = page * size
+        objects = list(
+            Notice.objects.filter(enabled=True).all().order_by("-created_date").values('id', 'content', 'created_date')[
+            index_left:index_right])
+        totalElements = Notice.objects.filter(enabled=True).all().count()
+        totalPages = math.ceil(totalElements / size)
+        data = {"code": 20000, 'data': objects, "total_elements": totalElements,
+                "total_pages": totalPages}
+        return JsonResponse(data)
+    except:
+        data = {"code": 50000}
+        return JsonResponse(data)
+        pass
+
+
+# 公告详情
+def notice_detail(request):
+    id = int(str(request.GET['id']))
+    object = dict(Notice.objects.values('id', 'content', 'created_date').get(id=id))
+    data = {"code": 20000, 'data': object}
+    return JsonResponse(data)
+
+
+# 公告保存
+def notice_save(request):
+    data = json.loads(request.body.decode())
+    print(data)
+    obj = Notice()
+    if "id" in data:
+        obj = Notice.objects.get(id=data["id"])
+        pass
+    obj.content = data["content"]
+    obj.enabled = True
+    obj.save()
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# 公告删除
+def notice_delete(request):
+    data = json.loads(request.body.decode())
+    print(data)
+    obj = Notice.objects.get(id=data["id"])
+    obj.enabled = False
+    obj.save()
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# 图文列表
+def image_text_list(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    if dict['level'] == 1:
+        objects = list(
+            ImageText.objects.filter(enabled=True).all().order_by("-created_date").values('id', 'content', 'url',
+                                                                                          'created_date')[
+            index_left:index_right])
+        pass
+    else:
+        objects = list(
+            ImageText.objects.filter(enabled=True, agent_enabled=True).all().order_by("-created_date").values('id',
+                                                                                                              'content',
+                                                                                                              'url',
+                                                                                                              'created_date')[
+            index_left:index_right])
+        pass
+    totalElements = ImageText.objects.filter(enabled=True).all().count()
+    totalPages = math.ceil(totalElements / size)
+    data = {"code": 20000, 'data': objects, "total_elements": totalElements,
+            "total_pages": totalPages}
+    return JsonResponse(data)
+
+
+# 图文详情
+def image_text_detail(request):
+    id = int(str(request.GET['id']))
+    object = dict(ImageText.objects.values('id', 'content', 'url', 'created_date').get(id=id))
+    data = {"code": 20000, 'data': object}
+    return JsonResponse(data)
+
+
+# 图文保存
+def image_text_save(request):
+    data = json.loads(request.body.decode())
+    obj = ImageText()
+    if "id" in data:
+        obj = ImageText.objects.get(id=data["id"])
+        pass
+    obj.content = data["content"]
+    obj.enabled = True
+    obj.save()
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# 图文删除
+def image_text_delete(request):
+    data = json.loads(request.body.decode())
+    obj = ImageText.objects.get(id=data["id"])
+    obj.enabled = False
+    obj.save()
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# Every day share settings
+def set_share(request):
+    data = json.loads(request.body.decode())
+    print(data)
+    file = open('share.json', 'w')
+    file.write(json.dumps(data))
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+def share_detail(request):
+    file = open('share.json', 'r')
+    lines = file.readlines()
+    obj = {}
+    for line in lines:
+        obj = line
+        break
+    data = {"code": 20000, 'data': json.loads(obj)}
+    return JsonResponse(data)
+
+
+def agent_withdraw(request):
+    data = json.loads(request.body.decode())
+    agentWithdraw = AgentWithdraw()
+    agentWithdraw.money = data['money']
+    agentWithdraw.name = data['name']
+    agentWithdraw.number = data['number']
+    agentWithdraw.phone = data['phone']
+    agentWithdraw.type = data['type']
+    agentWithdraw.agent_user_id = data['agent_user_id']
+    agentWithdraw.enabled = 0
+    agentWithdraw.save()
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# 提现申请列表
+def agent_withdraw_list(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+
+    objects = list(AgentWithdraw.objects.all().order_by("-created_date").values(
+        'id',
+        'created_date',
+        'enabled',
+        'money',
+        'name',
+        'number',
+        'phone',
+        'type',
+        'agent_user_id')[index_left:index_right])
+
+    totalElements = AgentWithdraw.objects.all().count()
+    totalPages = math.ceil(totalElements / size)
+
+    data = {"code": 20000, 'data': objects, "total_elements": totalElements,
+            "total_pages": totalPages}
+    return JsonResponse(data, safe=False)
+
+
+# 确认提现
+def agent_withdraw_confirm(request):
+    data = json.loads(request.body.decode())
+    agentWithdraw = AgentWithdraw.objects.get(id=data['id'])
+    agentWithdraw.enabled = 1
+    agentWithdraw.save()
+
+    user_id = agentWithdraw.agent_user_id
+    agent_user = Agent_user.objects.get(id=user_id)
+    agent_user.gold = agent_user.gold - float(agentWithdraw.money)
+    agent_user.save()
+
+    data = {"code": 20000, 'data': 1}
+    return JsonResponse(data)
+
+
+# 图片上传
+def upload(request):
+    if request.method == 'POST':
+        file_obj = request.FILES.get('file')
+        filename = ''.join(str(random.choice(range(20))) for _ in range(20)) + '.jpg'
+        print(filename)
+        path = os.path.join('/usr/local/nginx/html/upload', filename)
+        # path = os.path.join('C:\\Users\\Administrator\\IdeaProjects\\summer-admin\\static\\upload', filename)
+        print(path)
+        f = open(path, 'wb')
+        print(file_obj, type(file_obj))
+        for chunk in file_obj.chunks():
+            f.write(chunk)
+        f.close()
+        data = {"code": 20000, 'data': 'upload/%s' % filename}
+        return JsonResponse(data)

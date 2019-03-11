@@ -1,19 +1,12 @@
-import imghdr
-import json
-import random
-
 import os
-from django.http import JsonResponse
-from django.core.cache import cache
+import random
+import urllib.parse
+import urllib.request
+
+from django.db.models import Q
 from django.shortcuts import render
 
-from summer_admin.apps.models import Users, Charge, Agent_charge
-from summer_admin.rpc.rpc import *
 from summer_admin.apps.views import *
-import datetime
-from django.db.models import Q
-import urllib.request
-import urllib.parse
 
 
 @check_login
@@ -60,6 +53,67 @@ def change_user_delegate(request):
         return JsonResponse({'code': 20000, 'data': aid})
     else:
         return JsonResponse({'code': 1000, 'data': '充值失败'})
+
+
+@check_login
+def edit_vip(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dict = cache.get(x_token)
+    level = dict["level"]
+    # 总代理id
+    agent_id = dict['id']
+    # 需要修改的用户id
+    dic = json.loads(str(request.GET['vipForm']))
+    pid = dic['userId']
+    # 需要修改的代理id
+    vip = int(dic['vip'])
+    # if agent_id != 1:
+    #     return JsonResponse({'code': 101, 'data': '没有权限'})
+
+    # if aid == 0:
+    #     user = Users.objects.get(id=pid)
+    #     # user.referee = 0
+    #     # user.save()ź
+    #     rpc_client = get_client()
+    #     rtn = rpc_client.bindReferee(pid, 0)
+    #     if rtn == 0:
+    #         return JsonResponse({'code': 20000, 'data': aid})
+    #     else:
+    #         return JsonResponse({'code': 100, 'data': '失败'})
+
+    # Task.object.get(user_id=1)
+    # array = Agent_user.objects.filter(id=aid)
+    # entry_list = list(array.all())
+    # leng = len(entry_list)
+    # if leng == 0:
+    #     return JsonResponse({'code': 100, 'data': '不存在该代理'})
+    #
+    # agent = Agent_user.objects.get(id=aid)
+    # user = Users.objects.get(id=pid)
+    # user.referee = agent.invite_code
+    # user.save()
+    # rpc_client = get_client()
+    # rtn = rpc_client.bindReferee(pid, int(agent.invite_code))
+
+    data = {'userId': pid, 'vip': vip}
+
+    url_param = urllib.parse.urlencode(data)
+
+    try:
+        request = urllib.request.Request("http://localhost:8085/editVIP?" + url_param,
+                                         bytes(json.dumps(data), 'utf8'),
+                                         method='GET')
+
+        print(request.data)
+        response = urllib.request.urlopen(request)
+        the_page = response.read().decode()
+        logging.debug("登录账号服务器返回: " + the_page)
+
+    except Exception:
+        return JsonResponse({'code': 1000, 'data': '修改失败'})
+    else:
+        return JsonResponse({'code': 20000, 'data': vip})
 
 
 @check_login
@@ -286,12 +340,12 @@ def charge_list(request):
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
+
 @check_login
 def open_cheat(request):
     flag = int(str(request.GET['flag']))
     user_id = int(str(request.GET['userId']))
     print(flag)
-
 
     data = {'userId': user_id, 'flag': flag}
 
@@ -305,8 +359,7 @@ def open_cheat(request):
 
     print(response)
 
-
-    data = {'userId':user_id}
+    data = {'userId': user_id}
     return JsonResponse({'code': 20000, 'data': data})
 
 
@@ -434,7 +487,6 @@ def fetchplayer(request):
 
     # config.read(settings.BASE_DIR + '/config.conf')
     # gameCategory = config.get('robot', 'gameCategory')
-
 
     array = Users.objects.filter(id=player_id)
     player_data = list(array.values()[0:1])
@@ -579,12 +631,12 @@ def serarch_player_list_vip(request):
     size = int(str(request.GET['limit']))
     index_left = (page - 1) * size
     index_right = page * size
-    title = None
+    title = ""
 
     try:
         title = str(request.GET['title'])
     except:
-        title = ""
+        pass
     # user.object.filter(Q(question__startswith='Who') | Q(question__startswith='What'))
     array = Users.objects.filter(username__contains=title, vip__gt=0)
     player_data = list(array.values()[index_left:index_right])
@@ -599,15 +651,26 @@ def fetch_delegates(request):
     size = int(str(request.GET['limit']))
     index_left = (page - 1) * size
     index_right = page * size
-    title = None
+    title = ""
+    agent_type = -1
+    area = ""
 
     try:
         title = str(request.GET['title'])
     except:
-        title = ""
+        pass
 
+    try:
+        agent_type = int(str(request.GET['agent_type']))
+    except:
+        pass
+
+    try:
+        area = str(request.GET['area'])
+    except:
+        pass
+    print("agent_type:", agent_type)
     x_token = request.META['HTTP_X_TOKEN']
-    print(x_token)
     dict = cache.get(x_token)
     level = dict["level"]
     agent_id = dict['id']
@@ -616,9 +679,20 @@ def fetch_delegates(request):
     array = None
 
     if agent_name == 'admin':
-        array = Agent_user.objects.filter(username__contains=title)
+        if agent_type != -1:
+            array = Agent_user.objects.filter(username__contains=title, area__contains=area, agent_type=agent_type)
+            pass
+        else:
+            array = Agent_user.objects.filter(username__contains=title, area__contains=area)
+            pass
     else:
-        array = Agent_user.objects.filter(username__contains=title, parent_id=agent_id)
+        if agent_type != "":
+            array = Agent_user.objects.filter(username__contains=title, area__contains=area, agent_type=agent_type,
+                                              parent_id=agent_id)
+            pass
+        else:
+            array = Agent_user.objects.filter(username__contains=title, area__contains=area, parent_id=agent_id)
+            pass
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}
@@ -629,7 +703,6 @@ def fetch_delegates(request):
 @check_login
 def cash_gold(request):
     x_token = request.META['HTTP_X_TOKEN']
-    print(x_token)
     dict = cache.get(x_token)
     level = dict["level"]
     agent_id = dict['id']
