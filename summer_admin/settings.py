@@ -122,7 +122,7 @@ WSGI_APPLICATION = 'summer_admin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'summer_51',
+        'NAME': 'summer',
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': '127.0.0.1',
