@@ -23,8 +23,6 @@ class Agent_user(models.Model):
     parent_share_deduct = models.FloatField('上级分享提成', default=0)
     agent_info = models.TextField('代理返利信息', max_length=255, default='')
     agent_info_record = models.TextField('代理返利记录', default='')
-    # 0:打折代理 1:返利代理
-    agent_type = models.IntegerField('代理类型', default=0)
 
     class Meta:
         db_table = 'agent_user'
@@ -61,7 +59,6 @@ class Users(models.Model):
         verbose_name_plural = '用户'
         managed = False
 
-
 class Agent_charge(models.Model):
     id = models.AutoField(primary_key=True)
     agent_id = models.IntegerField('充值id', default=0)
@@ -93,13 +90,11 @@ class Constant(models.Model):
     access_code = models.CharField(max_length=255, default='')
     income1 = models.IntegerField(default=0)
     income2 = models.IntegerField(default=0)
-
     class Meta:
         db_table = 'constant'
         verbose_name = '常量表'
         verbose_name_plural = '常量表'
         managed = False
-
 
 class Charge(models.Model):
     order_id = models.CharField(max_length=255, primary_key=True)
@@ -120,7 +115,6 @@ class Charge(models.Model):
     username = models.CharField(max_length=255, default='')
     transaction_id = models.CharField(max_length=255, default='')
     finish_time = models.CharField(max_length=255, default='')
-
     class Meta:
         db_table = 'charge'
         verbose_name = '充值记录表'
@@ -135,123 +129,8 @@ class Log_record(models.Model):
     gold_room_income_data = models.TextField(default='')
     online_data = models.TextField(default='')
     log_info = models.TextField(default='')
-
     class Meta:
         db_table = 'log_record'
         verbose_name = 'log记录表'
         verbose_name_plural = 'log记录表'
         managed = False
-
-
-class GoodsCategory(models.Model):
-    id = models.AutoField(primary_key=True)
-    create_date = models.DateTimeField(auto_now=True)
-    last_modified_date = models.DateTimeField(auto_now=True)
-    enabled = models.BooleanField(default=True)
-    name = models.TextField(default='')
-
-    class Meta:
-        db_table = 'goods_category'
-        verbose_name = '商品种类表'
-        verbose_name_plural = '商品种类表'
-        managed = False
-
-
-class Goods(models.Model):
-    id = models.AutoField(primary_key=True)
-    create_date = models.DateTimeField(auto_now_add=True)
-    last_modified_date = models.DateTimeField(auto_now_add=True)
-    enabled = models.BooleanField(default=True)
-    name = models.TextField(default='')
-    gift_voucher = models.FloatField(default=0)
-    logo = models.TextField(default='')
-    price = models.FloatField(default=0)
-    goods_category_id = models.IntegerField(default=0)
-
-    class Meta:
-        db_table = 'goods'
-        verbose_name = '商品表'
-        verbose_name_plural = '商品表'
-        managed = False
-
-
-class GoodsExchangeRecord(models.Model):
-    id = models.AutoField(primary_key=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    last_modified_date = models.DateTimeField(auto_now_add=True)
-    users_id = models.IntegerField(default=0)
-    goods_id = models.IntegerField(default=0)
-    id_card = models.CharField(default='', max_length=255)
-    location = models.CharField(default='', max_length=255)
-    status = models.IntegerField(default=0)
-    phone = models.CharField(default='', max_length=255)
-    name = models.CharField(default='', max_length=255)
-
-    class Meta:
-        db_table = 'goods_exchange_record'
-        verbose_name = '商品兑换记录表'
-        verbose_name_plural = '商品兑换记录表'
-        managed = False
-
-
-class Notice(models.Model):
-    id = models.AutoField(primary_key=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    last_modified_date = models.DateTimeField(auto_now_add=True)
-    content = models.TextField(default='')
-    enabled = models.BooleanField(default=True)
-
-    class Meta:
-        db_table = 'notice'
-        verbose_name = '公告表'
-        verbose_name_plural = '公告表'
-
-
-class ImageText(models.Model):
-    id = models.AutoField(primary_key=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    last_modified_date = models.DateTimeField(auto_now_add=True)
-    content = models.TextField(default='')
-    url = models.TextField(default='')
-    enabled = models.BooleanField(default=True)
-    agent_enabled = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = 'image_text'
-        verbose_name = '图文表'
-        verbose_name_plural = '图文表'
-
-
-class AgentWithdraw(models.Model):
-    id = models.AutoField(primary_key=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    last_modified_date = models.DateTimeField(auto_now_add=True)
-    enabled = models.IntegerField(default=0)
-    money = models.TextField(default='')
-    name = models.TextField(default='')
-    number = models.TextField(default='')
-    phone = models.TextField(default='')
-    # 0.银行卡 1.支付宝 2.微信
-    type = models.IntegerField(default=0)
-    agent_user_id = models.BigIntegerField(default=0)
-
-    class Meta:
-        db_table = 'agent_withdraw'
-        verbose_name = '提现记录表'
-        verbose_name_plural = '提现记录表'
-
-
-class Wechat_Agent_Apply(models.Model):
-    id = models.AutoField(primary_key=True)
-    union_id = models.TextField(default='')
-    username = models.TextField(default='')
-    password = models.TextField(default='')
-    real_name = models.TextField(default='')
-    area = models.TextField(default='')
-    agent_type = models.IntegerField(default=0)
-    audited = models.IntegerField(default=0)
-
-    class Meta:
-        db_table = 'wechat_agent_apply'
-        verbose_name = '公众号代理申请记录表'
-        verbose_name_plural = '公众号代理申请记录表'

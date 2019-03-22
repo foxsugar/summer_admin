@@ -15,19 +15,22 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-
-from summer_admin.apps import officailWebViews
+from summer_admin.apps import views
 from summer_admin.apps import playerViews
 from summer_admin.apps import robotViews
-from summer_admin.apps import views
+from summer_admin.apps import officailWebViews
+
+
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # 登录
+    #登录
     url(r'^user/login$', views.login),
     url(r'^user/info$', views.get_info),
     url(r'^user/changepwd$', playerViews.change_password),
-    # 代理
+    #代理
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
@@ -43,9 +46,7 @@ urlpatterns = [
     url(r'^agent/clearRebate$', playerViews.clear_rebate),
     url(r'^agent/demo$', playerViews.cal_income),
     url(r'^agent/rebateDetail$', playerViews.rebate_record_from_admin),
-    url(r'^agent/changeAgentType', playerViews.change_agent_type),
-
-    # 搜索代理充值列表
+    #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
     url(r'^agent/fetchgoldlist$', playerViews.search_agent_record),
     url(r'^player/charge$', playerViews.charge),
@@ -54,7 +55,6 @@ urlpatterns = [
     url(r'^player/list$', playerViews.user_list),
     url(r'^player/memberlist$', playerViews.user_member_list),
     url(r'^player/listvip$', playerViews.user_list_vip),
-    url(r'^player/editVIP', playerViews.edit_vip),
     #搜索用户列表
     url(r'^player/fetchlist$', playerViews.search_player),
     url(r'^player/fetchplayer$', playerViews.fetchplayer),
@@ -63,6 +63,8 @@ urlpatterns = [
 
     url(r'^player/fetchplayersvip$', playerViews.serarch_player_list_vip),
     url(r'^player/chargelist$', playerViews.charge_list),
+    url(r'^player/openCheat', playerViews.open_cheat),
+
     url(r'^upload$', playerViews.upload),
 
     url(r'^user/logout$', playerViews.logout),
@@ -73,58 +75,20 @@ urlpatterns = [
     # 服务器信息
     url(r'^constant$', views.constant),
     url(r'^constant/update$', views.constant_update),
-    # 机器人
+    #机器人
     url(r'^robot/createroom$', robotViews.create_room),
     url(r'^robot/getRoomInfo$', robotViews.get_room_info),
     url(r'^robot/sendMessage', robotViews.send_message),
 
-    # 房间信息
+    #房间信息
     url(r'^room/getInfo', playerViews.get_room_info),
 
     # 官网
     url(r'^game$', officailWebViews.officail_web),
 
+
     url(r'^changeAgent', officailWebViews.changeAgent),
     url(r'^doChangeAgent', officailWebViews.doChangeAgent),
 
     # url(r'^startWx$', wxRo.start),
-
-    # 商品
-    url(r'^goods/list$', views.get_goods_list),
-    url(r'^goods/detail$', views.goods_detail),
-    url(r'^goods/save$', views.save_goods),
-    url(r'^goods/delete$', views.delete_goods),
-    url(r'^goods/delete_batch$', views.delete_batch_goods),
-    url(r'^goods/upload', views.upload),
-
-    # 商品种类
-    url(r'^goods_category/list$', views.get_goods_categories_list),
-
-    # 商品兑换记录
-    url(r'^goods_exchange_record/list$', views.goods_exchange_record_list),
-
-    # 公告
-    url(r'^notice/list$', views.notice_list),
-    url(r'^notice/detail$', views.notice_detail),
-    url(r'^notice/save$', views.notice_save),
-    url(r'^notice/delete$', views.notice_delete),
-
-    # 图文
-    url(r'^image_text/list$', views.image_text_list),
-    url(r'^image_text/detail$', views.image_text_detail),
-    url(r'^image_text/save$', views.image_text_save),
-    url(r'^image_text/delete$', views.image_text_delete),
-
-    # Every day share settings
-    url(r'^share$', views.set_share),
-    url(r'^share_detail$', views.share_detail),
-
-    # agent withdraw
-    url(r'^agent_withdraw/save$', views.agent_withdraw),
-    url(r'^agent_withdraw/list$', views.agent_withdraw_list),
-    url(r'^agent_withdraw/confirm$', views.agent_withdraw_confirm),
-
-    # 代理申请
-    url(r'^agent/apply/list$', views.agent_apply_list),
-    url(r'^agent/apply/agree$', views.agent_apply_agree),
 ]
