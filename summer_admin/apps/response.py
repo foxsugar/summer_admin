@@ -1,4 +1,3 @@
-
 class SuccessMsg:
     code = 0
 

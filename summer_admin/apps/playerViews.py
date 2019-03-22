@@ -972,6 +972,27 @@ def rebate_record_from_admin(request):
     return JsonResponse({'code': 20000, 'data': agent_info_record, })
 
 
+
+def change_agent_type(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dic = cache.get(x_token)
+    agent_name = dic['username']
+    if agent_name != 'admin':
+        return JsonResponse({'code': 100, 'data': '没有权限'})
+
+    param = json.loads(str(request.GET['changeForm']))
+    agent_id = int(str(param['id']))
+    agent_type = int(str(param['type']))
+    agent = Agent_user.objects.get(id=agent_id)
+    agent.agent_type = agent_type
+    agent.save()
+
+    d = {'agent_type': agent.agent_type}
+
+    return JsonResponse({'code': 20000, 'data': d })
+
+
 def get_room_info(request):
     """
     获取开房信息

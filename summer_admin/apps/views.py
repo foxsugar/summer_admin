@@ -6,6 +6,7 @@ import random
 import uuid
 
 from django.core.cache import cache
+from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -465,9 +466,10 @@ def create_agent_user(agent, request):
     """创建代理"""
     user = Agent_user()
     data = agent
+    print(data)
     user.username = data['username']
     user.password = data['password']
-    user.invite_code = data['invite_code']
+    user.invite_code = 0
     user.real_name = data['realName']
     user.level = data['level']
     user.parent_id = agent_id
@@ -872,3 +874,74 @@ def upload(request):
         f.close()
         data = {"code": 20000, 'data': 'upload/%s' % filename}
         return JsonResponse(data)
+
+
+# 代理申请列表
+@check_login
+def agent_apply_list(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    objects = list(Wechat_Agent_Apply.objects.all().order_by("-id").values(
+        'id',
+        'union_id',
+        'username',
+        'password',
+        'real_name',
+        'area',
+        'agent_type',
+        'audited'
+    )[index_left:index_right])
+    totalElements = Wechat_Agent_Apply.objects.all().count()
+    totalPages = math.ceil(totalElements / size)
+    data = {"code": 20000, 'data': objects, "total_elements": totalElements,
+            "total_pages": totalPages}
+    return JsonResponse(data)
+
+
+# 同意代理申请
+def agent_apply_agree(request):
+    try:
+        with transaction.atomic():
+            unionId = str(request.GET['union_id'])
+            wechat_Agent_Apply = Wechat_Agent_Apply.objects.values(
+                'id',
+                'union_id',
+                'username',
+                'password',
+                'real_name',
+                'area',
+                'agent_type',
+                'audited'
+            ).get(union_id=unionId)
+            param = dict(wechat_Agent_Apply)
+            param['level'] = 0
+            param['parentId'] = 1
+            param['idCard'] = "000000000000000000"
+            param['address'] = '1'
+            param['payDeduct'] = 0
+            param['shareDeduct'] = 0
+            param['parentPayDeduct'] = 0
+            param['parentShareDeduct'] = 0
+            param['email'] = '1@qq.com'
+            param['cell'] = '11111111111'
+            param['realName'] = param['real_name']
+            method = request.method
+            array = Agent_user.objects.filter(username=param['username'])
+            if len(array) != 0:
+                return JsonResponse({'code': 100, 'data': '该用户名已存在'})
+            # 添加代理
+            create_agent_user(param, request)
+            print(wechat_Agent_Apply)
+            agent_Apply = Wechat_Agent_Apply.objects.get(id=param['id'])
+            agent_Apply.audited = 1
+            agent_Apply.save()
+            users = Users.objects.get(unionId=unionId)
+            users.vip = param['agent_type']
+            users.save()
+            return JsonResponse({'code': 20000, 'data': 1})
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'code': 500})

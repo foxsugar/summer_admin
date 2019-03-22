@@ -15,22 +15,19 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from summer_admin.apps import views
+
+from summer_admin.apps import officailWebViews
 from summer_admin.apps import playerViews
 from summer_admin.apps import robotViews
-from summer_admin.apps import officailWebViews
-
-
-
-
+from summer_admin.apps import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    #登录
+    # 登录
     url(r'^user/login$', views.login),
     url(r'^user/info$', views.get_info),
     url(r'^user/changepwd$', playerViews.change_password),
-    #代理
+    # 代理
     url(r'^agent/list$', views.agent_list),
     url(r'^agent$', views.agent),
     url(r'^agent/charge$', views.agent_charge),
@@ -46,7 +43,9 @@ urlpatterns = [
     url(r'^agent/clearRebate$', playerViews.clear_rebate),
     url(r'^agent/demo$', playerViews.cal_income),
     url(r'^agent/rebateDetail$', playerViews.rebate_record_from_admin),
-    #搜索代理充值列表
+    url(r'^agent/changeAgentType', playerViews.change_agent_type),
+
+    # 搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
     url(r'^agent/fetchgoldlist$', playerViews.search_agent_record),
     url(r'^player/charge$', playerViews.charge),
@@ -76,20 +75,21 @@ urlpatterns = [
     # 服务器信息
     url(r'^constant$', views.constant),
     url(r'^constant/update$', views.constant_update),
-    #机器人
+    # 机器人
     url(r'^robot/createroom$', robotViews.create_room),
     url(r'^robot/getRoomInfo$', robotViews.get_room_info),
     url(r'^robot/sendMessage', robotViews.send_message),
 
-    #房间信息
+    # 房间信息
     url(r'^room/getInfo', playerViews.get_room_info),
 
     # 官网
     url(r'^game$', officailWebViews.officail_web),
 
-
     url(r'^changeAgent', officailWebViews.changeAgent),
     url(r'^doChangeAgent', officailWebViews.doChangeAgent),
+
+    # url(r'^startWx$', wxRo.start),
 
     # 商品
     url(r'^goods/list$', views.get_goods_list),
@@ -126,5 +126,7 @@ urlpatterns = [
     url(r'^agent_withdraw/list$', views.agent_withdraw_list),
     url(r'^agent_withdraw/confirm$', views.agent_withdraw_confirm),
 
-    # url(r'^startWx$', wxRo.start),
+    # 代理申请
+    url(r'^agent/apply/list$', views.agent_apply_list),
+    url(r'^agent/apply/agree$', views.agent_apply_agree),
 ]

@@ -239,3 +239,19 @@ class AgentWithdraw(models.Model):
         db_table = 'agent_withdraw'
         verbose_name = '提现记录表'
         verbose_name_plural = '提现记录表'
+
+
+class Wechat_Agent_Apply(models.Model):
+    id = models.AutoField(primary_key=True)
+    union_id = models.TextField(default='')
+    username = models.TextField(default='')
+    password = models.TextField(default='')
+    real_name = models.TextField(default='')
+    area = models.TextField(default='')
+    agent_type = models.IntegerField(default=0)
+    audited = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'wechat_agent_apply'
+        verbose_name = '公众号代理申请记录表'
+        verbose_name_plural = '公众号代理申请记录表'
