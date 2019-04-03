@@ -23,6 +23,8 @@ class Agent_user(models.Model):
     parent_share_deduct = models.FloatField('上级分享提成', default=0)
     agent_info = models.TextField('代理返利信息', max_length=255, default='')
     agent_info_record = models.TextField('代理返利记录', default='')
+    # 0:打折代理 1:返利代理
+    agent_type = models.IntegerField('代理类型', default=0)
 
     class Meta:
         db_table = 'agent_user'
