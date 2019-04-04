@@ -114,7 +114,7 @@ def agent_list(request):
         else:
             array = Agent_user.objects.filter(parent_id=agent_id).order_by('-id')
             pass
-    # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=a)))
+    array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=agent_id)))
     table_data = list(array.values()[index_left:index_right])
     total_page = len(table_data)
 
