@@ -9,6 +9,7 @@ from django.core.cache import cache
 from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
@@ -109,11 +110,13 @@ def agent_list(request):
         if_show = True
     else:
         if 'agent_type' in request.GET:
-            array = Agent_user.objects.filter(parent_id=agent_id, agent_type=request.GET['agent_type'],id=agent_id).order_by('-id')
+            array = Agent_user.objects.filter(parent_id=agent_id, agent_type=request.GET['agent_type']).order_by('-id')
             pass
         else:
-            array = Agent_user.objects.filter(parent_id=agent_id,id=agent_id).order_by('-id')
+            array = Agent_user.objects.filter(Q(parent_id=agent_id)|Q(id=agent_id)).order_by('-id')
             pass
+
+
     # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=agent_id)))
     table_data = list(array.values()[index_left:index_right])
     total_page = len(table_data)
@@ -250,6 +253,9 @@ def agent_charge(request):
     #
     # if not ret:
     #     return JsonResponse({'code': 100, 'data': ' 下分失败'})
+
+    if slf_id == id:
+        return JsonResponse({'code': 100, 'data': '不能给自己充值'})
 
     if num >= 0:
         str1 = "充值失败"

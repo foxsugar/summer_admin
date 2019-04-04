@@ -25,6 +25,7 @@ def send_message(request):
     account = str(request.GET['account'])
     password = str(request.GET['password'])
     message = request.GET['message']
+    print(message)
     rtn = robot.send_message(account, password, message)
     print(rtn)
     return JsonResponse(json.loads(rtn))
