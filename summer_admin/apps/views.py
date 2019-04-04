@@ -109,12 +109,12 @@ def agent_list(request):
         if_show = True
     else:
         if 'agent_type' in request.GET:
-            array = Agent_user.objects.filter(parent_id=agent_id, agent_type=request.GET['agent_type']).order_by('-id')
+            array = Agent_user.objects.filter(parent_id=agent_id, agent_type=request.GET['agent_type'],id=agent_id).order_by('-id')
             pass
         else:
-            array = Agent_user.objects.filter(parent_id=agent_id).order_by('-id')
+            array = Agent_user.objects.filter(parent_id=agent_id,id=agent_id).order_by('-id')
             pass
-    array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=agent_id)))
+    # array = Agent_user.objects.filter((Agent_user(parent_id=agent_id) | Agent_user(id=agent_id)))
     table_data = list(array.values()[index_left:index_right])
     total_page = len(table_data)
 
