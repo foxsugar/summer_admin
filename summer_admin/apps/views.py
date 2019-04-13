@@ -133,6 +133,28 @@ def agent_list(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
+#创建玩家
+def create_users(request):
+    param = json.loads(str(request.GET['usersForm']))
+    users = Users()
+    users.account = param["account"]
+    users.image = param['image']
+    users.open_id = param['openId']
+    users.password =param['password']
+    users.sex = param['sex']
+    users.username = param['username']
+    users.vip = param['vip']
+
+    js = {"name": None, "idCard": None, "playGameTime": 0, "shareWXCount": 0, "chargeGoldNum": 0, "lastShareTime": 0,
+     "chargeMoneyNum": 0, "hasAppleCharge": None, "inputAccessCode": None, "totalPlayGameNumber": 0}
+    users.user_info = json.dumps(js)
+    #notnull 的字段 默认都给0
+    users.cash = 0
+    users.gold = 0
+    users.money = 0
+    users.rebate = 0
+    users.save()
+    return JsonResponse({'code': 20000, 'data': param})
 
 @check_login
 def agent(request):

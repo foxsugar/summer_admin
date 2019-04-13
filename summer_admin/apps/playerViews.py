@@ -207,6 +207,10 @@ def user_list(request):
         index_right = page * size
         # user_data = list(Users.objects.values()[page:page_right])
         user_data = list(Users.objects.values()[index_left:index_right])
+
+        # for us in user_data:
+        #     us["image"] = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=253777390,947512827&fm=23&gp=0.jpg"
+
         total_page = Users.objects.count()
         data = {'tableData': user_data, 'totalPage': total_page, "show": True}
         return JsonResponse({'code': 20000, 'data': data})
