@@ -430,13 +430,75 @@ def constant(request):
     return JsonResponse({'code': 20000, 'data': con})
 
 @transaction.atomic()
+def constant_change_msg(request):
+
+    value = request.GET['value']
+    pxId = str(request.GET['pxId'])
+    kk = str(request.GET['msg'])
+
+    con = Constant.objects.get(id=1)
+    other = json.loads(con.other)
+    key = None
+    if value == '0':
+        key = "notice"
+    elif value == '1':
+        key = "explain"
+    else:
+        key = "promo"
+    dic = other[key]
+    kkk = "key" + pxId
+    dic[kkk] = kk
+    other_json = json.dumps(other)
+    con.other = other_json
+    con.save()
+    return JsonResponse({'code': 20000, 'data': 'ok'})
+
+def constant_list(request):
+    value = json.loads(str(request.GET['value']))
+    con = Constant.objects.filter(id=1).values()[0]
+    other = json.loads(con["other"])
+
+    key = None
+    if value == 0:
+        key = "notice"
+    elif value == 1:
+        key = "explain"
+    else:
+        key = "promo"
+    dic = other[key]
+
+    li = []
+    for k, v in dic.items():
+        d = dict()
+        d["key"] = v
+        d["px"] = int(k[3])
+        li.append(d)
+
+    # dd = dict()
+    # dd["key"] = "xx"
+    # dd["px"] = 0
+    # li.append(dd)
+    #
+    #用lambda表达式进行排序
+    new_list = sorted(li, key=lambda x:x["px"])
+    data = {"code": 20000, 'tableData': new_list,
+            "totalPage": len(new_list)}
+    return JsonResponse(data)
+
+@transaction.atomic()
 @check_login
 def constant_update(request):
     param = json.loads(str(request.GET['constantForm']))
     constant = Constant.objects.get(id=1)
 
+
     other = json.loads(constant.other)
+    if other == None:
+        other = dict()
+        other["rebateData"] = dict()
+
     rebate = other["rebateData"]
+
 
     constant.init_money = param['init_money']
     constant.apple_check = param['apple_check']
@@ -451,6 +513,27 @@ def constant_update(request):
     rebate["rebate4"] = param['income3']
     rebate["pay_one"] = param['income4']
     rebate["pay_aa"] = param['income5']
+
+    # 构造一些假数据, 是为了如果添加默认的json
+    if other["notice"] == None:
+        notice = dict()
+        # notice["key1"] = "我是notice1"
+        # notice["key2"] = "我是notice2"
+        # notice["key3"] = "我是notice3"
+        other["notice"] = notice
+
+    if other["explain"] == None:
+        explain = dict()
+        # explain["key1"] = "我是explain1"
+        # explain["key2"] = "我是explain2"
+        # explain["key3"] = "我是explain3"
+        other["explain"] = explain
+
+
+    if other["promo"] == None:
+        promo = dict()
+        other["promo"] = promo
+
 
     other_json = json.dumps(other)
     constant.other = other_json
