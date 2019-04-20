@@ -355,7 +355,7 @@ def charge_list(request):
             total_page = len(vo)
             array = vo.all().order_by('-createtime')
         else:
-            vo = Charge.objects.filter(charge_type=value)
+            vo = Charge.objects.filter(recharge_source=value)
             total_page = len(vo)
             array = vo.all().order_by('-createtime')
         player_data = list(array.values()[index_left:index_right])
