@@ -430,6 +430,7 @@ def constant(request):
     return JsonResponse({'code': 20000, 'data': con})
 
 @transaction.atomic()
+@check_login
 def constant_change_msg(request):
 
     value = request.GET['value']

@@ -33,7 +33,7 @@ def save_or_update_constant_rebate(request):
     constant.other = r
     constant.save()
     return JsonResponse({'code': 1000, 'data': '更新成功'})
-
+@check_login
 def fetch_constant_text_list(request):
     param = json.loads(str(request.GET['constantFrom']))
     kk = param["key"]
@@ -49,7 +49,7 @@ def fetch_constant_text_list(request):
 
     data = {'tableData': li, 'totalPage': len(li)}
     return JsonResponse({'code': 20000, 'data': data})
-
+@check_login
 def fetch_constant_rebate_list(request):
     param = json.loads(str(request.GET['constantFrom']))
     kk = param["key"]
