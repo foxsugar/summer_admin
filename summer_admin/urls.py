@@ -46,6 +46,8 @@ urlpatterns = [
     url(r'^agent/clearRebate$', playerViews.clear_rebate),
     url(r'^agent/demo$', playerViews.cal_income),
     url(r'^agent/rebateDetail$', playerViews.rebate_record_from_admin),
+    url(r'^agent/delegates$', views.fetch_delegate_relations),
+
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
     url(r'^agent/fetchgoldlist$', playerViews.search_agent_record),

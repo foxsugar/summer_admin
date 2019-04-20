@@ -14,7 +14,7 @@ from django.db.models import Q
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
-
+from django.core.paginator import Paginator , PageNotAnInteger,EmptyPage
 TIME_OUT = 60 * 60 * 2
 
 
@@ -189,6 +189,23 @@ def agent(request):
         print("--")
         return JsonResponse({'code': 20000, 'data': param})
 
+#分页查询
+@check_login
+def fetch_delegate_relations(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    delegate_Ids = Users.objects.only("referee").filter(referee__gt=0).values("referee").distinct()
+    # 暂时不用多表查询
+    delegate_Ids_list = list(delegate_Ids)
+    li = []
+    for t in delegate_Ids_list:
+        li.append(t["referee"])
+    rs = list(Users.objects.filter(id__in=li).values()[index_left:index_right])
+    total_page = len(li)
+    data = {'tableData': rs, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
 
 @check_login
 def agent_charge_gold(request):

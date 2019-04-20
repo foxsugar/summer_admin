@@ -199,21 +199,48 @@ def user_list(request):
     dict = cache.get(x_token)
     level = dict["level"]
     agent_id = dict['id']
+    #搜索类型 0 全部 1仅搜代理 2仅搜玩家
+    # type = dict['seachType']
 
+    value = int(str(request.GET['value']))
     if agent_id == 1:
         page = int(str(request.GET['page']))
         size = int(str(request.GET['size']))
-        index_left = (page - 1) * size
-        index_right = page * size
-        # user_data = list(Users.objects.values()[page:page_right])
-        user_data = list(Users.objects.values()[index_left:index_right])
+        if value == 0:
+            return response_all_users(page, size)
+        elif value == 1:
+            return response_delegates(page, size)
+        else:
+            return reponse_players(page, size)
+        # page = int(str(request.GET['page']))
+        # size = int(str(request.GET['size']))
+        # index_left = (page - 1) * size
+        # index_right = page * size
+        # # user_data = list(Users.objects.values()[page:page_right])
+        # user_data = list(Users.objects.values()[index_left:index_right])
+        #
+        # # for us in user_data:
+        # #     us["image"] = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=253777390,947512827&fm=23&gp=0.jpg"
+        #
+        # total_page = Users.objects.count()
+        # data = {'tableData': user_data, 'totalPage': total_page, "show": True}
+        #
+        # page = int(str(request.GET['page']))
+        # size = int(str(request.GET['size']))
+        # index_left = (page - 1) * size
+        # index_right = page * size
+        # delegate_Ids = Users.objects.only("referee").filter(referee__gt=0).values("referee").distinct()
+        # # 暂时不用多表查询
+        # delegate_Ids_list = list(delegate_Ids)
+        # li = []
+        # for t in delegate_Ids_list:
+        #     li.append(t["referee"])
+        # rs = list(Users.objects.filter(id__in=li).values()[index_left:index_right])
+        # total_page = len(li)
+        # data = {'tableData': rs, 'totalPage': total_page}
+        # return JsonResponse({'code': 20000, 'data': data})
 
-        # for us in user_data:
-        #     us["image"] = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=253777390,947512827&fm=23&gp=0.jpg"
 
-        total_page = Users.objects.count()
-        data = {'tableData': user_data, 'totalPage': total_page, "show": True}
-        return JsonResponse({'code': 20000, 'data': data})
     else:
         page = int(str(request.GET['page']))
         size = int(str(request.GET['size']))
@@ -225,6 +252,43 @@ def user_list(request):
         data = {'tableData': user_data, 'totalPage': total_page, "show": False}
         return JsonResponse({'code': 20000, 'data': data})
 
+
+def response_all_users(page,size):
+    index_left = (page - 1) * size
+    index_right = page * size
+    user_data = list(Users.objects.values()[index_left:index_right])
+    total_page = Users.objects.count()
+    data = {'tableData': user_data, 'totalPage': total_page, "show": True}
+    return JsonResponse({'code': 20000, 'data': data})
+
+def reponse_players(page,size):
+    index_left = (page - 1) * size
+    index_right = page * size
+    delegate_Ids = Users.objects.only("referee").filter(referee__gt=0).values("referee").distinct()
+    # 暂时不用多表查询
+    delegate_Ids_list = list(delegate_Ids)
+    li = []
+    for t in delegate_Ids_list:
+        li.append(t["referee"])
+    vo = Users.objects.exclude(id__in=li).values()
+    rs = list(vo[index_left:index_right])
+    total_page = len(vo)
+    data = {'tableData': rs, 'totalPage': total_page, "show": True}
+    return JsonResponse({'code': 20000, 'data': data})
+
+def response_delegates(page,size):
+    index_left = (page - 1) * size
+    index_right = page * size
+    delegate_Ids = Users.objects.only("referee").filter(referee__gt=0).values("referee").distinct()
+    # 暂时不用多表查询
+    delegate_Ids_list = list(delegate_Ids)
+    li = []
+    for t in delegate_Ids_list:
+        li.append(t["referee"])
+    rs = list(Users.objects.filter(id__in=li).values()[index_left:index_right])
+    total_page = len(li)
+    data = {'tableData': rs, 'totalPage': total_page,  "show": True}
+    return JsonResponse({'code': 20000, 'data': data})
 
 # 奔驰宝马的代理接口
 @check_login
@@ -265,7 +329,7 @@ def charge_list(request):
     level = dict["level"]
     agent_id = dict['id']
     username = dict['username']
-
+    value = int(str(request.GET['value']))
     if username != 'admin':
 
         page = int(str(request.GET['page']))
@@ -284,8 +348,16 @@ def charge_list(request):
         size = int(str(request.GET['size']))
         index_left = (page - 1) * size
         index_right = page * size
-        total_page = Charge.objects.count()
-        array = Charge.objects.all().order_by('-createtime')
+        total_page = 0
+        array = None
+        if value == 0:
+            vo = Charge.objects.all().order_by('-createtime')
+            total_page = len(vo)
+            array = vo.all().order_by('-createtime')
+        else:
+            vo = Charge.objects.filter(charge_type=value)
+            total_page = len(vo)
+            array = vo.all().order_by('-createtime')
         player_data = list(array.values()[index_left:index_right])
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
@@ -393,6 +465,7 @@ def agent_charge_list(request):
     agent_id = dict['id']
 
     username = dict['username']
+
     if username != 'admin':
 
         page = int(str(request.GET['page']))
@@ -414,8 +487,10 @@ def agent_charge_list(request):
         size = int(str(request.GET['size']))
         index_left = (page - 1) * size
         index_right = page * size
-        total_page = Agent_charge.objects.count()
-        agent_data = list(Agent_charge.objects.values()[index_left:index_right])
+        agent_data = None
+        total_page = 0
+        vo = Agent_charge.objects
+        total_page = len(vo)
         data = {'tableData': agent_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
