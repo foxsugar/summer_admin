@@ -156,6 +156,21 @@ def create_users(request):
     users.save()
     return JsonResponse({'code': 20000, 'data': param})
 
+#创建玩家
+def update_users(request):
+    param = json.loads(str(request.GET['usersForm']))
+    uid = param["userId"]
+    users = Users.objects.get(id=uid)
+    users.account = param["account"]
+    users.image = param['image']
+    users.open_id = param['openId']
+    users.password =param['password']
+    users.sex = param['sex']
+    users.username = param['username']
+    users.vip = param['vip']
+    users.save()
+    return JsonResponse({'code': 20000, 'data': param})
+
 @check_login
 def agent(request):
     param = json.loads(str(request.GET['agentForm']))

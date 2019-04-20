@@ -55,7 +55,7 @@ urlpatterns = [
     url(r'^player/chargeGold$', playerViews.charge_gold),
     url(r'^player/changeUserDelegate$', playerViews.change_user_delegate),
     url(r'^player/createUsers$', playerViews.create_users),
-
+    url(r'^player/udpateUsers', playerViews.update_users),
     url(r'^player/list$', playerViews.user_list),
     url(r'^player/memberlist$', playerViews.user_member_list),
     url(r'^player/listvip$', playerViews.user_list_vip),
