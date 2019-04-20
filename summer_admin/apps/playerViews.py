@@ -14,7 +14,81 @@ import datetime
 from django.db.models import Q
 import urllib.request
 import urllib.parse
+import collections
+#更新rebeat
+@check_login
+def save_or_update_constant_rebate(request):
+    param = json.loads(str(request.GET['constantFrom']))
+    # 具体更新哪个字段 比如 rebate100  rebate4 explain pay_aa
+    kk = param["key"]
+    vv = param["value"]
 
+    if vv < 0 or vv > 100:
+        raise RuntimeError('返利比例不正确')
+    constant = Constant.objects.get(id=1)
+    other = json.loads(constant.other)
+    rebate_data = other["rebateData"]
+    rebate_data[kk] = vv
+    r = json.dumps(other)
+    constant.other = r
+    constant.save()
+    return JsonResponse({'code': 1000, 'data': '更新成功'})
+
+def fetch_constant_text_list(request):
+    param = json.loads(str(request.GET['constantFrom']))
+    kk = param["key"]
+    constant = Constant.objects.get(id=1)
+    other = json.loads(constant.other)
+    data = other[kk]
+    li = []
+    for k,v in data:
+        d = dict()
+        d["key"] = k
+        d["v"] = v
+        li.append(d)
+
+    data = {'tableData': li, 'totalPage': len(li)}
+    return JsonResponse({'code': 20000, 'data': data})
+
+def fetch_constant_rebate_list(request):
+    param = json.loads(str(request.GET['constantFrom']))
+    kk = param["key"]
+    constant = Constant.objects.get(id=1)
+    other = json.loads(constant.other)
+    data = other["rebateData"]
+    data = {'data': data}
+    return JsonResponse({'code': 20000, 'data': data})
+
+#更新非rebeat
+@check_login
+def save_or_update_constant_text(request):
+    param = json.loads(str(request.GET['constantFrom']))
+    #具体更新哪个字段 比如 notice  promo explain
+
+    kk = param["key"]
+    skk =param["subKey"]
+    vv = param["value"]
+    #更新
+    if skk is not None:
+        constant = Constant.objects.get(id=1)
+        other = json.loads(constant.other)
+        data = other[kk]
+        data[skk] = vv
+        r = json.dumps(other)
+        constant.other = r
+        constant.save()
+        return JsonResponse({'code': 1000, 'data': '更新成功'})
+    else:
+        constant = Constant.objects.get(id=1)
+        other = json.loads(constant.other)
+        data = other[kk]
+        size = len(data)
+        sub_key = "key" + (size + 1)
+        data[sub_key] = vv
+        r = json.dumps(other)
+        constant.other = r
+        constant.save()
+        return JsonResponse({'code': 1000, 'data': '插入成功'})
 
 @check_login
 def change_user_delegate(request):
@@ -1036,3 +1110,4 @@ def get_room_info(request):
 #         dic["secondLevel2"] = second_level2
 #
 #     return dic
+

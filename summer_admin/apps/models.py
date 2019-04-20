@@ -92,6 +92,9 @@ class Constant(models.Model):
     access_code = models.CharField(max_length=255, default='')
     income1 = models.IntegerField(default=0)
     income2 = models.IntegerField(default=0)
+    other = models.TextField('常量', default='')
+    pay_token =  models.CharField(max_length=255, default='')
+    pay_uid = models.CharField(max_length=255, default='')
     class Meta:
         db_table = 'constant'
         verbose_name = '常量表'
