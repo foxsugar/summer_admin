@@ -149,6 +149,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+MIDDLEWARE_CLASSES = (
+
+    'django.middleware.cache.UpdateCacheMiddleware',
+
+    'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'django.middleware.common.CommonMiddleware',
+
+    'django.middleware.transaction.TransactionMiddleware',
+
+    'django.middleware.cache.FetchFromCacheMiddleware',
+
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

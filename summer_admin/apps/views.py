@@ -6,11 +6,10 @@ import random
 import uuid
 
 from django.core.cache import cache
-from django.db import transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-
+from django.db import transaction
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
@@ -413,14 +412,32 @@ def agent_downGoal(request):
 @check_login
 def constant(request):
     con = Constant.objects.filter(id=1).values()[0]
+    other = json.loads(con["other"])
+    rebate = other["rebateData"]
+    if len(rebate) == 0:
+        con["income1"] = 0
+        con["income2"] = 0
+        con["income3"] = 0
+        con["income4"] = 0
+        con["income5"] = 0
+    else:
+        con["income1"] = rebate["bet"]
+        con["income2"] = rebate["rebate100"]
+        con["income3"] = rebate["rebate4"]
+        con["income4"] = rebate["pay_one"]
+        con["income5"] = rebate["pay_aa"]
 
     return JsonResponse({'code': 20000, 'data': con})
 
-
+@transaction.atomic()
 @check_login
 def constant_update(request):
     param = json.loads(str(request.GET['constantForm']))
     constant = Constant.objects.get(id=1)
+
+    other = json.loads(constant.other)
+    rebate = other["rebateData"]
+
     constant.init_money = param['init_money']
     constant.apple_check = param['apple_check']
     constant.download = param['download']
@@ -428,8 +445,16 @@ def constant_update(request):
     constant.version_of_android = param['version_of_android']
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
-    constant.income1 = param['income1']
-    constant.income2 = param['income2']
+
+    rebate["bet"] = param['income1']
+    rebate["rebate100"] = param['income2']
+    rebate["rebate4"] = param['income3']
+    rebate["pay_one"] = param['income4']
+    rebate["pay_aa"] = param['income5']
+
+    other_json = json.dumps(other)
+    constant.other = other_json
+
     category = config.get('robot', 'gameCategory')
     if category == 'bcbm':
         constant.access_code = param['access_code']
