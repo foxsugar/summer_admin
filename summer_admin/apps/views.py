@@ -521,8 +521,14 @@ def constant_insert(request):
     else:
         key = "promo"
     dic = other[key]
-    l = len(dic)
-    kk = "key" + str(l + 1)
+
+    max_px = 0
+    for k, v in dic.items():
+        tmp = int(k[3])
+        if max_px < tmp:
+            max_px = tmp
+
+    kk = "key" + str(max_px + 1)
     dic[kk] = msg
     other_json = json.dumps(other)
     con.other =other_json
