@@ -79,7 +79,8 @@ urlpatterns = [
     # 服务器信息
     url(r'^constant$', views.constant),
     url(r'^constant/update$', views.constant_update),
-
+    url(r'^constant/insert', views.constant_insert),
+    url(r'^constant/delete', views.constant_delete),
     url(r'^constant/value$', views.constant_list),
     url(r'^constant/changeConstant$', views.constant_change_msg),
     #机器人
