@@ -4,7 +4,6 @@ import math
 import os
 import random
 import uuid
-
 from django.core.cache import cache
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -452,6 +451,9 @@ def constant_change_msg(request):
     other_json = json.dumps(other)
     con.other = other_json
     con.save()
+    client = get_client()
+    # 调用这个是为了刷新服务器内存
+    client.getBlackList()
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 def constant_list(request):
@@ -503,6 +505,9 @@ def constant_delete(request):
     other_json = json.dumps(other)
     con.other =other_json
     con.save()
+    client = get_client()
+    # 调用这个是为了刷新服务器内存
+    client.getBlackList()
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @transaction.atomic()
@@ -533,6 +538,9 @@ def constant_insert(request):
     other_json = json.dumps(other)
     con.other =other_json
     con.save()
+    client = get_client()
+    # 调用这个是为了刷新服务器内存
+    client.getBlackList()
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @transaction.atomic()
@@ -567,11 +575,11 @@ def constant_update(request):
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
 
-    rebate["bet"] = param['income1']
-    rebate["rebate100"] = param['income2']
-    rebate["rebate4"] = param['income3']
-    rebate["pay_one"] = param['income4']
-    rebate["pay_aa"] = param['income5']
+    rebate["bet"] = float('%.2f'%param['income1'])
+    rebate["rebate100"] = float('%.2f'%param['income2'])
+    rebate["rebate4"] = float('%.2f'%param['income3'])
+    rebate["pay_one"] = float('%.2f'%param['income4'])
+    rebate["pay_aa"] = float('%.2f'%float(param['income5']))
 
     # 构造一些假数据, 是为了如果添加默认的json
     # notice = dict()

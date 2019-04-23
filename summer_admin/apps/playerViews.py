@@ -12,9 +12,11 @@ from summer_admin.rpc.rpc import *
 from summer_admin.apps.views import *
 import datetime
 from django.db.models import Q
-import urllib.request
-import urllib.parse
+# import urllib.request
+# import urllib.parse
+from urllib import request, parse, error
 import collections
+
 #更新rebeat
 @check_login
 def save_or_update_constant_rebate(request):
@@ -91,50 +93,51 @@ def save_or_update_constant_text(request):
         return JsonResponse({'code': 1000, 'data': '插入成功'})
 
 @check_login
-def change_user_delegate(request):
-    x_token = request.META['HTTP_X_TOKEN']
+def change_user_delegate(req):
+
+    x_token = req.META['HTTP_X_TOKEN']
     print(x_token)
     dict = cache.get(x_token)
     level = dict["level"]
     # 总代理id
     agent_id = dict['id']
     # 需要修改的用户id
-    dic = json.loads(str(request.GET['chargeForm']))
+    dic = json.loads(str(req.GET['chargeForm']))
     pid = dic['id']
     # 需要修改的代理id
     aid = int(dic['agent_id'])
     if agent_id != 1:
         return JsonResponse({'code': 101, 'data': '没有权限'})
 
-    if aid == 0:
-        user = Users.objects.get(id=pid)
-        # user.referee = 0
-        # user.save()ź
-        rpc_client = get_client()
-        rtn = rpc_client.bindReferee(pid, 0)
-        if rtn == 0:
-            return JsonResponse({'code': 20000, 'data': aid})
-        else:
-            return JsonResponse({'code': 100, 'data': '失败'})
+    a_user = Users.objects.get(id=aid)
+    if a_user == None:
+        return JsonResponse({'code': 1000, 'data': '参数不正确'})
 
-    # Task.object.get(user_id=1)
-    array = Agent_user.objects.filter(id=aid)
-    entry_list = list(array.all())
-    leng = len(entry_list)
-    if leng == 0:
-        return JsonResponse({'code': 100, 'data': '不存在该代理'})
+    p_user = Users.objects.get(id=pid)
+    if p_user == None:
+        return JsonResponse({'code': 1000, 'data': '参数不正确'})
 
-    agent = Agent_user.objects.get(id=aid)
-    # user = Users.objects.get(id=pid)
-    # user.referee = agent.invite_code
-    # user.save()
-    rpc_client = get_client()
-    rtn = rpc_client.bindReferee(pid, int(agent.invite_code))
-    if rtn == 0:
-        return JsonResponse({'code': 20000, 'data': aid})
+    # print('Login to weibo.cn...')
+    # login_data = parse.urlencode([
+    #     ('userId', pid),
+    #     ('referrer', aid),
+    # ])
+
+    data = {
+        'userId': pid,
+        'referrer': aid
+    }
+    url_values = parse.urlencode(data)
+    print(url_values)
+    url = 'http://localhost:8085/game/bindReferrer'
+    full_url = url + '?' + url_values
+
+    try:
+        request.urlopen(full_url)
+    except error.URLError as e:
+        return JsonResponse({'code': 1000, 'data': '绑定失败'})
     else:
-        return JsonResponse({'code': 1000, 'data': '充值失败'})
-
+        return JsonResponse({'code': 20000, 'data': '绑定成功'})
 
 @check_login
 def charge_gold(request):
