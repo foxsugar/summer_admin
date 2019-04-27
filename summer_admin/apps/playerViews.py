@@ -135,7 +135,8 @@ def change_user_delegate(req):
     try:
         request.urlopen(full_url)
     except error.URLError as e:
-        return JsonResponse({'code': 1000, 'data': '绑定失败'})
+        print(e)
+        return JsonResponse({'code': 1000, 'data': '绑定失败:' + str(e)})
     else:
         return JsonResponse({'code': 20000, 'data': '绑定成功'})
 
