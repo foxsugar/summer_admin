@@ -129,7 +129,7 @@ def change_user_delegate(req):
     }
     url_values = parse.urlencode(data)
     print(url_values)
-    url = 'http://localhost:8085/game/bindReferrer'
+    url = 'http://localhost:8085/bindReferrer'
     full_url = url + '?' + url_values
     print("绑定请求全路径:" +full_url)
     try:
