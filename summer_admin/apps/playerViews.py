@@ -131,7 +131,7 @@ def change_user_delegate(req):
     print(url_values)
     url = 'http://localhost:8085/game/bindReferrer'
     full_url = url + '?' + url_values
-
+    print("绑定请求全路径:" +full_url)
     try:
         request.urlopen(full_url)
     except error.URLError as e:
