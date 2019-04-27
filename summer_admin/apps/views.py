@@ -619,6 +619,15 @@ def constant_update(request):
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 
+def pretty_floats(obj):
+    if isinstance(obj, float):
+        return round(obj, 3)
+    elif isinstance(obj, dict):
+        return dict((k, pretty_floats(v)) for k, v in obj.items())
+    elif isinstance(obj, (list, tuple)):
+        return map(pretty_floats, obj)
+    return obj
+
 def agent2vo(agent):
     """代理显示"""
 
