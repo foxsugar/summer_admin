@@ -575,11 +575,17 @@ def constant_update(request):
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']
 
-    rebate["bet"] = float('%.2f'%param['income1'])
-    rebate["rebate100"] = float('%.2f'%param['income2'])
-    rebate["rebate4"] = float('%.2f'%param['income3'])
-    rebate["pay_one"] = float('%.2f'%param['income4'])
-    rebate["pay_aa"] = float('%.2f'%float(param['income5']))
+    # rebate["bet"] = float('%.2f'%param['income1'])
+    # rebate["rebate100"] = float('%.2f'%param['income2'])
+    # rebate["rebate4"] = float('%.2f'%param['income3'])
+    # rebate["pay_one"] = float('%.2f'%param['income4'])
+    # rebate["pay_aa"] = float('%.2f'%float(param['income5']))
+
+    rebate["bet"] = '%.2f' % param['income1']
+    rebate["rebate100"] = '%.2f' % param['income2']
+    rebate["rebate4"] = '%.2f' % param['income3']
+    rebate["pay_one"] = '%.2f' % param['income4']
+    rebate["pay_aa"] = '%.2f' % float(param['income5'])
 
     # 构造一些假数据, 是为了如果添加默认的json
     # notice = dict()
@@ -597,7 +603,7 @@ def constant_update(request):
         promo = dict()
         other["promo"] = promo
 
-    other_json = json.dumps(other)
+    other_json = json.dumps(pretty_floats(other))
     constant.other = other_json
 
     category = config.get('robot', 'gameCategory')
@@ -605,11 +611,11 @@ def constant_update(request):
         constant.access_code = param['access_code']
     constant.save()
 
-    # 刷新游戏服务器数据
+    # # 刷新游戏服务器数据
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
-    # client.modifyAndroidVersion(constant.version_of_android)
+    client.modifyAndroidVersion(constant.version_of_android)
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 
