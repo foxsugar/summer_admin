@@ -12,6 +12,7 @@ from django.db import transaction
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
+from urllib import request, parse, error
 from django.core.paginator import Paginator , PageNotAnInteger,EmptyPage
 TIME_OUT = 60 * 60 * 2
 
@@ -454,7 +455,19 @@ def constant_change_msg(request):
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
+
+    #为了刷新
+    refresh()
+
     return JsonResponse({'code': 20000, 'data': 'ok'})
+
+def refresh():
+    url = 'http://94.191.19.227:8085/refreshMemory'
+    full_url = url
+    print("刷新:" + full_url)
+    request.urlopen(full_url)
+    print("刷新完毕")
+
 
 def constant_list(request):
     value = json.loads(str(request.GET['value']))
@@ -508,6 +521,8 @@ def constant_delete(request):
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
+    # 为了刷新
+    refresh()
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @transaction.atomic()
@@ -541,6 +556,8 @@ def constant_insert(request):
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
+    # 为了刷新
+    refresh()
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @transaction.atomic()
@@ -615,7 +632,9 @@ def constant_update(request):
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
-    client.modifyAndroidVersion(constant.version_of_android)
+    # client.modifyAndroidVersion(constant.version_of_android)
+    # 为了刷新
+    refresh()
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 
