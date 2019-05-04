@@ -466,7 +466,8 @@ def refresh():
     # url = 'http://94.191.19.227:8085/refreshMemory'
     full_url = url
     print("刷新:................." + full_url)
-    request.urlopen(full_url)
+    rs = request.urlopen(full_url)
+    print(rs)
     print("刷新完毕...........................")
 
 
