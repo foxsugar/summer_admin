@@ -462,11 +462,12 @@ def constant_change_msg(request):
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 def refresh():
-    url = 'http://94.191.19.227:8085/refreshMemory'
+    url = 'http://localhost:8085/refreshMemory'
+    # url = 'http://94.191.19.227:8085/refreshMemory'
     full_url = url
-    print("刷新:" + full_url)
+    print("刷新:................." + full_url)
     request.urlopen(full_url)
-    print("刷新完毕")
+    print("刷新完毕...........................")
 
 
 def constant_list(request):
