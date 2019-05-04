@@ -158,7 +158,7 @@ LOGGING = {
             'filename': os.path.join(BASE_LOG_DIR, "xxx_collect.log"),
             'maxBytes': 1024 * 1024 * 50,  # 日志大小 50M
             'backupCount': 5,
-            'formatter': 'collect',
+            'formatter': 'standard',
             'encoding': "utf-8"
         }
     },
