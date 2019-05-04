@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
@@ -432,37 +432,42 @@ def constant(request):
 
     return JsonResponse({'code': 20000, 'data': con})
 
-@transaction.atomic()
+
 @check_login
 def constant_change_msg(request):
+    try:
+        with transaction.atomic():
+            value = request.GET['value']
+            pxId = str(request.GET['pxId'])
+            kk = str(request.GET['msg'])
 
-    value = request.GET['value']
-    pxId = str(request.GET['pxId'])
-    kk = str(request.GET['msg'])
+            con = Constant.objects.get(id=1)
+            other = json.loads(con.other)
+            key = None
+            if value == '0':
+                key = "notice"
+            elif value == '1':
+                key = "explain"
+            else:
+                key = "promo"
+            dic = other[key]
+            kkk = "key" + pxId
+            dic[kkk] = kk
+            other_json = json.dumps(other)
+            con.other = other_json
+            con.save()
+            client = get_client()
+            # 调用这个是为了刷新服务器内存
+            client.getBlackList()
 
-    con = Constant.objects.get(id=1)
-    other = json.loads(con.other)
-    key = None
-    if value == '0':
-        key = "notice"
-    elif value == '1':
-        key = "explain"
-    else:
-        key = "promo"
-    dic = other[key]
-    kkk = "key" + pxId
-    dic[kkk] = kk
-    other_json = json.dumps(other)
-    con.other = other_json
-    con.save()
-    client = get_client()
-    # 调用这个是为了刷新服务器内存
-    client.getBlackList()
+            # 为了刷新
+            refresh("修改公告等")
 
-    #为了刷新
-    refresh("修改公告等")
+            return JsonResponse({'code': 20000, 'data': 'ok'})
+    except Exception as e:
+        return HttpResponse("出现错误<%s>" % str(e))
+    return HttpResponse("执行成功")
 
-    return JsonResponse({'code': 20000, 'data': 'ok'})
 
 def refresh(ssss):
 
@@ -505,27 +510,33 @@ def constant_list(request):
     return JsonResponse(data)
 
 
-@transaction.atomic()
+
 @check_login
 def constant_delete(request):
-    value = str(request.GET['value'])
-    kk = str(request.GET['pxId'])
-    con = Constant.objects.get(id=1)
-    other = json.loads(con.other)
+    try:
+        with transaction.atomic():
+            value = str(request.GET['value'])
+            kk = str(request.GET['pxId'])
+            con = Constant.objects.get(id=1)
+            other = json.loads(con.other)
 
-    key = None
-    if value == '0':
-        key = "notice"
-    elif value == '1':
-        key = "explain"
-    else:
-        key = "promo"
-    dic = other[key]
+            key = None
+            if value == '0':
+                key = "notice"
+            elif value == '1':
+                key = "explain"
+            else:
+                key = "promo"
+            dic = other[key]
 
-    del dic["key" + kk]
-    other_json = json.dumps(other)
-    con.other =other_json
-    con.save()
+            del dic["key" + kk]
+            other_json = json.dumps(other)
+            con.other = other_json
+            con.save()
+
+    except IntegrityError:
+        pass
+
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
@@ -533,34 +544,38 @@ def constant_delete(request):
     refresh("删除公告等")
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
-@transaction.atomic()
 @check_login
 def constant_insert(request):
-    value = str(request.GET['value'])
-    msg = str(request.GET['msg'])
-    con = Constant.objects.get(id=1)
+    try:
+        with transaction.atomic():
+            value = str(request.GET['value'])
+            msg = str(request.GET['msg'])
+            con = Constant.objects.get(id=1)
 
-    other = json.loads(con.other)
-    key = None
-    if value == '0':
-        key = "notice"
-    elif value == '1':
-        key = "explain"
-    else:
-        key = "promo"
-    dic = other[key]
+            other = json.loads(con.other)
+            key = None
+            if value == '0':
+                key = "notice"
+            elif value == '1':
+                key = "explain"
+            else:
+                key = "promo"
+            dic = other[key]
 
-    max_px = 0
-    for k, v in dic.items():
-        tmp = int(k[3])
-        if max_px < tmp:
-            max_px = tmp
+            max_px = 0
+            for k, v in dic.items():
+                tmp = int(k[3])
+                if max_px < tmp:
+                    max_px = tmp
 
-    kk = "key" + str(max_px + 1)
-    dic[kk] = msg
-    other_json = json.dumps(other)
-    con.other =other_json
-    con.save()
+            kk = "key" + str(max_px + 1)
+            dic[kk] = msg
+            other_json = json.dumps(other)
+            con.other = other_json
+            con.save()
+    except IntegrityError:
+        pass
+
     client = get_client()
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
@@ -568,73 +583,80 @@ def constant_insert(request):
     refresh("插入公告等")
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
-@transaction.atomic()
+
 @check_login
 def constant_update(request):
-    param = json.loads(str(request.GET['constantForm']))
-    constant = Constant.objects.get(id=1)
+    try:
+        with transaction.atomic():
+            param = json.loads(str(request.GET['constantForm']))
+            constant = Constant.objects.get(id=1)
 
-    other = json.loads(constant.other)
-    if other == None:
-        other = dict()
+            other = json.loads(constant.other)
+            if other == None:
+                other = dict()
 
-    if not ("notice" in other.keys()):
-        other["notice"] = dict()
+            if not ("notice" in other.keys()):
+                other["notice"] = dict()
 
-    if not ("explain" in other.keys()):
-        other["explain"] = dict()
+            if not ("explain" in other.keys()):
+                other["explain"] = dict()
 
-    if not ("promo" in other.keys()):
-        other["promo"] = dict()
+            if not ("promo" in other.keys()):
+                other["promo"] = dict()
 
-    if not ("rebateData" in other.keys()):
-        other["rebateData"] = dict()
+            if not ("rebateData" in other.keys()):
+                other["rebateData"] = dict()
 
-    rebate = other["rebateData"]
+            rebate = other["rebateData"]
 
-    constant.init_money = param['init_money']
-    constant.apple_check = param['apple_check']
-    constant.download = param['download']
-    constant.marquee = param['marquee']
-    constant.version_of_android = param['version_of_android']
-    constant.version_of_ios = param['version_of_ios']
-    constant.apple_check = param['apple_check']
+            constant.init_money = param['init_money']
+            constant.apple_check = param['apple_check']
+            constant.download = param['download']
+            constant.marquee = param['marquee']
+            constant.version_of_android = param['version_of_android']
+            constant.version_of_ios = param['version_of_ios']
+            constant.apple_check = param['apple_check']
 
-    # rebate["bet"] = float('%.2f'%param['income1'])
-    # rebate["rebate100"] = float('%.2f'%param['income2'])
-    # rebate["rebate4"] = float('%.2f'%param['income3'])
-    # rebate["pay_one"] = float('%.2f'%param['income4'])
-    # rebate["pay_aa"] = float('%.2f'%float(param['income5']))
+            # rebate["bet"] = float('%.2f'%param['income1'])
+            # rebate["rebate100"] = float('%.2f'%param['income2'])
+            # rebate["rebate4"] = float('%.2f'%param['income3'])
+            # rebate["pay_one"] = float('%.2f'%param['income4'])
+            # rebate["pay_aa"] = float('%.2f'%float(param['income5']))
 
-    rebate["bet"] = '%.2f' % param['income1']
-    rebate["rebate100"] = '%.2f' % param['income2']
-    rebate["rebate4"] = '%.2f' % param['income3']
-    rebate["pay_one"] = '%.2f' % param['income4']
-    rebate["pay_aa"] = '%.2f' % float(param['income5'])
+            rebate["bet"] = '%.2f' % param['income1']
+            rebate["rebate100"] = '%.2f' % param['income2']
+            rebate["rebate4"] = '%.2f' % param['income3']
+            rebate["pay_one"] = '%.2f' % param['income4']
+            rebate["pay_aa"] = '%.2f' % float(param['income5'])
 
-    # 构造一些假数据, 是为了如果添加默认的json
-    # notice = dict()
-    # notice["key1"] = "我是notice1"
-    # notice["key2"] = "我是notice2"
-    # notice["key3"] = "我是notice3"
-    # other["notice"] = notice
-    # explain = dict()
-    # explain["key1"] = "我是explain1"
-    # explain["key2"] = "我是explain2"
-    # explain["key3"] = "我是explain3"
-    # other["explain"] = explain
+            # 构造一些假数据, 是为了如果添加默认的json
+            # notice = dict()
+            # notice["key1"] = "我是notice1"
+            # notice["key2"] = "我是notice2"
+            # notice["key3"] = "我是notice3"
+            # other["notice"] = notice
+            # explain = dict()
+            # explain["key1"] = "我是explain1"
+            # explain["key2"] = "我是explain2"
+            # explain["key3"] = "我是explain3"
+            # other["explain"] = explain
 
-    if other["promo"] == None:
-        promo = dict()
-        other["promo"] = promo
+            if other["promo"] == None:
+                promo = dict()
+                other["promo"] = promo
 
-    other_json = json.dumps(pretty_floats(other))
-    constant.other = other_json
+            other_json = json.dumps(pretty_floats(other))
+            constant.other = other_json
 
-    category = config.get('robot', 'gameCategory')
-    if category == 'bcbm':
-        constant.access_code = param['access_code']
-    constant.save()
+            category = config.get('robot', 'gameCategory')
+            if category == 'bcbm':
+                constant.access_code = param['access_code']
+            constant.save()
+
+    except IntegrityError:
+        pass
+        # handle_exception()
+
 
     # # 刷新游戏服务器数据
     client = get_client()
