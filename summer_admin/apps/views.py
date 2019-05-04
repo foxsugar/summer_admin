@@ -13,9 +13,12 @@ from summer_admin.apps.models import *
 from summer_admin.robot.robot import config
 from summer_admin.rpc.rpc import *
 from urllib import request, parse, error
+import logging
+from django.http import HttpResponse
 from django.core.paginator import Paginator , PageNotAnInteger,EmptyPage
 TIME_OUT = 60 * 60 * 2
 
+collect_logger = logging.getLogger("collect")
 
 def check_login(func):
     """
@@ -462,12 +465,15 @@ def constant_change_msg(request):
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 def refresh(ssss):
+
+
     url = 'http://localhost:8085/refreshMemory'
     # url = 'http://94.191.19.227:8085/refreshMemory'
     full_url = url
-    print("刷新:................." + ssss + full_url)
+    collect_logger.info("刷新:................." + ssss + full_url)
     rs = request.urlopen(full_url)
-    print(rs)
+    html = rs.read().decode('utf-8')
+    collect_logger.info("请求结果:" + html)
     print("刷新完毕..........................." + ssss)
 
 
