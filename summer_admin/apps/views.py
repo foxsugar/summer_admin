@@ -457,18 +457,18 @@ def constant_change_msg(request):
     client.getBlackList()
 
     #为了刷新
-    refresh()
+    refresh("修改公告等")
 
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
-def refresh():
+def refresh(ssss):
     url = 'http://localhost:8085/refreshMemory'
     # url = 'http://94.191.19.227:8085/refreshMemory'
     full_url = url
-    print("刷新:................." + full_url)
+    print("刷新:................." + ssss + full_url)
     rs = request.urlopen(full_url)
     print(rs)
-    print("刷新完毕...........................")
+    print("刷新完毕..........................." + ssss)
 
 
 def constant_list(request):
@@ -524,7 +524,7 @@ def constant_delete(request):
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
     # 为了刷新
-    refresh()
+    refresh("删除公告等")
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @transaction.atomic()
@@ -559,7 +559,7 @@ def constant_insert(request):
     # 调用这个是为了刷新服务器内存
     client.getBlackList()
     # 为了刷新
-    refresh()
+    refresh("插入公告等")
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 @transaction.atomic()
@@ -636,7 +636,7 @@ def constant_update(request):
     client.getBlackList()
     # client.modifyAndroidVersion(constant.version_of_android)
     # 为了刷新
-    refresh()
+    refresh("更新公告等")
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
 
