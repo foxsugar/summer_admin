@@ -544,13 +544,14 @@ def constant_delete(request):
 
             new_dic = dict()
 
-            ii = 0
+            ii = 1
             for x in new_list:
                 new_dic["key" + str(ii)] = dic[x]
+                ii = ii + 1
             other[key] = new_dic
 
             collect_logger.info("new dic is" + str(new_dic))
-            
+
             other_json = json.dumps(other)
             con.other = other_json
             con.save()
