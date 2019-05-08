@@ -530,6 +530,27 @@ def constant_delete(request):
             dic = other[key]
 
             del dic["key" + kk]
+
+            #重排序
+
+            li = []
+            for k, v in dic.items():
+                li.append(k)
+
+            # 用lambda表达式进行排序
+            new_list = sorted(li, key=lambda x: x)
+
+            collect_logger.info("new list is" + str(new_list))
+
+            new_dic = dict()
+
+            ii = 0
+            for x in new_list:
+                new_dic["key" + str(ii)] = dic[x]
+            other[key] = new_dic
+
+            collect_logger.info("new dic is" + str(new_dic))
+            
             other_json = json.dumps(other)
             con.other = other_json
             con.save()
