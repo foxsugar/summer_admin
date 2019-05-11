@@ -26,7 +26,7 @@ def check_login(func):
     """
 
     def wrapper(req):
-        collect_logger.info("请求信息-----------:" + str(req))
+        # collect_logger.info("请求信息-----------:" + str(req))
         print(req)
         x_token = req.META['HTTP_X_TOKEN']
         print(x_token)
