@@ -459,7 +459,7 @@ def constant_change_msg(request):
             con.save()
 
 
-            return JsonResponse({'code': 20000, 'data': 'ok'})
+
     except Exception as e:
         return HttpResponse("出现错误<%s>" % str(e))
 
@@ -470,7 +470,7 @@ def constant_change_msg(request):
     # 为了刷新
     refresh("修改公告等")
 
-    return HttpResponse("执行成功")
+    return JsonResponse({'code': 20000, 'data': 'ok'})
 
 
 def refresh(ssss):
