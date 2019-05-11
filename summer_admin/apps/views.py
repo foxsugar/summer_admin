@@ -456,16 +456,19 @@ def constant_change_msg(request):
             other_json = json.dumps(other)
             con.other = other_json
             con.save()
-            client = get_client()
-            # 调用这个是为了刷新服务器内存
-            client.getBlackList()
 
-            # 为了刷新
-            refresh("修改公告等")
 
             return JsonResponse({'code': 20000, 'data': 'ok'})
     except Exception as e:
         return HttpResponse("出现错误<%s>" % str(e))
+
+    client = get_client()
+    # 调用这个是为了刷新服务器内存
+    client.getBlackList()
+
+    # 为了刷新
+    refresh("修改公告等")
+
     return HttpResponse("执行成功")
 
 
