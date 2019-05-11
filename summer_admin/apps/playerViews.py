@@ -16,7 +16,7 @@ from django.db.models import Q
 # import urllib.parse
 from urllib import request, parse, error
 import collections
-
+collect_logger = logging.getLogger("collect")
 #更新rebeat
 @check_login
 def save_or_update_constant_rebate(request):
@@ -397,6 +397,24 @@ def test1(request):
 
 def test2(request):
     pass
+
+@check_login
+def updatea1(request):
+
+    try:
+        with transaction.atomic():
+            order_id = int(str(request.GET['aid']))
+            charge_ = Charge.objects.get(order_id=order_id)
+            if charge_.a1 == 0:
+                charge_.a1 = 1
+            else:
+                charge_.a1 = 0
+
+            charge_.save()
+    except Exception as e:
+        collect_logger.info("err:" + str(e))
+        return HttpResponse("出现错误<%s>" % str(e))
+    return JsonResponse({'code': 20000, 'data': None})
 
 
 @check_login

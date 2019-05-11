@@ -120,6 +120,7 @@ class Charge(models.Model):
     username = models.CharField(max_length=255, default='')
     transaction_id = models.CharField(max_length=255, default='')
     finish_time = models.CharField(max_length=255, default='')
+    a1 = models.IntegerField('打款状态', default=0)
     class Meta:
         db_table = 'charge'
         verbose_name = '充值记录表'

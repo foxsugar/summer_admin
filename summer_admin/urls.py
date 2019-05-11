@@ -67,6 +67,7 @@ urlpatterns = [
 
     url(r'^player/fetchplayersvip$', playerViews.serarch_player_list_vip),
     url(r'^player/chargelist$', playerViews.charge_list),
+    url(r'^player/updatea1$', playerViews.updatea1),
     url(r'^player/openCheat', playerViews.open_cheat),
 
     url(r'^upload$', playerViews.upload),
