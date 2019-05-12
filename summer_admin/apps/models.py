@@ -104,7 +104,7 @@ class Constant(models.Model):
 class Charge(models.Model):
     order_id = models.CharField(max_length=255, primary_key=True)
     # order_id = models.AutoField()
-    createtime = models.DateTimeField('创建时间', auto_now=True)
+    createtime = models.DateTimeField('创建时间', auto_now=False)
     money = models.FloatField('充值金额', default='')
     money_point = models.FloatField('充值点数')
     origin = models.IntegerField(default=0)
