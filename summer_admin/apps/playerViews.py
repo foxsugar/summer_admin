@@ -426,6 +426,8 @@ def charge_list(request):
     agent_id = dict['id']
     username = dict['username']
     value = int(str(request.GET['value']))
+
+    collect_logger.info("请求参数~:", str(request))
     if username != 'admin':
 
         page = int(str(request.GET['page']))
