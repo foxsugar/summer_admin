@@ -138,26 +138,54 @@ def agent_list(request):
 
 #创建玩家
 def create_users(request):
-    param = json.loads(str(request.GET['usersForm']))
-    users = Users()
-    users.account = param["account"]
-    users.image = param['image']
-    users.open_id = param['openId']
-    users.password =param['password']
-    users.sex = param['sex']
-    users.username = param['username']
-    users.vip = param['vip']
+    try:
+        with transaction.atomic():
+            param = json.loads(str(request.GET['usersForm']))
+            users = Users()
+            users.account = param["account"]
+            users.image = param['image']
+            users.open_id = param['openId']
+            users.password = param['password']
+            users.sex = param['sex']
+            users.username = param['username']
+            users.vip = param['vip']
 
-    js = {"name": None, "idCard": None, "playGameTime": 0, "shareWXCount": 0, "chargeGoldNum": 0, "lastShareTime": 0,
-     "chargeMoneyNum": 0, "hasAppleCharge": None, "inputAccessCode": None, "totalPlayGameNumber": 0}
-    users.user_info = json.dumps(js)
-    #notnull 的字段 默认都给0
-    users.cash = 0
-    users.gold = 0
-    users.money = 0
-    users.rebate = 0
-    users.save()
+            js = {"name": None, "idCard": None, "playGameTime": 0, "shareWXCount": 0, "chargeGoldNum": 0,
+                  "lastShareTime": 0,
+                  "chargeMoneyNum": 0, "hasAppleCharge": None, "inputAccessCode": None, "totalPlayGameNumber": 0}
+            users.user_info = json.dumps(js)
+            # notnull 的字段 默认都给0
+            users.cash = 0
+            users.gold = 0
+            users.money = 0
+            users.rebate = 0
+            users.save()
+            req_qrcode(users, param['vip'])
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        collect_logger.info("创建用户失败:" + str(e))
+        return JsonResponse({'code': 500})
     return JsonResponse({'code': 20000, 'data': param})
+
+
+def req_qrcode(users, vip):
+    url = "http://localhost:8085/createQrCode"
+    request_data = {}
+    request_data['userId'] = users.id
+    if vip == 1:
+        request_data['isRobot'] = True
+    else:
+        request_data['isRobot'] = False
+
+        # 将自定义data转换成标准格式
+    dat = parse.urlencode(request_data).encode('utf-8')
+    collect_logger.info("创建二维码请求:" + str(url) + str(dat))
+    rs = request.urlopen(url, dat)
+    result = rs.read().decode('utf-8')
+    collect_logger.info("创建二维码请求结果:" + result)
+
 
 #创建玩家
 def update_users(request):
