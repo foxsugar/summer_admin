@@ -217,7 +217,7 @@ def user_list(request):
         index_right = page * size
         agent = Agent_user.objects.get(id=agent_id)
         user_data = list(Users.objects.filter(referee=agent.invite_code).values()[index_left:index_right])
-        total_page = Users.objects.count()
+        total_page = len(user_data)
         data = {'tableData': user_data, 'totalPage': total_page, "show": False}
         return JsonResponse({'code': 20000, 'data': data})
 
@@ -244,6 +244,26 @@ def user_list_vip(request):
 
     return JsonResponse({'code': 20000, 'data': data})
 
+
+@check_login
+def change_agent_type(request):
+    x_token = request.META['HTTP_X_TOKEN']
+    print(x_token)
+    dic = cache.get(x_token)
+    agent_name = dic['username']
+    if agent_name != 'admin':
+        return JsonResponse({'code': 100, 'data': '没有权限'})
+
+    param = json.loads(str(request.GET['changeForm']))
+    agent_id = int(str(param['id']))
+    agent_type = int(str(param['type']))
+    agent = Agent_user.objects.get(id=agent_id)
+    agent.agent_type = agent_type
+    agent.save()
+
+    d = {'agent_type': agent.agent_type}
+
+    return JsonResponse({'code': 20000, 'data': d })
 
 def test1(request):
     pass
@@ -533,6 +553,27 @@ def serarch_player_list_with_referee(request):
         referee = ""
 
     array = Users.objects.filter(referee=referee)
+    player_data = list(array.values()[index_left:index_right])
+    total_page = len(player_data)
+    data = {'tableData': player_data, 'totalPage': total_page}
+    return JsonResponse({'code': 20000, 'data': data})
+
+
+# 通过邀请码搜索玩家
+@check_login
+def serarch_player_list_with_id(request):
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['limit']))
+    index_left = (page - 1) * size
+    index_right = page * size
+    userId = None
+
+    try:
+        userId = str(request.GET['userId'])
+    except:
+        userId = ""
+
+    array = Users.objects.filter(id=userId)
     player_data = list(array.values()[index_left:index_right])
     total_page = len(player_data)
     data = {'tableData': player_data, 'totalPage': total_page}

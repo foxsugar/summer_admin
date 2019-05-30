@@ -371,6 +371,8 @@ def constant_update(request):
     constant.apple_check = param['apple_check']
     constant.download = param['download']
     constant.marquee = param['marquee']
+    constant.marquee1 = param['marquee1']
+    constant.marquee2 = param['marquee2']
     constant.version_of_android = param['version_of_android']
     constant.version_of_ios = param['version_of_ios']
     constant.apple_check = param['apple_check']

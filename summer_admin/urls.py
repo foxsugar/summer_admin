@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^agent/clearRebate$', playerViews.clear_rebate),
     url(r'^agent/demo$', playerViews.cal_income),
     url(r'^agent/rebateDetail$', playerViews.rebate_record_from_admin),
+    url(r'^agent/changeAgentType', playerViews.change_agent_type),
     #搜索代理充值列表
     url(r'^agent/fetchlist$', playerViews.search_agent_charge),
     url(r'^agent/fetchgoldlist$', playerViews.search_agent_record),
@@ -60,6 +61,7 @@ urlpatterns = [
     url(r'^player/fetchplayer$', playerViews.fetchplayer),
     url(r'^player/fetchplayers$', playerViews.serarch_player_list),
     url(r'^player/fetchPlayersRef$', playerViews.serarch_player_list_with_referee),
+    url(r'^player/fetchPlayersUserId$', playerViews.serarch_player_list_with_id),
 
     url(r'^player/fetchplayersvip$', playerViews.serarch_player_list_vip),
     url(r'^player/chargelist$', playerViews.charge_list),
