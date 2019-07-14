@@ -405,10 +405,10 @@ def updatea1(request):
         with transaction.atomic():
             order_id = int(str(request.GET['aid']))
             charge_ = Charge.objects.get(order_id=order_id)
-            if charge_.a1 == 0:
-                charge_.a1 = 1
+            if charge_.status == 0:
+                charge_.status = 1
             else:
-                charge_.a1 = 0
+                charge_.status = 0
 
             charge_.save()
     except Exception as e:
