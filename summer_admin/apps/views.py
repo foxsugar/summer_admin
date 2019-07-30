@@ -171,7 +171,7 @@ def create_users(request):
 
 
 def req_qrcode(users, vip):
-    url = "http://localhost:8085/createQrCode"
+    url = "http://localhost:8086/createQrCode"
     request_data = {}
     request_data['userId'] = users.id
     if vip == 1:
@@ -504,7 +504,7 @@ def constant_change_msg(request):
 def refresh(ssss):
 
 
-    url = 'http://localhost:8085/refreshMemory'
+    url = 'http://localhost:8086/refreshMemory'
     # url = 'http://94.191.19.227:8085/refreshMemory'
     full_url = url
     collect_logger.info("刷新:................." + ssss + full_url)

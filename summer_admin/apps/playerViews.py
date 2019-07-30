@@ -129,7 +129,7 @@ def change_user_delegate(req):
     }
     url_values = parse.urlencode(data)
     print(url_values)
-    url = 'http://localhost:8085/bindReferrer'
+    url = 'http://localhost:8086/bindReferrer'
     full_url = url + '?' + url_values
     print("绑定请求全路径:" +full_url)
     try:
@@ -335,6 +335,19 @@ def response_all_users(page,size):
     index_left = (page - 1) * size
     index_right = page * size
     user_data = list(Users.objects.values()[index_left:index_right])
+
+   #小数点保留两位
+    for o in user_data:
+        gold = o['gold']
+        money = o['money']
+
+        gold_str = "%.2f" % gold
+        money_str = "%.2f" % money
+        o['gold'] = gold_str
+        o['money'] = money_str
+
+        # floatVal = round(gold_str, 2)
+
     total_page = Users.objects.count()
     data = {'tableData': user_data, 'totalPage': total_page, "show": True}
     return JsonResponse({'code': 20000, 'data': data})
@@ -437,6 +450,17 @@ def charge_list(request):
 
         array = Charge.objects.filter(origin=agent_id).order_by('-createtime')
         player_data = list(array.values()[index_left:index_right])
+
+        # 小数点保留两位
+        for o in player_data:
+            moeny_point = o['money_point']
+            money = o['money']
+
+            gold_str = "%.2f" % moeny_point
+            money_str = "%.2f" % money
+            o['money_point'] = gold_str
+            o['money'] = money_str
+
         total_page = len(player_data)
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
@@ -457,6 +481,16 @@ def charge_list(request):
             total_page = len(vo)
             array = vo.all().order_by('-createtime')
         player_data = list(array.values()[index_left:index_right])
+
+        # 小数点保留两位
+        for o in player_data:
+            moeny_point = o['money_point']
+            money = o['money']
+
+            gold_str = "%.2f" % moeny_point
+            money_str = "%.2f" % money
+            o['money_point'] = gold_str
+            o['money'] = money_str
         data = {'tableData': player_data, 'totalPage': total_page}
         return JsonResponse({'code': 20000, 'data': data})
 
@@ -471,7 +505,7 @@ def open_cheat(request):
 
     url_parame = urllib.parse.urlencode(data)
 
-    request = urllib.request.Request("http://localhost:8085/openCheat?" + url_parame,
+    request = urllib.request.Request("http://localhost:8086/openCheat?" + url_parame,
                                      bytes(json.dumps(data), 'utf8'),
                                      method='GET')
 
