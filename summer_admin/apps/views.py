@@ -198,6 +198,20 @@ def update_users(request):
     users.password =param['password']
     users.sex = param['sex']
     users.username = param['username']
+
+    vip = param['vip'] + ''
+
+    if vip == '0':
+        pass
+    elif vip == '1':
+        pass
+    elif vip == '2':
+        pass
+    elif vip == '3':
+        pass
+    else:
+        return JsonResponse({'code': 101, 'data': '玩家类型不存在！'})
+
     users.vip = param['vip']
     users.save()
     return JsonResponse({'code': 20000, 'data': param})
