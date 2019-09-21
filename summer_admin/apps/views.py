@@ -199,7 +199,9 @@ def update_users(request):
     users.sex = param['sex']
     users.username = param['username']
 
-    vip = param['vip'] + ''
+    vip = str(param['vip'])
+
+
 
     if vip == '0':
         pass
@@ -214,6 +216,8 @@ def update_users(request):
 
     users.vip = param['vip']
     users.save()
+
+    refresh_vip(users.id, param['vip'])
     return JsonResponse({'code': 20000, 'data': param})
 
 @check_login
@@ -531,6 +535,16 @@ def constant_change_msg(request):
 
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
+#刷新 vip
+def refresh_vip(uid, vip):
+
+    url = 'http://localhost:8086/setVip?userId={}&vip={}'.format(uid, vip)
+    full_url = url
+    collect_logger.info("刷新vip:................." + full_url)
+    rs = request.urlopen(full_url)
+    html = rs.read().decode('utf-8')
+    collect_logger.info("请求结果:" + html)
+    print("刷新vip完毕..........................." + full_url)
 
 def refresh(ssss):
 
