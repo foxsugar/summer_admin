@@ -491,10 +491,27 @@ def constant_change_msg(request):
                 key = "notice"
             elif value == '1':
                 key = "explain"
-            else:
+            elif value == '2':
                 key = "promo"
+            elif value == '3':
+                #微信客服
+                key = 'kefu'
+
+            elif value == '4':
+                #qq客服务
+                key = 'kefu'
+            else:
+                raise RuntimeError('类型错误')
+
+
             dic = other[key]
-            kkk = "key" + pxId
+            kkk = None
+            if value == '3':
+                kkk = "wx" + pxId
+            elif value == '4':
+                kkk = "qq" + pxId
+            else:
+                kkk = "key" + pxId
             dic[kkk] = kk
             other_json = json.dumps(other)
             con.other = other_json
@@ -505,12 +522,12 @@ def constant_change_msg(request):
     except Exception as e:
         return HttpResponse("出现错误<%s>" % str(e))
 
-    client = get_client()
-    # 调用这个是为了刷新服务器内存
-    client.getBlackList()
-
-    # 为了刷新
-    refresh("修改公告等")
+    # client = get_client()
+    # # 调用这个是为了刷新服务器内存
+    # client.getBlackList()
+    #
+    # # 为了刷新
+    # refresh("修改公告等")
 
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
@@ -538,15 +555,39 @@ def constant_list(request):
         key = "notice"
     elif value == 1:
         key = "explain"
-    else:
+    elif value == 2:
         key = "promo"
+    elif value == 3:
+        #微信客服
+        key = 'kefu'
+    elif value == 4:
+        #QQ客服务
+        key = 'kefu'
+    else:
+        pass
     dic = other[key]
 
     li = []
     for k, v in dic.items():
         d = dict()
         d["key"] = v
-        d["px"] = int(k[3])
+        if value == 3:
+            if k.startswith('qq'):
+                continue
+
+            #截取字符串 wx1 wx2 wx3  截取第三个
+            d["px"] = int(k[2])
+
+        elif value == 4:
+            if (k + "").startswith('wx'):
+                continue
+
+            # 截取字符串 qq1 qq2 qq3 截取第三个
+            d["px"] = int(k[2])
+        else:
+            # 截取字符串 key1 key2 key3 截取第四个
+            d["px"] = int(k[3])
+
         li.append(d)
 
     #用lambda表达式进行排序
@@ -571,8 +612,10 @@ def constant_delete(request):
                 key = "notice"
             elif value == '1':
                 key = "explain"
-            else:
+            elif value == '2':
                 key = "promo"
+            else:
+                return JsonResponse({'code': 2001, 'data': '客服信息不允许删除'})
             dic = other[key]
 
             del dic["key" + kk]
@@ -626,8 +669,10 @@ def constant_insert(request):
                 key = "notice"
             elif value == '1':
                 key = "explain"
-            else:
+            elif value == '2':
                 key = "promo"
+            else:
+                return JsonResponse({'code': 2001, 'data': '客服信息不允许插入'})
             dic = other[key]
 
             max_px = 0
