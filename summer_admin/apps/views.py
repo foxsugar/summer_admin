@@ -458,6 +458,20 @@ def agent_downGoal(request):
     else:
         return JsonResponse({'code': 100, 'data': ' 下分失败'})
 
+#数据修正
+@check_login
+def fix_data(request):
+    param = json.loads(str(request.GET['chargeForm']))
+    uid = int(param['uid'])
+    child_num = int(param['childNum'])
+    weekRebate = float(param['weekRebate'])
+    allRebate = float(param['allRebate'])
+    try:
+        repair_data(uid, child_num, weekRebate, allRebate)
+        return JsonResponse({'code': 20000, 'data': '数据修复成功'})
+    except Exception as e:
+        return JsonResponse({'code': 19999, 'data': '数据修复失败'})
+
 
 @check_login
 def constant(request):
@@ -534,6 +548,18 @@ def constant_change_msg(request):
     # refresh("修改公告等")
 
     return JsonResponse({'code': 20000, 'data': 'ok'})
+
+#修正数据
+def repair_data(uid, childNum, weekRebate, allRebate):
+
+    url = 'http://localhost:8085/setFixNum?userId={}&childNum={}&weekRebate={}&allRebate={}'.format(uid, childNum, weekRebate, allRebate)
+    full_url = url
+    collect_logger.info("修正数据:................." + full_url)
+    rs = request.urlopen(full_url)
+    html = rs.read().decode('utf-8')
+    collect_logger.info("修正数据请求结果:" + html)
+    print("修正数据..........................." + full_url)
+
 
 #刷新 vip
 def refresh_vip(uid, vip):
