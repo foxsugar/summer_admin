@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^agent/fetchdelegates$', playerViews.fetch_delegates),
     url(r'^agent/upGoal$', playerViews.agent_upGoal),
     url(r'^agent/downGoal$', playerViews.agent_downGoal),
+    url(r'^agent/fixData$', playerViews.fix_data),
     url(r'^agent/goldCashList$', playerViews.gold_cash_list),
     url(r'^agent/changeState$', playerViews.agent_change_state),
     url(r'^agent/clearRebate$', playerViews.clear_rebate),
