@@ -288,8 +288,18 @@ def user_list(request):
             return response_all_users(page, size)
         elif value == 1:
             return response_delegates(page, size)
-        else:
+            # return response_all_users_(page, size, 2)
+        elif value == 2:
             return reponse_players(page, size)
+            # return response_all_users_(page, size, 4)
+        #vip 玩家
+        elif value == 3:
+            return response_all_users_(page, size, 1)
+         # 工会玩家
+        elif value == 4:
+            return response_all_users_(page, size, 3)
+
+
         # page = int(str(request.GET['page']))
         # size = int(str(request.GET['size']))
         # index_left = (page - 1) * size
@@ -330,11 +340,31 @@ def user_list(request):
         data = {'tableData': user_data, 'totalPage': total_page, "show": False}
         return JsonResponse({'code': 20000, 'data': data})
 
-
 def response_all_users(page,size):
+    return response_all_users_(page, size, 0)
+
+def response_all_users_(page,size, type):
     index_left = (page - 1) * size
     index_right = page * size
-    user_data = list(Users.objects.values()[index_left:index_right])
+    user_data = None
+
+    #如果type == 0 什么都不过滤
+    if type == 0:
+        user_data  = list(Users.objects.values()[index_left:index_right])
+    #如果type == 1就是过滤 vip玩家
+    if type == 1:
+        user_data = list(Users.objects.values().filter(vip=1)[index_left:index_right])
+
+        # 如果type == 2就是过滤 代理玩家
+    if type == 2:
+        user_data = list(Users.objects.values().filter(vip=2)[index_left:index_right])
+    # 如果type == 3就是过滤 工会玩家
+    if type == 3:
+        user_data = list(Users.objects.values().filter(vip=3)[index_left:index_right])
+
+        # 如果type == 3就是过滤 工会玩家
+    if type == 4:
+        user_data = list(Users.objects.values().filter(vip=0)[index_left:index_right])
 
    #小数点保留两位
     for o in user_data:

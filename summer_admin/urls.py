@@ -71,6 +71,9 @@ urlpatterns = [
     url(r'^player/updatea1$', playerViews.updatea1),
     url(r'^player/openCheat', playerViews.open_cheat),
 
+    #代理工会明细数据
+    url(r'^player/gonghui', playerViews.user_info_new),
+
     url(r'^upload$', playerViews.upload),
 
     url(r'^user/logout$', playerViews.logout),

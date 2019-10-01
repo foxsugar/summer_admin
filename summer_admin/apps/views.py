@@ -253,6 +253,37 @@ def agent(request):
         print("--")
         return JsonResponse({'code': 20000, 'data': param})
 
+#代理工会明细数据
+def user_info_new(request):
+    #暂时写死 模拟请求数据
+    train_f = open('/Users/zhaobingbing/Desktop/pythonweb/summer_admin/static/json/test.json', 'r', encoding='UTF-8')
+    train = json.load(train_f)
+
+    # page = int(str(request.GET['page']))
+    # size = int(str(request.GET['size']))
+    #level 代表代理级别 1 代表1级 2 代表2级 3 代表三级
+    # level = int(str(request.GET['level']))
+    # index_left = (page - 1) * size
+    # index_right = page * size
+
+    level = 1
+    index_left = 0
+    index_right = 3
+
+    data = None
+    #一级代理
+    if level == 1:
+        data = train['firstLevelUser'][index_left:index_right]
+    # 二级代理
+    elif level == 2:
+        data = train['secondLevelUser'][index_left:index_right]
+    # 三级代理
+    elif level == 3:
+        data = train['thirdLevelUser'][index_left:index_right]
+    #在此做分页返回
+    return JsonResponse({'code': 20000, 'data': data})
+
+
 #分页查询
 @check_login
 def fetch_delegate_relations(request):
