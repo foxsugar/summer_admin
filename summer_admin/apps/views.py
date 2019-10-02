@@ -860,7 +860,7 @@ def repair_data(uid, childNum, weekRebate, allRebate):
 #刷新 vip
 def refresh_vip(uid, vip):
 
-    url = 'http://localhost:8086/setVip?userId={}&vip={}'.format(uid, vip)
+    url = 'http://154.91.199.113:8086/setVip?userId={}&vip={}'.format(uid, vip)
     full_url = url
     collect_logger.info("刷新vip:................." + full_url)
     rs = request.urlopen(full_url)
