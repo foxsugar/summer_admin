@@ -270,7 +270,12 @@ def user_info_new(request):
         url = 'http://localhost:8086/getRebateInfo?userId={}'.format(uid)
         full_url = url
         collect_logger.info("请求三级代理数据:................." + full_url)
-        train = request.urlopen(full_url)
+        try:
+            train = request.urlopen(full_url)
+        except Exception as e:
+            collect_logger.info("请求三级代理数据返回异常")
+            collect_logger.info(e)
+
 
     page = int(str(request.GET['page']))
     size = int(str(request.GET['size']))
