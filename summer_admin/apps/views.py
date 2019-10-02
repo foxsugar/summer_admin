@@ -253,35 +253,104 @@ def agent(request):
         print("--")
         return JsonResponse({'code': 20000, 'data': param})
 
+@check_login
 #代理工会明细数据
 def user_info_new(request):
-    #暂时写死 模拟请求数据
-    train_f = open('/Users/zhaobingbing/Desktop/pythonweb/summer_admin/static/json/test.json', 'r', encoding='UTF-8')
-    train = json.load(train_f)
+    # 暂时写死 模拟请求数据
+    # train_f = open('/Users/zhaobingbing/Desktop/pythonweb/summer_admin/static/json/test.json', 'r', encoding='UTF-8')
+    # train = json.load(train_f)
 
-    # page = int(str(request.GET['page']))
-    # size = int(str(request.GET['size']))
+    uid = 0
+    try:
+        uid = int(str(request.GET['uid']))
+    except:
+        uid = 0
+
+    if uid != 0:
+        url = 'http://localhost:8086/getRebateInfo?userId={}'.format(uid)
+        full_url = url
+        collect_logger.info("刷新vip:................." + full_url)
+        train = request.urlopen(full_url)
+
+    page = int(str(request.GET['page']))
+    size = int(str(request.GET['size']))
     #level 代表代理级别 1 代表1级 2 代表2级 3 代表三级
-    # level = int(str(request.GET['level']))
-    # index_left = (page - 1) * size
-    # index_right = page * size
+    level = int(str(request.GET['level']))
+    index_left = (page - 1) * size
+    index_right = page * size
 
-    level = 1
-    index_left = 0
-    index_right = 3
 
+    # level = 1
+    # index_left = 0
+    # index_right = 3
+    total_page = 0
     data = None
-    #一级代理
-    if level == 1:
-        data = train['firstLevelUser'][index_left:index_right]
-    # 二级代理
-    elif level == 2:
-        data = train['secondLevelUser'][index_left:index_right]
-    # 三级代理
-    elif level == 3:
-        data = train['thirdLevelUser'][index_left:index_right]
+    tdata = None
+
+    ddd_info = {}
+
+
+
+    if uid == 0:
+        ddd_info['firstNum'] = 0
+        ddd_info['secondNum'] =0
+        ddd_info['thirdNum'] =0
+        ddd_info['firstContribute'] = 0
+        ddd_info['secondContribute'] = 0
+        ddd_info['thirdContribute'] = 0
+        ddd_info['firstRebate'] = 0
+        ddd_info['secondRebate'] = 0
+        ddd_info['thirdRebate'] = 0
+        ddd_info['allFirstContribute'] = 0
+        ddd_info['allSecondContribute'] = 0
+        ddd_info['allThirdContribute'] =0
+        ddd_info['allFirstRebate'] = 0
+        ddd_info['allSecondRebate'] =0
+        ddd_info['allThirdRebate'] = 0
+
+        ddd_info['totalPlayGameNumber'] = 0
+        ddd_info['playGameTime'] = 0
+        ddd_info['shareWXCount'] = 0
+        tdata = {'tableData': data, 'totalPage': total_page, "dict": ddd_info, "show": False}
+        pass
+    else:
+
+        ddd_info['firstNum'] = train['firstNum']
+        ddd_info['secondNum'] = train['secondNum']
+        ddd_info['thirdNum'] = train['thirdNum']
+        ddd_info['firstContribute'] = train['firstContribute']
+        ddd_info['secondContribute'] = train['secondContribute']
+        ddd_info['thirdContribute'] = train['thirdContribute']
+        ddd_info['firstRebate'] = train['firstRebate']
+        ddd_info['secondRebate'] = train['secondRebate']
+        ddd_info['thirdRebate'] = train['thirdRebate']
+        ddd_info['allFirstContribute'] = train['allFirstContribute']
+        ddd_info['allSecondContribute'] = train['allSecondContribute']
+        ddd_info['allThirdContribute'] = train['allThirdContribute']
+        ddd_info['allFirstRebate'] = train['allFirstRebate']
+        ddd_info['allSecondRebate'] = train['allSecondRebate']
+        ddd_info['allThirdRebate'] = train['allThirdRebate']
+
+        ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
+        ddd_info['playGameTime'] = train['playGameTime']
+        ddd_info['shareWXCount'] = train['shareWXCount']
+        # 一级代理
+        if level == 1:
+            data = train['firstLevelUser'][index_left:index_right]
+            total_page = len(train['firstLevelUser'])
+        # 二级代理
+        elif level == 2:
+            data = train['secondLevelUser'][index_left:index_right]
+            total_page = len(train['secondLevelUser'])
+        # 三级代理
+        elif level == 3:
+            data = train['thirdLevelUser'][index_left:index_right]
+            total_page = len(train['thirdLevelUser'])
+
+        tdata = {'tableData': data, 'totalPage': total_page, "dict" : ddd_info, "show": False}
+
     #在此做分页返回
-    return JsonResponse({'code': 20000, 'data': data})
+    return JsonResponse({'code': 20000, 'data': tdata})
 
 
 #分页查询
