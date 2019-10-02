@@ -255,18 +255,27 @@ def agent(request):
 
 @check_login
 #代理工会明细数据
-def user_info_new(request):
+def user_info_new(req):
     # 暂时写死 模拟请求数据
     # train_f = open('/Users/zhaobingbing/Desktop/pythonweb/summer_admin/static/json/test.json', 'r', encoding='UTF-8')
     # train = json.load(train_f)
 
     uid = 0
     try:
-        uid = int(str(request.GET['uid']))
+        uid = int(str(req.GET['uid']))
     except:
         uid = 0
 
     if uid != 0:
+        #
+        # url = 'http://localhost:8086/setVip?userId={}&vip={}'.format(uid, vip)
+        # full_url = url
+        # collect_logger.info("刷新vip:................." + full_url)
+        # rs = request.urlopen(full_url)
+        # html = rs.read().decode('utf-8')
+        # collect_logger.info("请求结果:" + html)
+        # print("刷新vip完毕..........................." + full_url)
+
         url = 'http://localhost:8086/getRebateInfo?userId={}'.format(uid)
         full_url = url
         collect_logger.info("请求三级代理数据:................." + full_url)
@@ -277,10 +286,10 @@ def user_info_new(request):
             collect_logger.info(e)
 
 
-    page = int(str(request.GET['page']))
-    size = int(str(request.GET['size']))
+    page = int(str(req.GET['page']))
+    size = int(str(req.GET['size']))
     #level 代表代理级别 1 代表1级 2 代表2级 3 代表三级
-    level = int(str(request.GET['level']))
+    level = int(str(req.GET['level']))
     index_left = (page - 1) * size
     index_right = page * size
 
