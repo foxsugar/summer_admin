@@ -215,9 +215,16 @@ def update_users(request):
         return JsonResponse({'code': 101, 'data': '玩家类型不存在！'})
 
     users.vip = param['vip']
-    users.save()
 
-    refresh_vip(users.id, param['vip'])
+    try:
+        with transaction.atomic():
+            refresh_vip(users.id, param['vip'])
+            users.save()
+    except Exception as e:
+        collect_logger.info("修改玩家数据失败{}", e)
+
+
+
     return JsonResponse({'code': 20000, 'data': param})
 
 @check_login
