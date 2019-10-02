@@ -281,6 +281,7 @@ def user_info_new(req):
         collect_logger.info("请求三级代理数据:................." + full_url)
         try:
             train = request.urlopen(full_url)
+            collect_logger.info("返回结果{}", train)
         except Exception as e:
             collect_logger.info("请求三级代理数据返回异常")
             collect_logger.info(e)
