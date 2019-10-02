@@ -381,9 +381,9 @@ def user_info_new(req):
             ddd_info['firstNum'] = 0
 
         try:
-            ddd_info['thirdNum'] = train['thirdNum']
+            ddd_info['secondNum'] = train['secondNum']
         except:
-            ddd_info['thirdNum'] = 0
+            ddd_info['secondNum'] = 0
 
         try:
             ddd_info['thirdNum'] = train['thirdNum']
@@ -391,46 +391,90 @@ def user_info_new(req):
             ddd_info['thirdNum'] = 0
 
         try:
-            ddd_info['firstContribute'] = train['firstContribute']
+            ddd_info['firstContribute'] ="%.2f" %  train['firstContribute']
         except:
-            ddd_info['firstContribute'] = 0
+            ddd_info['firstContribute'] =  '0.0'
 
         try:
-            ddd_info['secondContribute'] = train['secondContribute']
+            ddd_info['secondContribute'] = "%.2f" % train['secondContribute']
         except:
-            ddd_info['secondContribute'] = 0
+            ddd_info['secondContribute'] =  '0.0'
 
         try:
-            ddd_info['thirdContribute'] = train['thirdContribute']
+            ddd_info['thirdContribute'] ="%.2f" %  train['thirdContribute']
         except:
-            ddd_info['thirdContribute'] =0
+            ddd_info['thirdContribute'] = '0.0'
 
         try:
-            ddd_info['allFirstContribute'] = train['allFirstContribute']
+            ddd_info['allFirstContribute'] ="%.2f" %  train['allFirstContribute']
         except:
-            ddd_info['allFirstContribute'] = 0
+            ddd_info['allFirstContribute'] =  '0.0'
 
 
         try:
-            ddd_info['allSecondContribute'] = train['allSecondContribute']
+            ddd_info['allSecondContribute'] = "%.2f" %  train['allSecondContribute']
         except:
-            ddd_info['allSecondContribute'] = 0
+            ddd_info['allSecondContribute'] =  '0.0'
 
         try:
-            ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
+            ddd_info['allThirdContribute'] = "%.2f" %  train['allThirdContribute']
         except:
-            ddd_info['totalPlayGameNumber'] = 0
+            ddd_info['allThirdContribute'] =  '0.0'
 
         try:
-            ddd_info['playGameTime'] = train['playGameTime']
+            ddd_info['allFirstRebate'] = "%.2f" %  train['allFirstRebate']
         except:
-            ddd_info['playGameTime'] = 0
+            ddd_info['allFirstRebate'] =  '0.0'
 
         try:
-            ddd_info['shareWXCount'] = train['shareWXCount']
+            ddd_info['allSecondRebate'] ="%.2f" %  train['allSecondRebate']
         except:
-            ddd_info['firstNum'] = 0
+            ddd_info['allSecondRebate'] =  '0.0'
 
+        try:
+            ddd_info['allThirdRebate'] = "%.2f" %  train['allThirdRebate']
+        except:
+            ddd_info['allThirdRebate'] =  '0.0'
+
+        try:
+            ddd_info['fixNum'] = train['fixNum']
+        except:
+            ddd_info['fixNum'] = 0
+
+        try:
+            ddd_info['fixRebate'] ="%.2f" %  train['fixRebate']
+        except:
+            ddd_info['fixRebate'] = '0.0'
+
+        try:
+            ddd_info['fixAllRebate'] ="%.2f" %  train['fixAllRebate']
+        except:
+            ddd_info['fixAllRebate'] ='0.0'
+
+        try:
+            ddd_info['firstRebate'] ="%.2f" %  train['firstRebate']
+        except:
+            ddd_info['firstRebate'] ='0.0'
+
+        try:
+            ddd_info['secondRebate'] ="%.2f" %   train['secondRebate']
+        except:
+            ddd_info['secondRebate'] = '0.0'
+
+        try:
+            ddd_info['thirdRebate'] ="%.2f" %  train['thirdRebate']
+        except:
+            ddd_info['thirdRebate'] = '0.0'
+
+            # 小数点保留两位
+        # for o in user_data:
+        #     gold = o['gold']
+        #     money = o['money']
+        #
+        #     gold_str = "%.2f" % gold
+        #     money_str = "%.2f" % money
+        #     o['gold'] = gold_str
+        #     o['money'] = money_str
 
         # ddd_info['secondNum'] = train['secondNum']
         # ddd_info['thirdNum'] = train['thirdNum']
@@ -450,6 +494,26 @@ def user_info_new(req):
         # ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
         # ddd_info['playGameTime'] = train['playGameTime']
         # ddd_info['shareWXCount'] = train['shareWXCount']
+
+        # result.put("fixNum", userBean.getUserInfo().getPlayGameTime()); // 修正玩家人数
+        # result.put("fixRebate", userBean.getUserInfo().getChargeMoneyNum()); // 修正本周数据
+        # result.put("fixAllRebate", userBean.getUserInfo().getChargeGoldNum()); // 修正历史数据
+
+        try:
+            ddd_info['fixNum'] = train['fixNum']
+        except:
+            ddd_info['fixNum'] = '0.0'
+
+        try:
+            ddd_info['fixRebate'] = "%.2f" % train['fixRebate']
+        except:
+            ddd_info['fixRebate'] = '0.0'
+
+        try:
+            ddd_info['fixAllRebate'] = "%.2f" % train['fixAllRebate']
+        except:
+            ddd_info['fixAllRebate'] = '0.0'
+
         # 一级代理
         if level == 1:
             data = train['firstLevelUser'][index_left:index_right]
@@ -691,11 +755,13 @@ def agent_downGoal(request):
 #数据修正
 @check_login
 def fix_data(request):
-    param = json.loads(str(request.GET['chargeForm']))
-    uid = int(param['uid'])
-    child_num = int(param['childNum'])
-    weekRebate = float(param['weekRebate'])
-    allRebate = float(param['allRebate'])
+    # param = json.loads()
+    uid = int(str(request.GET['uid']))
+    child_num = int(str(request.GET['fixNum']))
+
+    weekRebate = float(str(request.GET['fixRebate']))
+    allRebate = float(str(request.GET['fixAllRebate']))
+
     try:
         repair_data(uid, child_num, weekRebate, allRebate)
         return JsonResponse({'code': 20000, 'data': '数据修复成功'})
@@ -782,7 +848,7 @@ def constant_change_msg(request):
 #修正数据
 def repair_data(uid, childNum, weekRebate, allRebate):
 
-    url = 'http://localhost:8085/setFixNum?userId={}&childNum={}&weekRebate={}&allRebate={}'.format(uid, childNum, weekRebate, allRebate)
+    url = 'http://localhost:8086/setFixNum?userId={}&childNum={}&weekRebate={}&allRebate={}'.format(uid, childNum, weekRebate, allRebate)
     full_url = url
     collect_logger.info("修正数据:................." + full_url)
     rs = request.urlopen(full_url)
