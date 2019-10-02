@@ -253,13 +253,34 @@ def agent(request):
         print("--")
         return JsonResponse({'code': 20000, 'data': param})
 
+
+def req_delegate(uid):
+    train = None
+    url = 'http://154.91.199.113:8086/getRebateInfo?userId={}'.format(uid)
+    # url = 'http://localhost:8086/getRebateInfo?userId={}'.format(uid)
+    full_url = url
+    collect_logger.info("请求三级代理数据:................." + full_url)
+
+
+    try:
+        rs = request.urlopen(full_url)
+        html = rs.read().decode('utf-8')
+        train = json.loads(html)
+        collect_logger.info("返回结果{}", train)
+        return train
+
+    except Exception as e:
+        collect_logger.info("请求三级代理数据返回异常")
+        collect_logger.info(e)
+        return train
+
 @check_login
 #代理工会明细数据
 def user_info_new(req):
     # 暂时写死 模拟请求数据
     # train_f = open('/Users/zhaobingbing/Desktop/pythonweb/summer_admin/static/json/test.json', 'r', encoding='UTF-8')
     # train = json.load(train_f)
-
+    train = {}
     uid = 0
     try:
         uid = int(str(req.GET['uid']))
@@ -267,6 +288,7 @@ def user_info_new(req):
         uid = 0
 
     if uid != 0:
+        train = req_delegate(uid)
         #
         # url = 'http://localhost:8086/setVip?userId={}&vip={}'.format(uid, vip)
         # full_url = url
@@ -276,15 +298,7 @@ def user_info_new(req):
         # collect_logger.info("请求结果:" + html)
         # print("刷新vip完毕..........................." + full_url)
 
-        url = 'http://localhost:8086/getRebateInfo?userId={}'.format(uid)
-        full_url = url
-        collect_logger.info("请求三级代理数据:................." + full_url)
-        try:
-            train = request.urlopen(full_url)
-            collect_logger.info("返回结果{}", train)
-        except Exception as e:
-            collect_logger.info("请求三级代理数据返回异常")
-            collect_logger.info(e)
+
 
 
     page = int(str(req.GET['page']))
@@ -307,9 +321,9 @@ def user_info_new(req):
 
 
     if uid == 0:
-        ddd_info['firstNum'] = 0
-        ddd_info['secondNum'] =0
-        ddd_info['thirdNum'] =0
+        # ddd_info['firstNum'] = 0
+        # ddd_info['secondNum'] =0
+        # ddd_info['thirdNum'] =0
         ddd_info['firstContribute'] = 0
         ddd_info['secondContribute'] = 0
         ddd_info['thirdContribute'] = 0
@@ -330,37 +344,138 @@ def user_info_new(req):
         pass
     else:
 
-        ddd_info['firstNum'] = train['firstNum']
-        ddd_info['secondNum'] = train['secondNum']
-        ddd_info['thirdNum'] = train['thirdNum']
-        ddd_info['firstContribute'] = train['firstContribute']
-        ddd_info['secondContribute'] = train['secondContribute']
-        ddd_info['thirdContribute'] = train['thirdContribute']
-        ddd_info['firstRebate'] = train['firstRebate']
-        ddd_info['secondRebate'] = train['secondRebate']
-        ddd_info['thirdRebate'] = train['thirdRebate']
-        ddd_info['allFirstContribute'] = train['allFirstContribute']
-        ddd_info['allSecondContribute'] = train['allSecondContribute']
-        ddd_info['allThirdContribute'] = train['allThirdContribute']
-        ddd_info['allFirstRebate'] = train['allFirstRebate']
-        ddd_info['allSecondRebate'] = train['allSecondRebate']
-        ddd_info['allThirdRebate'] = train['allThirdRebate']
+        # "allFirstContribute": 31.66,
+        # "allSecondContribute": 236.32,
+        # "secondNum": 76,
+        # "thirdContribute": 0.0,
+        # "allFirstRebate": 0.0,
+        # "allThirdRebate": 587.2659999999997,
+        # "fixNum": 0,
+        # "firstContribute": 0.0,
+        # "secondRebate": 0.0,
+        # "thirdRebate": 0.0,
+        # "fixAllRebate": 0.0,
+        # "allSecondRebate": 34.80000000000003,
+        # ddd_info['secondNum'] = train['secondNum']
+        # ddd_info['thirdNum'] = train['thirdNum']
+        # ddd_info['firstContribute'] = train['firstContribute']
+        # ddd_info['secondContribute'] = train['secondContribute']
+        # ddd_info['thirdContribute'] = train['thirdContribute']
+        # ddd_info['firstRebate'] = train['firstRebate']
+        # ddd_info['secondRebate'] = train['secondRebate']
+        # ddd_info['thirdRebate'] = train['thirdRebate']
+        # ddd_info['allFirstContribute'] = train['allFirstContribute']
+        # ddd_info['allSecondContribute'] = train['allSecondContribute']
+        # ddd_info['allThirdContribute'] = train['allThirdContribute']
+        # ddd_info['allFirstRebate'] = train['allFirstRebate']
+        # ddd_info['allSecondRebate'] = train['allSecondRebate']
+        # ddd_info['allThirdRebate'] = train['allThirdRebate']
+        #
+        # ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
+        # ddd_info['playGameTime'] = train['playGameTime']
+        # ddd_info['shareWXCount'] = train['shareWXCount']
 
-        ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
-        ddd_info['playGameTime'] = train['playGameTime']
-        ddd_info['shareWXCount'] = train['shareWXCount']
+        try:
+            ddd_info['firstNum'] = train['firstNum']
+        except:
+            ddd_info['firstNum'] = 0
+
+        try:
+            ddd_info['thirdNum'] = train['thirdNum']
+        except:
+            ddd_info['thirdNum'] = 0
+
+        try:
+            ddd_info['thirdNum'] = train['thirdNum']
+        except:
+            ddd_info['thirdNum'] = 0
+
+        try:
+            ddd_info['firstContribute'] = train['firstContribute']
+        except:
+            ddd_info['firstContribute'] = 0
+
+        try:
+            ddd_info['secondContribute'] = train['secondContribute']
+        except:
+            ddd_info['secondContribute'] = 0
+
+        try:
+            ddd_info['thirdContribute'] = train['thirdContribute']
+        except:
+            ddd_info['thirdContribute'] =0
+
+        try:
+            ddd_info['allFirstContribute'] = train['allFirstContribute']
+        except:
+            ddd_info['allFirstContribute'] = 0
+
+
+        try:
+            ddd_info['allSecondContribute'] = train['allSecondContribute']
+        except:
+            ddd_info['allSecondContribute'] = 0
+
+        try:
+            ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
+        except:
+            ddd_info['totalPlayGameNumber'] = 0
+
+        try:
+            ddd_info['playGameTime'] = train['playGameTime']
+        except:
+            ddd_info['playGameTime'] = 0
+
+        try:
+            ddd_info['shareWXCount'] = train['shareWXCount']
+        except:
+            ddd_info['firstNum'] = 0
+
+
+        # ddd_info['secondNum'] = train['secondNum']
+        # ddd_info['thirdNum'] = train['thirdNum']
+        # ddd_info['firstContribute'] = train['firstContribute']
+        # ddd_info['secondContribute'] = train['secondContribute']
+        # ddd_info['thirdContribute'] = train['thirdContribute']
+        # ddd_info['firstRebate'] = train['firstRebate']
+        # ddd_info['secondRebate'] = train['secondRebate']
+        # ddd_info['thirdRebate'] = train['thirdRebate']
+        # ddd_info['allFirstContribute'] = train['allFirstContribute']
+        # ddd_info['allSecondContribute'] = train['allSecondContribute']
+        # ddd_info['allThirdContribute'] = train['allThirdContribute']
+        # ddd_info['allFirstRebate'] = train['allFirstRebate']
+        # ddd_info['allSecondRebate'] = train['allSecondRebate']
+        # ddd_info['allThirdRebate'] = train['allThirdRebate']
+        #
+        # ddd_info['totalPlayGameNumber'] = train['totalPlayGameNumber']
+        # ddd_info['playGameTime'] = train['playGameTime']
+        # ddd_info['shareWXCount'] = train['shareWXCount']
         # 一级代理
         if level == 1:
             data = train['firstLevelUser'][index_left:index_right]
             total_page = len(train['firstLevelUser'])
+
+            for a in data:
+                a['totalPlayGameNumber'] = a['userInfo']['totalPlayGameNumber']
+                a['shareWXCount'] = a['userInfo']['shareWXCount']
         # 二级代理
         elif level == 2:
             data = train['secondLevelUser'][index_left:index_right]
+
+
+            for a in data:
+                a['totalPlayGameNumber'] = a['userInfo']['totalPlayGameNumber']
+                a['shareWXCount'] = a['userInfo']['shareWXCount']
+
             total_page = len(train['secondLevelUser'])
         # 三级代理
         elif level == 3:
             data = train['thirdLevelUser'][index_left:index_right]
             total_page = len(train['thirdLevelUser'])
+
+            for a in data:
+                a['totalPlayGameNumber'] = a['userInfo']['totalPlayGameNumber']
+                a['shareWXCount'] = a['userInfo']['shareWXCount']
 
         tdata = {'tableData': data, 'totalPage': total_page, "dict" : ddd_info, "show": False}
 
