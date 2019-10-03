@@ -19,6 +19,10 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator , PageNotAnInteger,EmptyPage
 TIME_OUT = 60 * 60 * 2
 
+import sys
+import codecs
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+
 collect_logger = logging.getLogger("collect")
 
 def check_login(func):
