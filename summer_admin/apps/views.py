@@ -871,7 +871,7 @@ def repair_data(uid, childNum, weekRebate, allRebate):
 
 
 def refresh_user_info(id, password, image, sex, username):
-    url = 'http://localhost:8086/setUserInfo?id={}&account={}&openId={}&password={}&image={}&sex={}&username={}'.format(id, password, image, sex, username)
+    url = 'http://localhost:8086/setUserInfo?id={}&&password={}&image={}&sex={}&username={}'.format(id, password, image, sex, username)
     full_url = url
     collect_logger.info("刷新用户信息:................." + full_url)
     rs = request.urlopen(full_url)
