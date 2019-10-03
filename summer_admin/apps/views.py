@@ -192,9 +192,9 @@ def update_users(request):
     param = json.loads(str(request.GET['usersForm']))
     uid = param["userId"]
     users = Users.objects.get(id=uid)
-    users.account = param["account"]
+    # users.account = param["account"]
     users.image = param['image']
-    users.open_id = param['openId']
+    # users.open_id = param['openId']
     users.password =param['password']
     users.sex = param['sex']
     users.username = param['username']
@@ -222,7 +222,7 @@ def update_users(request):
             if type == '1':
                 refresh_vip(users.id, param['vip'])
             else:
-                refresh_user_info(users.id, users.account, users.open_id, users.password, users.image, users.sex, users.username)
+                refresh_user_info(users.id, users.password, users.image, users.sex, users.username)
                 pass
 
             users.save()
@@ -870,8 +870,8 @@ def repair_data(uid, childNum, weekRebate, allRebate):
     print("修正数据..........................." + full_url)
 
 
-def refresh_user_info(id, account, openId, password, image, sex, username):
-    url = 'http://154.91.199.113:8086/setUserInfo?id={}&account={}&openId={}&password={}&image={}&sex={}&username={}'.format(id, account, openId, password, image, sex, username)
+def refresh_user_info(id, password, image, sex, username):
+    url = 'http://localhost:8086/setUserInfo?id={}&account={}&openId={}&password={}&image={}&sex={}&username={}'.format(id, account, openId, password, image, sex, username)
     full_url = url
     collect_logger.info("刷新用户信息:................." + full_url)
     rs = request.urlopen(full_url)
