@@ -19,9 +19,9 @@ from django.http import HttpResponse
 from django.core.paginator import Paginator , PageNotAnInteger,EmptyPage
 TIME_OUT = 60 * 60 * 2
 
-import sys
-import codecs
-sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+# import sys
+# import codecs
+# sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 
 collect_logger = logging.getLogger("collect")
 
@@ -227,7 +227,7 @@ def update_users(request):
             if type == '1':
                 refresh_vip(users.id, param['vip'])
             else:
-                refresh_user_info(users.id, users.password, users.image, users.sex, users.username)
+                refresh_user_info(users.id, users.password, users.image, users.sex,  param['username'].encode('utf-8'))
                 pass
 
             users.save()
@@ -884,6 +884,7 @@ def refresh_user_info(id, password, image, sex, username):
     html = rs.read().decode('utf-8')
     collect_logger.info("刷新用户信息请求结果:" + html)
     print("刷新用户信息..........................." + full_url)
+
 
 #刷新 vip
 def refresh_vip(uid, vip):
