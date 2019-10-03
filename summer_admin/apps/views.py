@@ -227,7 +227,8 @@ def update_users(request):
 
             users.save()
     except Exception as e:
-        collect_logger.info("修改玩家数据失败{}", e)
+        collect_logger.info("修改玩家信息失败")
+        collect_logger.info(e)
         return JsonResponse({'code': 19999, 'data': "失败"})
 
 
@@ -871,7 +872,7 @@ def repair_data(uid, childNum, weekRebate, allRebate):
 
 
 def refresh_user_info(id, password, image, sex, username):
-    url = 'http://localhost:8086/setUserInfo?id={}&&password={}&image={}&sex={}&username={}'.format(id, password, image, sex, username)
+    url = 'http://154.91.199.113:8086/setUserInfo?id={}&&password={}&image={}&sex={}&username={}'.format(id, password, image, sex, username)
     full_url = url
     collect_logger.info("刷新用户信息:................." + full_url)
     rs = request.urlopen(full_url)
