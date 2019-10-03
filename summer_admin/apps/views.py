@@ -201,7 +201,8 @@ def update_users(request):
 
     vip = str(param['vip'])
 
-
+    #0 代表修改玩家信息 1代表修改玩家类型
+    type = str(param['type'])
 
     if vip == '0':
         pass
@@ -218,7 +219,12 @@ def update_users(request):
 
     try:
         with transaction.atomic():
-            refresh_vip(users.id, param['vip'])
+            if type == '1':
+                refresh_vip(users.id, param['vip'])
+            else:
+                refresh_user_info(users.id, users.account, users.open_id, users.password, users.image, users.sex, users.username)
+                pass
+
             users.save()
     except Exception as e:
         collect_logger.info("修改玩家数据失败{}", e)
@@ -848,7 +854,7 @@ def constant_change_msg(request):
     # client.getBlackList()
     #
     # # 为了刷新
-    # refresh("修改公告等")
+    refresh("修改公告等")
 
     return JsonResponse({'code': 20000, 'data': 'ok'})
 
@@ -863,6 +869,15 @@ def repair_data(uid, childNum, weekRebate, allRebate):
     collect_logger.info("修正数据请求结果:" + html)
     print("修正数据..........................." + full_url)
 
+
+def refresh_user_info(id, account, openId, password, image, sex, username):
+    url = 'http://154.91.199.113:8086/setUserInfo?id={}&account={}&openId={}&password={}&image={}&sex={}&username={}'.format(id, account, openId, password, image, sex, username)
+    full_url = url
+    collect_logger.info("刷新用户信息:................." + full_url)
+    rs = request.urlopen(full_url)
+    html = rs.read().decode('utf-8')
+    collect_logger.info("刷新用户信息请求结果:" + html)
+    print("刷新用户信息..........................." + full_url)
 
 #刷新 vip
 def refresh_vip(uid, vip):
