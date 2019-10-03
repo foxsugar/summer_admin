@@ -209,6 +209,8 @@ def update_users(request):
     #0 代表修改玩家信息 1代表修改玩家类型
     type = str(param['type'])
 
+
+
     if vip == '0':
         pass
     elif vip == '1':
@@ -227,7 +229,7 @@ def update_users(request):
             if type == '1':
                 refresh_vip(users.id, param['vip'])
             else:
-                refresh_user_info(users.id, users.password, users.image, users.sex,  param['username'].encode('utf-8'))
+                refresh_user_info(users.id, users.password, users.image, users.sex,  '')
                 pass
 
             users.save()
@@ -877,7 +879,7 @@ def repair_data(uid, childNum, weekRebate, allRebate):
 
 
 def refresh_user_info(id, password, image, sex, username):
-    url = 'http://154.91.199.113:8086/setUserInfo?id={}&&password={}&image={}&sex={}&username={}'.format(id, password, image, sex, username)
+    url = 'http://154.91.199.113:8086/setUserInfo?id={}&&password={}&image={}&sex={}'.format(id, password, image, sex)
     full_url = url
     collect_logger.info("刷新用户信息:................." + full_url)
     rs = request.urlopen(full_url)
