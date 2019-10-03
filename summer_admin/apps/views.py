@@ -228,7 +228,7 @@ def update_users(request):
             users.save()
     except Exception as e:
         collect_logger.info("修改玩家数据失败{}", e)
-
+        return JsonResponse({'code': 19999, 'data': "失败"})
 
 
     return JsonResponse({'code': 20000, 'data': param})
