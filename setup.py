@@ -18,7 +18,7 @@ setup(
     platforms="any",
     install_requires=[
         'pymysql>=0.7.11',
-        'django==1.10.3',
+        'django==1.11.29',
         'django-cors-headers>=2.1.0',
         'thrift>=0.10.0',
         'configparser>=3.5.0',
